@@ -241,6 +241,10 @@ def create_user():
         )
         user.set_password(data['password'])
         
+        # Generate referral code for agents and masters
+        if user.role in ['supermaster', 'super_admin', 'admin', 'agent']:
+            user.generate_referral_code()
+        
         db.session.add(user)
         db.session.commit()
         
