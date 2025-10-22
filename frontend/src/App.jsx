@@ -15,9 +15,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const HomePage = lazy(() => import('./pages/NewHomePage'));
 const Programs = lazy(() => import('./pages/ProgramsNew'));
 const ProgramDetails = lazy(() => import('./pages/ProgramDetails'));
-const OnePhaseChallenge = lazy(() => import('./pages/OnePhaseChallenge'));
-const TwoPhaseChallenge = lazy(() => import('./pages/TwoPhaseChallenge'));
-const InstantFunding = lazy(() => import('./pages/InstantFunding'));
+
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const HowItWorks = lazy(() => import('./pages/HowItWorks'));
 const FAQ = lazy(() => import('./pages/FAQ'));
@@ -147,9 +145,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/programs" element={<Programs />} />
-        <Route path="/programs/one-phase" element={<OnePhaseChallenge />} />
-        <Route path="/programs/two-phase" element={<TwoPhaseChallenge />} />
-        <Route path="/programs/instant-funding" element={<InstantFunding />} />
+
         <Route path="/programs/:id" element={<ProgramDetails />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
