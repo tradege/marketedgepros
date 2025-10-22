@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Users, UserCheck, UserX, UserCog, X } from 'lucide-react';
 import axios from 'axios';
+import UserDetailsModal from '../../components/UserDetailsModal';om 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -9,6 +10,8 @@ function UserManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -370,7 +373,15 @@ function UserManagement() {
                     {new Date(user.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                    <button 
+                      onClick={() => {
+                        setSelectedUserId(user.id);
+                        setShowViewModal(true);
+                      }}
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                    >
+                      View
+                    </button>
                     <button className="text-green-600 hover:text-green-900 mr-3">Edit</button>
                     <button 
                       onClick={() => handleDeleteUser(user.id, `${user.first_name} ${user.last_name}`)}
@@ -550,6 +561,17 @@ function UserManagement() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* View User Modal */}
+      {showViewModal && selectedUserId && (
+        <UserDetailsModal
+          userId={selectedUserId}
+          onClose={() => {
+            setShowViewModal(false);
+            setSelectedUserId(null);
+          }}
+        />
       )}
     </div>
   );
