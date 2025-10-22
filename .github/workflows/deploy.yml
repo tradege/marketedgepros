@@ -23,7 +23,7 @@ jobs:
         password: ${{ secrets.DO_PASSWORD }}
         script: |
           echo "=== Starting deployment ==="
-          cd /root/MarketEdgePros
+          cd /var/www/PropTradePro
           
           echo "=== Pulling latest code ==="
           git pull origin master || git pull origin main
@@ -37,8 +37,8 @@ jobs:
           
           echo "=== Building frontend ==="
           cd ../frontend
-          npm install
-          npm run build
+          pnpm install
+          pnpm run build
           
           echo "=== Restarting frontend service ==="
           sudo systemctl restart marketedgepros-frontend || echo "Frontend service not configured yet"
