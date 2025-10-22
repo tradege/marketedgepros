@@ -147,6 +147,7 @@ function UserManagement() {
 
   const getRoleBadgeColor = (role) => {
     const colors = {
+      supermaster: 'bg-purple-100 text-purple-800',
       super_admin: 'bg-purple-100 text-purple-800',
       admin: 'bg-blue-100 text-blue-800',
       agent: 'bg-green-100 text-green-800',
@@ -173,7 +174,7 @@ function UserManagement() {
 
   // Count users by role
   const userCounts = {
-    super_admin: users.filter(u => u.role === 'super_admin').length,
+    super_admin: users.filter(u => u.role === 'super_admin' || u.role === 'supermaster').length,
     admin: users.filter(u => u.role === 'admin').length,
     agent: users.filter(u => u.role === 'agent').length,
     trader: users.filter(u => u.role === 'trader').length,
