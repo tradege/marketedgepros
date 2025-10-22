@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
-import { X, User, Mail, Phone, Calendar, Shield, Activity } from 'lucide-react';
+import { X, User, Mail, Phone, Calendar, Shield, Activity, Users } from 'lucide-react';
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 function UserDetailsModal({ userId, onClose }) {
   const [user, setUser] = useState(null);
+  const [downline, setDownline] = useState(null);
+  const [challenges, setChallenges] = useState(null);
+  const [payments, setPayments] = useState(null);
+  const [commissions, setCommissions] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,7 +23,7 @@ function UserDetailsModal({ userId, onClose }) {
       const token = localStorage.getItem('access_token');
       
       const response = await axios.get(
-        `${API_BASE_URL}/admin/users/${userId}`,
+        `${API_BASE_URL}/admin/users/${userId}/full-details`,
         {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -27,7 +31,11 @@ function UserDetailsModal({ userId, onClose }) {
         }
       );
       
-      setUser(response.data);
+      setUser(response.data.user);
+      setDownline(response.data.downline);
+      setChallenges(response.data.challenges);
+      setPayments(response.data.payments);
+      setCommissions(response.data.commissions);
       setError(null);
     } catch (err) {
       setError('Failed to load user details');
@@ -232,6 +240,102 @@ function UserDetailsModal({ userId, onClose }) {
               </div>
             </div>
           </div>
+
+          {/* Downline/Referrals */}
+          {downline && downline.total_count > 0 && (
+            <div className="bg-gray-700 rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                Downline ({downline.total_count} referrals)
+              </h3>
+              <div className="space-y-3">
+                {downline.direct_referrals.map((ref) => (
+                  <div key={ref.id} className="bg-gray-600 rounded p-3 flex justify-between items-center">
+                    <div>
+                      <p className="text-white font-medium">{ref.name}</p>
+                      <p className="text-sm text-gray-400">{ref.email}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className={`px-2 py-1 text-xs rounded ${ref.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {ref.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                      <p className="text-xs text-gray-400 mt-1">{ref.children_count} referrals</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Trading Challenges */}
+          {challenges && challenges.total_count > 0 && (
+            <div className="bg-gray-700 rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">
+                Trading Challenges ({challenges.total_count})
+              </h3>
+              <div className="space-y-3">
+                {challenges.list.map((challenge) => (
+                  <div key={challenge.id} className="bg-gray-600 rounded p-3">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="text-white font-medium">{challenge.program_name}</p>
+                        <p className="text-sm text-gray-400">Account Size: ${challenge.account_size.toLocaleString()}</p>
+                      </div>
+                      <span className={`px-2 py-1 text-xs rounded ${
+                        challenge.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                        challenge.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {challenge.status}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-gray-400">Balance:</span>
+                        <span className="text-white ml-2">${challenge.current_balance.toLocaleString()}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-400">P/L:</span>
+                        <span className={`ml-2 ${challenge.profit_loss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          ${challenge.profit_loss.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Payments */}
+          {payments && payments.total_count > 0 && (
+            <div className="bg-gray-700 rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">
+                Payments ({payments.total_count})
+              </h3>
+              <div className="mb-3">
+                <p className="text-sm text-gray-400">Total Paid:</p>
+                <p className="text-2xl font-bold text-white">${payments.total_amount.toLocaleString()}</p>
+              </div>
+              <div className="space-y-2">
+                {payments.list.slice(0, 5).map((payment) => (
+                  <div key={payment.id} className="bg-gray-600 rounded p-2 flex justify-between items-center">
+                    <div>
+                      <p className="text-white">${payment.amount.toLocaleString()}</p>
+                      <p className="text-xs text-gray-400">{payment.payment_type}</p>
+                    </div>
+                    <span className={`px-2 py-1 text-xs rounded ${
+                      payment.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {payment.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
