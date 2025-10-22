@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Users, UserCheck, UserX, UserCog, X } from 'lucide-react';
 import axios from 'axios';
 import UserDetailsModal from '../../components/UserDetailsModal';
+import UserEditModal from '../../components/UserEditModal';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -11,6 +12,7 @@ function UserManagement() {
   const [error, setError] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [formData, setFormData] = useState({
     first_name: '',
@@ -383,7 +385,15 @@ function UserManagement() {
                     >
                       View
                     </button>
-                    <button className="text-green-600 hover:text-green-900 mr-3">Edit</button>
+                    <button 
+                      onClick={() => {
+                        setSelectedUserId(user.id);
+                        setShowEditModal(true);
+                      }}
+                      className="text-green-600 hover:text-green-900 mr-3"
+                    >
+                      Edit
+                    </button>
                     <button 
                       onClick={() => handleDeleteUser(user.id, `${user.first_name} ${user.last_name}`)}
                       className="text-red-600 hover:text-red-900"
@@ -571,6 +581,21 @@ function UserManagement() {
           onClose={() => {
             setShowViewModal(false);
             setSelectedUserId(null);
+          }}
+        />
+      )}
+
+      {/* Edit User Modal */}
+      {showEditModal && selectedUserId && (
+        <UserEditModal
+          userId={selectedUserId}
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedUserId(null);
+          }}
+          onSuccess={() => {
+            fetchUsers();
           }}
         />
       )}
