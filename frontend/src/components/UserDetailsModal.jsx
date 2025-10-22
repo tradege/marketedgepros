@@ -87,15 +87,15 @@ function UserDetailsModal({ userId, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-800 rounded-lg w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-white">
             User Details
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="text-gray-400 hover:text-gray-200"
           >
             <X className="w-6 h-6" />
           </button>
@@ -104,34 +104,34 @@ function UserDetailsModal({ userId, onClose }) {
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Basic Info */}
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+          <div className="bg-gray-700 rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <User className="w-5 h-5" />
               Basic Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Full Name</label>
-                <p className="text-lg font-medium text-gray-900 dark:text-white">
+                <label className="text-sm text-gray-400">Full Name</label>
+                <p className="text-lg font-medium text-white">
                   {user.first_name} {user.last_name}
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Email</label>
-                <p className="text-lg font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                <label className="text-sm text-gray-400">Email</label>
+                <p className="text-lg font-medium text-white flex items-center gap-2">
                   <Mail className="w-4 h-4" />
                   {user.email}
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Phone</label>
-                <p className="text-lg font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                <label className="text-sm text-gray-400">Phone</label>
+                <p className="text-lg font-medium text-white flex items-center gap-2">
                   <Phone className="w-4 h-4" />
                   {user.country_code} {user.phone || 'Not provided'}
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Role</label>
+                <label className="text-sm text-gray-400">Role</label>
                 <p>
                   <span className={`px-3 py-1 text-sm font-semibold rounded-full ${roleBadge.color}`}>
                     {roleBadge.label}
@@ -142,14 +142,14 @@ function UserDetailsModal({ userId, onClose }) {
           </div>
 
           {/* Account Status */}
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+          <div className="bg-gray-700 rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Shield className="w-5 h-5" />
               Account Status
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Status</label>
+                <label className="text-sm text-gray-400">Status</label>
                 <p>
                   <span className={`px-3 py-1 text-sm font-semibold rounded-full ${
                     user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -159,7 +159,7 @@ function UserDetailsModal({ userId, onClose }) {
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Email Verified</label>
+                <label className="text-sm text-gray-400">Email Verified</label>
                 <p>
                   <span className={`px-3 py-1 text-sm font-semibold rounded-full ${
                     user.is_verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
@@ -169,7 +169,7 @@ function UserDetailsModal({ userId, onClose }) {
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">KYC Status</label>
+                <label className="text-sm text-gray-400">KYC Status</label>
                 <p>
                   <span className={`px-3 py-1 text-sm font-semibold rounded-full ${kycBadge.color}`}>
                     {kycBadge.label}
@@ -180,29 +180,29 @@ function UserDetailsModal({ userId, onClose }) {
           </div>
 
           {/* Activity */}
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+          <div className="bg-gray-700 rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Activity className="w-5 h-5" />
               Activity
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Created</label>
-                <p className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                <label className="text-sm text-gray-400">Created</label>
+                <p className="text-sm font-medium text-white flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   {new Date(user.created_at).toLocaleDateString()}
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Last Updated</label>
-                <p className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                <label className="text-sm text-gray-400">Last Updated</label>
+                <p className="text-sm font-medium text-white flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   {new Date(user.updated_at).toLocaleDateString()}
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Last Login</label>
-                <p className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                <label className="text-sm text-gray-400">Last Login</label>
+                <p className="text-sm font-medium text-white flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   {user.last_login_at ? new Date(user.last_login_at).toLocaleDateString() : 'Never'}
                 </p>
@@ -211,11 +211,11 @@ function UserDetailsModal({ userId, onClose }) {
           </div>
 
           {/* Security */}
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+          <div className="bg-gray-700 rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4">Security</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">Two-Factor Authentication</label>
+                <label className="text-sm text-gray-400">Two-Factor Authentication</label>
                 <p>
                   <span className={`px-3 py-1 text-sm font-semibold rounded-full ${
                     user.two_factor_enabled ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
@@ -225,8 +225,8 @@ function UserDetailsModal({ userId, onClose }) {
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600 dark:text-gray-400">User ID</label>
-                <p className="text-sm font-mono text-gray-900 dark:text-white">
+                <label className="text-sm text-gray-400">User ID</label>
+                <p className="text-sm font-mono text-white">
                   #{user.id}
                 </p>
               </div>
@@ -235,7 +235,7 @@ function UserDetailsModal({ userId, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 px-6 py-4">
+        <div className="sticky bottom-0 bg-gray-700 border-t border-gray-600 px-6 py-4">
           <button
             onClick={onClose}
             className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
