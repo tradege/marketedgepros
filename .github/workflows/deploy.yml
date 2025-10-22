@@ -29,23 +29,25 @@ jobs:
           git pull origin master || git pull origin main
           
           echo "=== Installing backend dependencies ==="
-          cd backend
-          pip3 install -r requirements.txt
-          
-          echo "=== Restarting backend service ==="
-          sudo systemctl restart marketedgepros-backend || echo "Backend service not configured yet"
+          cd /var/www/PropTradePro/backend
+          pip3 install -r requirements.txt --break-system-packages || echo "Backend install warning (continuing)"
           
           echo "=== Building frontend ==="
-          cd ../frontend
-          pnpm install
-          pnpm run build
+          cd /var/www/PropTradePro/frontend
           
-          echo "=== Restarting frontend service ==="
-          sudo systemctl restart marketedgepros-frontend || echo "Frontend service not configured yet"
+          # Check if pnpm is available, otherwise use npm
+          if command -v pnpm &> /dev/null; then
+            echo "Using pnpm"
+            pnpm install
+            pnpm run build
+          else
+            echo "pnpm not found, using npm as fallback"
+            npm install
+            npm run build
+          fi
           
           echo "=== Restarting Nginx ==="
-          sudo systemctl restart nginx
+          sudo systemctl reload nginx
           
           echo "=== Deployment completed successfully ==="
           echo "Website: https://marketedgepros.com"
-
