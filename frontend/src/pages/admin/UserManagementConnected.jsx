@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Users, UserCheck, UserX, UserCog, X } from 'lucide-react';
 import axios from 'axios';
-import UserDetailsModal from '../../components/UserDetailsModal';om 'axios';
+import UserDetailsModal from '../../components/UserDetailsModal';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
