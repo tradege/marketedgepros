@@ -87,7 +87,7 @@ function UserDetailsModal({ userId, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-      <div className="bg-gray-800 rounded-lg w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-800 rounded-lg w-full max-w-6xl m-4 max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-white">
@@ -102,7 +102,7 @@ function UserDetailsModal({ userId, onClose }) {
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 overflow-y-auto flex-1">
           {/* Basic Info */}
           <div className="bg-gray-700 rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -235,7 +235,7 @@ function UserDetailsModal({ userId, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-gray-700 border-t border-gray-600 px-6 py-4">
+        <div className="bg-gray-700 border-t border-gray-600 px-6 py-4 flex-shrink-0">
           <button
             onClick={onClose}
             className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
