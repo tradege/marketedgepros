@@ -86,7 +86,7 @@ function UserDetailsModal({ userId, onClose }) {
   const kycBadge = getKYCBadge(user.kyc_status);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style={{zIndex: 1400}}>
       <div className="bg-gray-800 rounded-lg w-full max-w-6xl m-4 max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
