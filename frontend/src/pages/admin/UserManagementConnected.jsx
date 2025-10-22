@@ -110,6 +110,30 @@ function UserManagement() {
     }
   };
 
+  const handleDeleteUser = async (userId, userName) => {
+    if (!window.confirm(`Are you sure you want to delete ${userName}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('access_token');
+      
+      await axios.delete(
+        `${API_BASE_URL}/admin/users/${userId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      // Refresh users list
+      fetchUsers();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to delete user');
+    }
+  };
+
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
   };
@@ -343,7 +367,13 @@ function UserManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
-                    <button className="text-green-600 hover:text-green-900">Edit</button>
+                    <button className="text-green-600 hover:text-green-900 mr-3">Edit</button>
+                    <button 
+                      onClick={() => handleDeleteUser(user.id, `${user.first_name} ${user.last_name}`)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
