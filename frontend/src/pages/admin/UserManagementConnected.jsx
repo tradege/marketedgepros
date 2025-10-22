@@ -14,6 +14,8 @@ function UserManagement() {
     last_name: '',
     email: '',
     password: '',
+    phone: '',
+    country_code: '+972',
     role: 'trader'
   });
   const [formError, setFormError] = useState('');
@@ -97,6 +99,8 @@ function UserManagement() {
         last_name: '',
         email: '',
         password: '',
+        phone: '',
+        country_code: '+972',
         role: 'trader'
       });
       setShowAddModal(false);
@@ -480,6 +484,34 @@ function UserManagement() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Phone Number
+                </label>
+                <div className="flex gap-2">
+                  <select
+                    className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    value={formData.country_code}
+                    onChange={(e) => setFormData({ ...formData, country_code: e.target.value })}
+                  >
+                    <option value="+972">🇮🇱 +972</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+971">🇦🇪 +971</option>
+                  </select>
+                  <input
+                    type="tel"
+                    placeholder="50-123-4567"
+                    className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  />
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Required for Master, Agent, and Trader roles
+                </p>
               </div>
 
               <div>
