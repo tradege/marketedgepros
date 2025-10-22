@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Users, UserCheck, UserX, UserCog, X } from 'lucide-react';
 import axios from 'axios';
 import UserDetailsModal from '../../components/UserDetailsModal';
