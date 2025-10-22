@@ -214,6 +214,20 @@ def create_user():
         if User.query.filter_by(email=data['email']).first():
             return jsonify({'error': 'User already exists'}), 400
         
+        # Only supermaster can create users without verification requirements
+        # All other roles (admin, agent, trader) must have verified email and phone
+        is_verified = False
+        if g.current_user.role == 'supermaster':
+            # Supermaster can create users with or without verification
+            is_verified = data.get('is_verified', False)
+        else:
+            # Other roles must create verified users only
+            if data['role'] in ['admin', 'agent', 'trader']:
+                # These roles require email and phone verification
+                if not data.get('phone'):
+                    return jsonify({'error': 'Phone number is required for this role'}), 400
+                is_verified = True  # Force verification for non-supermaster created users
+        
         # Create user
         user = User(
             email=data['email'],
@@ -223,7 +237,7 @@ def create_user():
             is_active=data.get('is_active', True),
             phone=data.get('phone'),
             country_code=data.get('country_code'),
-            is_verified=data.get('is_verified', False)
+            is_verified=is_verified
         )
         user.set_password(data['password'])
         
