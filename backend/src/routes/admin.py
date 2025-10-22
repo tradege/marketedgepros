@@ -615,3 +615,104 @@ def reject_kyc(user_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+
+
+
+@admin_bp.route('/users/<int:user_id>/full-details', methods=['GET'])
+@token_required
+@admin_required
+def get_user_full_details(user_id):
+    """Get complete user details including downline, challenges, commissions, and payments"""
+    try:
+        user = User.query.get_or_404(user_id)
+        
+        # Basic user info
+        user_data = {
+            'id': user.id,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'role': user.role,
+            'is_active': user.is_active,
+            'kyc_status': user.kyc_status,
+            'phone': user.phone,
+            'country_code': user.country_code,
+            'created_at': user.created_at.isoformat(),
+            'updated_at': user.updated_at.isoformat(),
+            'last_login_at': user.last_login_at.isoformat() if user.last_login_at else None,
+            'is_verified': user.is_verified,
+            'two_factor_enabled': user.two_factor_enabled
+        }
+        
+        # Downline (for Master/Agent roles)
+        downline_data = []
+        if user.role in ['supermaster', 'admin', 'agent']:
+            # Get direct referrals
+            children = User.query.filter_by(parent_id=user.id).all()
+            for child in children:
+                downline_data.append({
+                    'id': child.id,
+                    'name': f"{child.first_name} {child.last_name}",
+                    'email': child.email,
+                    'role': child.role,
+                    'is_active': child.is_active,
+                    'created_at': child.created_at.isoformat() if child.created_at else None,
+                    'children_count': User.query.filter_by(parent_id=child.id).count()
+                })
+        
+        # Trading challenges
+        challenges_data = []
+        challenges = Challenge.query.filter_by(user_id=user.id).all()
+        for challenge in challenges:
+            challenges_data.append({
+                'id': challenge.id,
+                'program_name': challenge.program.name if challenge.program else 'N/A',
+                'account_size': float(challenge.account_size) if challenge.account_size else 0,
+                'status': challenge.status,
+                'current_balance': float(challenge.current_balance) if challenge.current_balance else 0,
+                'profit_loss': float(challenge.profit_loss) if challenge.profit_loss else 0,
+                'created_at': challenge.created_at.isoformat() if challenge.created_at else None
+            })
+        
+        # Payments
+        payments_data = []
+        payments = Payment.query.filter_by(user_id=user.id).all()
+        for payment in payments:
+            payments_data.append({
+                'id': payment.id,
+                'amount': float(payment.amount),
+                'currency': payment.currency,
+                'status': payment.status,
+                'payment_type': payment.payment_type,
+                'created_at': payment.created_at.isoformat() if payment.created_at else None
+            })
+        
+        # Commissions (if applicable)
+        commissions_data = {
+            'total_earned': 0,
+            'this_month': 0,
+            'commission_rate': float(user.commission_rate) if hasattr(user, 'commission_rate') and user.commission_rate else 0
+        }
+        
+        return jsonify({
+            'user': user_data,
+            'downline': {
+                'direct_referrals': downline_data,
+                'total_count': len(downline_data)
+            },
+            'challenges': {
+                'list': challenges_data,
+                'total_count': len(challenges_data),
+                'active_count': len([c for c in challenges_data if c['status'] == 'active'])
+            },
+            'payments': {
+                'list': payments_data,
+                'total_count': len(payments_data),
+                'total_amount': sum([p['amount'] for p in payments_data if p['status'] == 'completed'])
+            },
+            'commissions': commissions_data
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
