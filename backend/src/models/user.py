@@ -79,6 +79,7 @@ class User(db.Model, TimestampMixin):
     level = db.Column(db.Integer, default=0, nullable=False, index=True)  # Depth in hierarchy (0 = top)
     tree_path = db.Column(db.String(500), index=True)  # Path in tree: "1/5/23/45" for fast queries
     commission_rate = db.Column(db.Numeric(5, 2), default=0.00)  # Custom commission rate for this user
+    referral_code = db.Column(db.String(20), unique=True, nullable=True, index=True)  # Unique referral code for agents/masters
     
     # Tenant (White Label)
     tenant_id = db.Column(db.Integer, db.ForeignKey('tenants.id'), nullable=True)
@@ -106,6 +107,22 @@ class User(db.Model, TimestampMixin):
     def check_password(self, password):
         """Verify password"""
         return check_password_hash(self.password_hash, password)
+    
+    def generate_referral_code(self):
+        """Generate unique referral code"""
+        import secrets
+        import string
+        
+        # Only agents and masters get referral codes
+        if self.role not in ['supermaster', 'super_admin', 'admin', 'agent']:
+            return None
+        
+        # Generate unique 8-character code
+        while True:
+            code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
+            if not User.query.filter_by(referral_code=code).first():
+                self.referral_code = code
+                return code
     
     def generate_2fa_secret(self):
         """Generate new 2FA secret"""
