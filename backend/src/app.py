@@ -38,6 +38,10 @@ def create_app(config_name=None):
     
     # Enable CORS
     csrf = CSRFProtect(app)
+    
+    # Exempt API endpoints from CSRF protection (they use JWT authentication)
+    # This is the standard approach for JWT-based APIs
+    app.config['WTF_CSRF_CHECK_DEFAULT'] = False
     cors_origins = app.config.get('CORS_ORIGINS', '*')
     if isinstance(cors_origins, str):
         cors_origins = cors_origins.split(',')
