@@ -189,7 +189,7 @@ export default function AdminLayout({ children }) {
             sx={{
               width: 40,
               height: 40,
-              background: `linear-gradient(135deg, ${roleColors[user?.role]} 0%, ${roleColors[user?.role]}80 100%)`,
+              background: `linear-gradient(135deg, ${getRoleColor(user?.role)} 0%, ${getRoleColor(user?.role)}80 100%)`,
             }}
           >
             {user?.email?.[0]?.toUpperCase()}
@@ -281,7 +281,7 @@ export default function AdminLayout({ children }) {
               sx={{
                 width: 32,
                 height: 32,
-                background: `linear-gradient(135deg, ${roleColors[user?.role]} 0%, ${roleColors[user?.role]}80 100%)`,
+                background: `linear-gradient(135deg, ${getRoleColor(user?.role)} 0%, ${getRoleColor(user?.role)}80 100%)`,
               }}
             >
               {user?.email?.[0]?.toUpperCase()}
