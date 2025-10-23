@@ -6,7 +6,7 @@ import secrets
 from datetime import datetime, timedelta
 import jwt
 from flask import current_app
-from src.constants.roles import Roles, ROLE_HIERARCHYpp
+from src.constants.roles import Roles, ROLE_HIERARCHY
 
 
 class User(db.Model, TimestampMixin):
