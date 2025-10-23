@@ -36,8 +36,7 @@ import {
   Approval,
 } from '@mui/icons-material';
 import useAuthStore from '../../store/authStore';
-import { ROLES, ROLE_CONFIG, getRoleLabel } from '../../constants/roles';
-import { getRoleColor } from '../../constants/roleColors';
+import { ROLES, ROLE_CONFIG, getRoleLabel, getRoleConfig, getRoleColor } from '../../constants/roles';
 
 const drawerWidth = 280;
 

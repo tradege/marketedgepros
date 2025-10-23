@@ -16,9 +16,9 @@ export const ROLE_CONFIG = {
   [ROLES.SUPERMASTER]: {
     value: 'supermaster',
     label: 'Super Master',
-
     color: 'bg-purple-100 text-purple-800',
     darkColor: 'dark:bg-purple-900 dark:text-purple-200',
+    hexColor: '#f093fb',
     icon: '👑',
     hierarchy: 1,
     permissions: {
@@ -34,9 +34,9 @@ export const ROLE_CONFIG = {
   [ROLES.SUPER_ADMIN]: {
     value: 'super_admin',
     label: 'Super Admin',
-
     color: 'bg-purple-100 text-purple-800',
     darkColor: 'dark:bg-purple-900 dark:text-purple-200',
+    hexColor: '#f093fb',
     icon: '👑',
     hierarchy: 1,
     permissions: {
@@ -52,9 +52,9 @@ export const ROLE_CONFIG = {
   [ROLES.MASTER]: {
     value: 'master',
     label: 'Master',
-
     color: 'bg-blue-100 text-blue-800',
     darkColor: 'dark:bg-blue-900 dark:text-blue-200',
+    hexColor: '#667eea',
     icon: '⭐',
     hierarchy: 2,
     permissions: {
@@ -70,9 +70,9 @@ export const ROLE_CONFIG = {
   [ROLES.ADMIN]: {
     value: 'admin',
     label: 'Admin',
-
     color: 'bg-blue-100 text-blue-800',
     darkColor: 'dark:bg-blue-900 dark:text-blue-200',
+    hexColor: '#667eea',
     icon: '⭐',
     hierarchy: 2,
     permissions: {
@@ -88,9 +88,9 @@ export const ROLE_CONFIG = {
   [ROLES.AGENT]: {
     value: 'agent',
     label: 'Agent',
-
     color: 'bg-green-100 text-green-800',
     darkColor: 'dark:bg-green-900 dark:text-green-200',
+    hexColor: '#43e97b',
     icon: '🤝',
     hierarchy: 3,
     permissions: {
@@ -106,9 +106,9 @@ export const ROLE_CONFIG = {
   [ROLES.TRADER]: {
     value: 'trader',
     label: 'Trader',
-
     color: 'bg-gray-100 text-gray-800',
     darkColor: 'dark:bg-gray-700 dark:text-gray-200',
+    hexColor: '#94a3b8',
     icon: '📊',
     hierarchy: 4,
     permissions: {
@@ -195,5 +195,15 @@ export const getCreatableRoles = (currentRole) => {
   
   // Others cannot create users
   return [];
+};
+
+
+
+/**
+ * Get role hex color (for gradients, charts, etc.)
+ */
+export const getRoleColor = (role) => {
+  const config = getRoleConfig(role);
+  return config.hexColor || '#94a3b8';
 };
 

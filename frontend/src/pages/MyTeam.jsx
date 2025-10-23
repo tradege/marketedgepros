@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Users, TrendingUp, UserPlus, Search, Filter, ChevronDown, ChevronRight } from 'lucide-react';
+import { getRoleConfig } from '../constants/roles';
 
 export default function MyTeam() {
   const [stats, setStats] = useState({
@@ -141,13 +142,7 @@ export default function MyTeam() {
   const renderTreeNode = (node, depth = 0) => {
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded = expandedNodes.has(node.id);
-    
-    const roleColors = {
-      supermaster: 'bg-purple-100 text-purple-800',
-      master: 'bg-blue-100 text-blue-800',
-      agent: 'bg-green-100 text-green-800',
-      trader: 'bg-gray-100 text-gray-800'
-    };
+    const roleConfig = getRoleConfig(node.role);
 
     return (
       <div key={node.id} className="mb-2">
@@ -171,8 +166,8 @@ export default function MyTeam() {
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <span className="font-medium text-gray-900">{node.name}</span>
-              <span className={`px-2 py-1 text-xs rounded-full ${roleColors[node.role]}`}>
-                {node.role}
+              <span className={`px-2 py-1 text-xs rounded-full ${roleConfig.color}`}>
+                {roleConfig.label}
               </span>
               {!node.is_active && (
                 <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">
@@ -195,15 +190,7 @@ export default function MyTeam() {
     );
   };
 
-  const getRoleBadgeColor = (role) => {
-    const colors = {
-      supermaster: 'bg-purple-100 text-purple-800',
-      master: 'bg-blue-100 text-blue-800',
-      agent: 'bg-green-100 text-green-800',
-      trader: 'bg-gray-100 text-gray-800'
-    };
-    return colors[role] || 'bg-gray-100 text-gray-800';
-  };
+  // getRoleBadgeColor removed - using getRoleConfig from constants/roles.js instead
 
   const getKYCBadgeColor = (status) => {
     const colors = {
@@ -356,8 +343,8 @@ export default function MyTeam() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 text-xs rounded-full ${getRoleBadgeColor(user.role)}`}>
-                        {user.role}
+                      <span className={`px-2 py-1 text-xs rounded-full ${getRoleConfig(user.role).color}`}>
+                        {getRoleConfig(user.role).label}
                       </span>
                     </td>
                     <td className="px-6 py-4">

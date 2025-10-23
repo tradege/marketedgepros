@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, User, Mail, Phone, Calendar, Shield, Activity, Users } from 'lucide-react';
 import axios from 'axios';
+import { getRoleConfig } from '../constants/roles';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -45,14 +46,11 @@ function UserDetailsModal({ userId, onClose }) {
   };
 
   const getRoleBadge = (role) => {
-    const badges = {
-      supermaster: { color: 'bg-purple-100 text-purple-800', label: 'Super Master' },
-      super_admin: { color: 'bg-purple-100 text-purple-800', label: 'Super Admin' },
-      admin: { color: 'bg-blue-100 text-blue-800', label: 'Master' },
-      agent: { color: 'bg-green-100 text-green-800', label: 'Agent' },
-      trader: { color: 'bg-gray-100 text-gray-800', label: 'Trader' }
+    const config = getRoleConfig(role);
+    return {
+      color: config.color,
+      label: config.label
     };
-    return badges[role] || badges.trader;
   };
 
   const getKYCBadge = (status) => {

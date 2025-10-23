@@ -3,7 +3,7 @@ import { Users, UserCheck, UserX, UserCog, X } from 'lucide-react';
 import axios from 'axios';
 import UserDetailsModal from '../../components/UserDetailsModal';
 import UserEditModal from '../../components/UserEditModal';
-import { getCreatableRoles } from '../../constants/roles';
+import { getCreatableRoles, getRoleConfig } from '../../constants/roles';
 import ReferralCodeDisplay from '../../components/ReferralCodeDisplay';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
@@ -172,16 +172,7 @@ function UserManagement() {
     setPagination(prev => ({ ...prev, page: newPage }));
   };
 
-  const getRoleBadgeColor = (role) => {
-    const colors = {
-      supermaster: 'bg-purple-100 text-purple-800',
-      super_admin: 'bg-purple-100 text-purple-800',
-      admin: 'bg-blue-100 text-blue-800',
-      agent: 'bg-green-100 text-green-800',
-      trader: 'bg-gray-100 text-gray-800'
-    };
-    return colors[role] || 'bg-gray-100 text-gray-800';
-  };
+  // getRoleBadgeColor removed - using getRoleConfig from constants/roles.js instead
 
   const getStatusBadgeColor = (isActive) => {
     return isActive 
@@ -395,8 +386,8 @@ function UserManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadgeColor(user.role)}`}>
-                      {user.role.replace('_', ' ')}
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getRoleConfig(user.role).color}`}>
+                      {getRoleConfig(user.role).label}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
