@@ -309,7 +309,7 @@ def approve_kyc(user_id):
         
         db.session.commit()
         
-        # TODO: Send approval email to user
+        # TODO (Phase 4 - Email Notifications): Send KYC approval email to user
         
         return jsonify({
             'message': 'KYC approved successfully',
@@ -359,7 +359,7 @@ def reject_kyc(user_id):
         
         db.session.commit()
         
-        # TODO: Send rejection email to user with reason
+        # TODO (Phase 4 - Email Notifications): Send KYC rejection email to user with reason
         
         return jsonify({
             'message': 'KYC rejected',

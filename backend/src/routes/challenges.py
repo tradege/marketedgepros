@@ -213,8 +213,8 @@ def fund_challenge(challenge_id):
         
         db.session.commit()
         
-        # TODO: Send funding notification email
-        # TODO: Provision MT5 account
+        # TODO (Phase 4 - Email Notifications): Send funding notification email to trader
+        # TODO (Phase 12 - MT4/MT5 Integration): Provision MT5 account automatically
         
         return jsonify({
             'message': 'Challenge funded successfully',

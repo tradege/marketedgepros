@@ -3,6 +3,7 @@ Payment Approval Service
 Handles cash and free payment approval workflow
 """
 from datetime import datetime
+import logging
 from src.database import db
 from src.models import PaymentApprovalRequest, Challenge, Payment, User
 from src.services.email_service import EmailService
@@ -254,7 +255,7 @@ class PaymentApprovalService:
                 )
         except Exception as e:
             # Log error but don't fail the request creation
-            print(f"Error sending notification to Super Admins: {str(e)}")
+            logging.error(f"Error sending notification to Super Admins: {str(e)}", exc_info=True)
     
     @staticmethod
     def _notify_approval(approval_request, approved=True):
@@ -291,5 +292,5 @@ class PaymentApprovalService:
                 )
         except Exception as e:
             # Log error but don't fail the approval/rejection
-            print(f"Error sending approval/rejection notification: {str(e)}")
+            logging.error(f"Error sending approval/rejection notification: {str(e)}", exc_info=True)
 

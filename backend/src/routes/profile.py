@@ -98,7 +98,7 @@ def update_profile():
             user.is_verified = False
             user.email_verified_at = None
             
-            # TODO: Send verification email to new address
+            # TODO (Phase 4 - Email Notifications): Send verification email to new address
         
         db.session.commit()
         
@@ -143,8 +143,8 @@ def change_password():
         user.set_password(data['new_password'])
         db.session.commit()
         
-        # TODO: Send password change notification email
-        # TODO: Revoke all existing tokens for security
+        # TODO (Phase 4 - Email Notifications): Send password change notification email
+        # TODO (Phase 3 - Security): Revoke all existing tokens for security
         
         return jsonify({
             'message': 'Password changed successfully'
@@ -264,7 +264,7 @@ def get_profile_stats():
             account_age = datetime.utcnow() - user.created_at
             stats['account_age_days'] = account_age.days
         
-        # TODO: Calculate challenge statistics from database
+        # TODO (Phase 6 - Analytics): Calculate challenge statistics from database
         # This requires querying the Challenge model
         
         return jsonify({

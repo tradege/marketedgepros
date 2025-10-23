@@ -2,6 +2,7 @@
 Admin routes for system management
 """
 from flask import Blueprint, request, jsonify, g
+import logging
 from src.database import db
 from src.models.user import User
 from src.models.trading_program import Challenge
@@ -304,7 +305,7 @@ def create_user():
     except Exception as e:
         db.session.rollback()
         # Log the actual error for debugging
-        print(f"Error creating user: {str(e)}")
+        logging.error(f"Error creating user: {str(e)}", exc_info=True)
         return jsonify(format_error_response(
             'DATABASE_ERROR'
         )), 500
