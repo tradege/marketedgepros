@@ -41,7 +41,7 @@ const drawerWidth = 280;
 
 const menuItems = [
   { title: 'Dashboard', path: '/admin', icon: Dashboard, color: '#667eea' },
-  { title: 'Users', path: '/admin/users', icon: People, color: '#f093fb' },
+  { title: 'Users', path: '/admin/users', icon: People, color: '#f093fb', adminOnly: true },
   { title: 'Programs', path: '/admin/programs', icon: Assessment, color: '#4facfe' },
   { title: 'Payments', path: '/admin/payments', icon: Payment, color: '#43e97b' },
   { title: 'Payment Approvals', path: '/admin/payment-approvals', icon: Approval, color: '#ff6b6b', superAdminOnly: true },
@@ -138,7 +138,13 @@ export default function AdminLayout({ children }) {
       {/* Navigation Menu */}
       <List sx={{ flex: 1, px: 2, py: 2 }}>
         {menuItems
-          .filter(item => !item.superAdminOnly || user?.role === 'supermaster')
+          .filter(item => {
+            // Hide supermaster-only items from non-supermasters
+            if (item.superAdminOnly && user?.role !== 'supermaster') return false;
+            // Hide admin-only items (like Users) from agents and traders
+            if (item.adminOnly && !['supermaster', 'admin'].includes(user?.role)) return false;
+            return true;
+          })
           .map((item) => {
           const isActive = location.pathname === item.path;
           return (

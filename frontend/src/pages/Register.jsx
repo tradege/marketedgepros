@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import useAuthStore from '../store/authStore';
 import { UserPlus, Mail, Lock, User, Phone, AlertCircle } from 'lucide-react';
 
 export default function Register() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { register, error, clearError } = useAuthStore();
 
   const [formData, setFormData] = useState({
@@ -16,7 +17,16 @@ export default function Register() {
     last_name: '',
     phone: '',
     country_code: 'US',
+    referral_code: '',
   });
+
+  // Extract referral code from URL on mount
+  useEffect(() => {
+    const refCode = searchParams.get('ref');
+    if (refCode) {
+      setFormData(prev => ({ ...prev, referral_code: refCode }));
+    }
+  }, [searchParams]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -141,6 +151,29 @@ export default function Register() {
                   />
                 </div>
               </div>
+
+              {formData.referral_code && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Referral Code
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      name="referral_code"
+                      value={formData.referral_code}
+                      readOnly
+                      className="w-full px-4 py-3 border border-green-300 bg-green-50 rounded-lg text-green-700 font-mono"
+                    />
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-600 text-sm font-medium">
+                      ✓ Applied
+                    </div>
+                  </div>
+                  <p className="text-xs text-green-600 mt-1">
+                    You'll be connected to your referrer after registration
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

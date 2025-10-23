@@ -276,6 +276,18 @@ def create_user():
             user.generate_referral_code()
             db.session.commit()
         
+        # Create Agent profile for agents
+        if user.role == 'agent':
+            from src.models.agent import Agent
+            agent = Agent(
+                user_id=user.id,
+                agent_code=user.referral_code,  # Use the same code as referral_code
+                commission_rate=10.0,  # Default 10% commission
+                is_active=True
+            )
+            db.session.add(agent)
+            db.session.commit()
+        
         return jsonify({
             'message': 'User created successfully',
             'user': {
