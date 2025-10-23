@@ -3,6 +3,7 @@ import { Users, UserCheck, UserX, UserCog, X } from 'lucide-react';
 import axios from 'axios';
 import UserDetailsModal from '../../components/UserDetailsModal';
 import UserEditModal from '../../components/UserEditModal';
+import { getCreatableRoles } from '../../constants/roles';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -25,6 +26,7 @@ function UserManagement() {
   });
   const [formError, setFormError] = useState('');
   const [formLoading, setFormLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   
   const [pagination, setPagination] = useState({
     page: 1,
@@ -39,8 +41,26 @@ function UserManagement() {
   });
 
   useEffect(() => {
+    fetchCurrentUser();
     fetchUsers();
   }, [pagination.page, filters]);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await axios.get(
+        `${API_BASE_URL}/auth/me`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      setCurrentUser(response.data.user);
+    } catch (err) {
+      console.error('Failed to fetch current user:', err);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -206,7 +226,19 @@ function UserManagement() {
           </p>
         </div>
         <button 
-          onClick={() => setShowAddModal(true)}
+          onClick={() => {
+            // Set default role to first creatable role
+            if (currentUser) {
+              const creatableRoles = getCreatableRoles(currentUser.role);
+              if (creatableRoles.length > 0) {
+                setFormData(prev => ({
+                  ...prev,
+                  role: creatableRoles[0].value
+                }));
+              }
+            }
+            setShowAddModal(true);
+          }}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           Add User
@@ -549,10 +581,11 @@ function UserManagement() {
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                 >
-                  <option value="trader">Trader</option>
-                  <option value="agent">Agent</option>
-                  <option value="admin">Master</option>
-                  <option value="supermaster">Super Master</option>
+                  {currentUser && getCreatableRoles(currentUser.role).map(roleConfig => (
+                    <option key={roleConfig.value} value={roleConfig.value}>
+                      {roleConfig.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
