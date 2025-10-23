@@ -8,6 +8,7 @@ from src.utils.decorators import token_required, admin_required
 from datetime import datetime
 from sqlalchemy import desc, or_
 from src.services.storage_service import storage_service
+from src.services.email_service import EmailService
 
 kyc_bp = Blueprint('kyc', __name__)
 
@@ -309,7 +310,12 @@ def approve_kyc(user_id):
         
         db.session.commit()
         
-        # TODO (Phase 4 - Email Notifications): Send KYC approval email to user
+        # Send KYC approval email
+        try:
+            EmailService.send_kyc_approved_email(user)
+        except Exception as email_error:
+            # Log but don't fail the approval
+            print(f"Failed to send KYC approval email: {email_error}")
         
         return jsonify({
             'message': 'KYC approved successfully',
@@ -359,7 +365,12 @@ def reject_kyc(user_id):
         
         db.session.commit()
         
-        # TODO (Phase 4 - Email Notifications): Send KYC rejection email to user with reason
+        # Send KYC rejection email
+        try:
+            EmailService.send_kyc_rejected_email(user, data['reason'])
+        except Exception as email_error:
+            # Log but don't fail the rejection
+            print(f"Failed to send KYC rejection email: {email_error}")
         
         return jsonify({
             'message': 'KYC rejected',

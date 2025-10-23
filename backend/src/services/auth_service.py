@@ -52,6 +52,16 @@ class AuthService:
                 # Update agent stats
                 agent.referral_count += 1
                 db.session.commit()
+                
+                # Send email notification to upline (agent owner)
+                try:
+                    from src.services.email_service import EmailService
+                    upline_user = agent.user
+                    EmailService.send_new_downline_email(upline_user, user)
+                except Exception as e:
+                    # Log error but don't fail registration
+                    import logging
+                    logging.error(f'Failed to send downline notification email: {str(e)}')
         
         # Generate email verification token
         verification_token = EmailVerificationToken(user.id)
