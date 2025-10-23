@@ -370,3 +370,321 @@ class EmailService:
             html_content=html_content
         )
 
+
+
+    @staticmethod
+    def send_commission_earned_email(user, commission_amount, source_user):
+        """Send email when user earns a commission"""
+        dashboard_url = f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/dashboard"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+                .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+                .amount-box {{ background: white; border: 2px solid #f5576c; padding: 30px; text-align: center; border-radius: 10px; margin: 25px 0; }}
+                .amount {{ font-size: 48px; font-weight: bold; color: #f5576c; }}
+                .button {{ display: inline-block; padding: 12px 30px; background: #f5576c; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+                .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>💰 You Earned a Commission!</h1>
+                </div>
+                <div class="content">
+                    <h2>Hi {user.first_name},</h2>
+                    <p>Great news! You've earned a commission from your downline.</p>
+                    <div class="amount-box">
+                        <div class="amount">${commission_amount:.2f}</div>
+                        <p style="color: #666; margin-top: 10px;">Commission Earned</p>
+                    </div>
+                    <p><strong>From:</strong> {source_user.first_name} {source_user.last_name}</p>
+                    <p>This commission has been added to your wallet and is available for withdrawal.</p>
+                    <p style="text-align: center;">
+                        <a href="{dashboard_url}" class="button">View Dashboard</a>
+                    </p>
+                    <p>Keep up the great work!</p>
+                    <p>Best regards,<br>The MarketEdgePros Team</p>
+                </div>
+                <div class="footer">
+                    <p>© 2025 MarketEdgePros. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return EmailService._send_email(
+            to_email=user.email,
+            subject=f'💰 Commission Earned: ${commission_amount:.2f}',
+            html_content=html_content
+        )
+    
+    @staticmethod
+    def send_withdrawal_approved_email(user, withdrawal_amount):
+        """Send email when withdrawal is approved"""
+        dashboard_url = f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/dashboard"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+                .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+                .amount-box {{ background: white; border: 2px solid #11998e; padding: 30px; text-align: center; border-radius: 10px; margin: 25px 0; }}
+                .amount {{ font-size: 48px; font-weight: bold; color: #11998e; }}
+                .button {{ display: inline-block; padding: 12px 30px; background: #11998e; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+                .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>✅ Withdrawal Approved!</h1>
+                </div>
+                <div class="content">
+                    <h2>Hi {user.first_name},</h2>
+                    <p>Good news! Your withdrawal request has been approved.</p>
+                    <div class="amount-box">
+                        <div class="amount">${withdrawal_amount:.2f}</div>
+                        <p style="color: #666; margin-top: 10px;">Withdrawal Amount</p>
+                    </div>
+                    <p>The funds will be transferred to your account within 3-5 business days.</p>
+                    <p style="text-align: center;">
+                        <a href="{dashboard_url}" class="button">View Dashboard</a>
+                    </p>
+                    <p>Thank you for being a valued member of MarketEdgePros!</p>
+                    <p>Best regards,<br>The MarketEdgePros Team</p>
+                </div>
+                <div class="footer">
+                    <p>© 2025 MarketEdgePros. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return EmailService._send_email(
+            to_email=user.email,
+            subject='✅ Withdrawal Approved',
+            html_content=html_content
+        )
+    
+    @staticmethod
+    def send_withdrawal_rejected_email(user, withdrawal_amount, reason):
+        """Send email when withdrawal is rejected"""
+        dashboard_url = f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/dashboard"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+                .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+                .warning {{ background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }}
+                .button {{ display: inline-block; padding: 12px 30px; background: #f5576c; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+                .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>❌ Withdrawal Request Rejected</h1>
+                </div>
+                <div class="content">
+                    <h2>Hi {user.first_name},</h2>
+                    <p>We're sorry, but your withdrawal request for <strong>${withdrawal_amount:.2f}</strong> has been rejected.</p>
+                    <div class="warning">
+                        <strong>Reason:</strong> {reason}
+                    </div>
+                    <p>The funds have been returned to your wallet. If you have any questions or need assistance, please contact our support team.</p>
+                    <p style="text-align: center;">
+                        <a href="{dashboard_url}" class="button">View Dashboard</a>
+                    </p>
+                    <p>Best regards,<br>The MarketEdgePros Team</p>
+                </div>
+                <div class="footer">
+                    <p>© 2025 MarketEdgePros. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return EmailService._send_email(
+            to_email=user.email,
+            subject='❌ Withdrawal Request Rejected',
+            html_content=html_content
+        )
+    
+    @staticmethod
+    def send_kyc_approved_email(user):
+        """Send email when KYC is approved"""
+        dashboard_url = f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/dashboard"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+                .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+                .success-box {{ background: white; border: 2px solid #11998e; padding: 30px; text-align: center; border-radius: 10px; margin: 25px 0; }}
+                .button {{ display: inline-block; padding: 12px 30px; background: #11998e; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+                .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>✅ KYC Verification Approved!</h1>
+                </div>
+                <div class="content">
+                    <h2>Hi {user.first_name},</h2>
+                    <p>Congratulations! Your KYC verification has been approved.</p>
+                    <div class="success-box">
+                        <h3 style="color: #11998e; margin: 0;">🎉 You're All Set!</h3>
+                        <p style="color: #666; margin-top: 10px;">Your account is now fully verified</p>
+                    </div>
+                    <p>You can now:</p>
+                    <ul>
+                        <li>Purchase trading challenges</li>
+                        <li>Request withdrawals</li>
+                        <li>Access all platform features</li>
+                    </ul>
+                    <p style="text-align: center;">
+                        <a href="{dashboard_url}" class="button">Start Trading</a>
+                    </p>
+                    <p>Thank you for completing the verification process!</p>
+                    <p>Best regards,<br>The MarketEdgePros Team</p>
+                </div>
+                <div class="footer">
+                    <p>© 2025 MarketEdgePros. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return EmailService._send_email(
+            to_email=user.email,
+            subject='✅ KYC Verification Approved',
+            html_content=html_content
+        )
+    
+    @staticmethod
+    def send_kyc_rejected_email(user, reason):
+        """Send email when KYC is rejected"""
+        dashboard_url = f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/dashboard"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+                .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+                .warning {{ background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }}
+                .button {{ display: inline-block; padding: 12px 30px; background: #f5576c; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+                .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>❌ KYC Verification Not Approved</h1>
+                </div>
+                <div class="content">
+                    <h2>Hi {user.first_name},</h2>
+                    <p>Unfortunately, we were unable to approve your KYC verification at this time.</p>
+                    <div class="warning">
+                        <strong>Reason:</strong> {reason}
+                    </div>
+                    <p>Please review the reason above and resubmit your documents. If you need assistance, our support team is here to help.</p>
+                    <p style="text-align: center;">
+                        <a href="{dashboard_url}" class="button">Resubmit Documents</a>
+                    </p>
+                    <p>Best regards,<br>The MarketEdgePros Team</p>
+                </div>
+                <div class="footer">
+                    <p>© 2025 MarketEdgePros. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return EmailService._send_email(
+            to_email=user.email,
+            subject='❌ KYC Verification Not Approved',
+            html_content=html_content
+        )
+    
+    @staticmethod
+    def send_new_downline_email(user, new_downline):
+        """Send email when a new downline joins"""
+        dashboard_url = f"{current_app.config.get('FRONTEND_URL', 'http://localhost:3000')}/dashboard"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+                .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+                .info-box {{ background: white; border: 2px solid #667eea; padding: 20px; border-radius: 10px; margin: 25px 0; }}
+                .button {{ display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+                .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>🎉 New Team Member!</h1>
+                </div>
+                <div class="content">
+                    <h2>Hi {user.first_name},</h2>
+                    <p>Great news! A new member has joined your team.</p>
+                    <div class="info-box">
+                        <p><strong>Name:</strong> {new_downline.first_name} {new_downline.last_name}</p>
+                        <p><strong>Email:</strong> {new_downline.email}</p>
+                        <p><strong>Joined:</strong> Today</p>
+                    </div>
+                    <p>You'll earn commissions from their activity. Keep growing your team!</p>
+                    <p style="text-align: center;">
+                        <a href="{dashboard_url}" class="button">View Your Team</a>
+                    </p>
+                    <p>Best regards,<br>The MarketEdgePros Team</p>
+                </div>
+                <div class="footer">
+                    <p>© 2025 MarketEdgePros. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return EmailService._send_email(
+            to_email=user.email,
+            subject='🎉 New Team Member Joined!',
+            html_content=html_content
+        )
+
