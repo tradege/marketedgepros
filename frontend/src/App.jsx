@@ -237,7 +237,7 @@ function App() {
           path="/admin"
           element={
             <ProtectedRoute>
-              <RoleGuard allowedRoles={['supermaster', 'super_admin', 'admin', 'master']}>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
                 <AdminLayout>
                   <AdminDashboard />
                 </AdminLayout>
@@ -249,7 +249,7 @@ function App() {
           path="/admin/users"
           element={
             <ProtectedRoute>
-              <RoleGuard allowedRoles={['supermaster', 'super_admin', 'admin', 'master']}>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
                 <AdminLayout>
                   <UserManagement />
                 </AdminLayout>
@@ -261,7 +261,7 @@ function App() {
           path="/admin/programs"
           element={
             <ProtectedRoute>
-              <RoleGuard allowedRoles={['supermaster', 'super_admin', 'admin', 'master']}>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
                 <AdminLayout>
                   <ProgramsManagement />
                 </AdminLayout>
@@ -273,7 +273,7 @@ function App() {
           path="/admin/payments"
           element={
             <ProtectedRoute>
-              <RoleGuard allowedRoles={['supermaster', 'super_admin', 'admin', 'master']}>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
                 <AdminLayout>
                   <PaymentsManagement />
                 </AdminLayout>
@@ -285,7 +285,7 @@ function App() {
           path="/admin/kyc"
           element={
             <ProtectedRoute>
-              <RoleGuard allowedRoles={['supermaster', 'super_admin', 'admin', 'master']}>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
                 <AdminLayout>
                   <KYCApproval />
                 </AdminLayout>
@@ -309,7 +309,7 @@ function App() {
           path="/admin/settings"
           element={
             <ProtectedRoute>
-              <RoleGuard allowedRoles={['supermaster', 'super_admin', 'admin', 'master']}>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
                 <AdminLayout>
                   <Settings />
                 </AdminLayout>
