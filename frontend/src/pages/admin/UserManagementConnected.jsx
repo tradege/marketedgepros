@@ -113,7 +113,11 @@ function UserManagement() {
       // Refresh users list
       fetchUsers();
     } catch (err) {
-      setFormError(err.response?.data?.message || 'Failed to create user');
+      // Display error in Hebrew if available, fallback to English, then generic message
+      const errorData = err.response?.data;
+      const errorMessage = errorData?.error_he || errorData?.error || errorData?.message || 'Failed to create user / יצירת משתמש נכשלה';
+      const errorCode = errorData?.error_code ? ` (${errorData.error_code})` : '';
+      setFormError(errorMessage + errorCode);
     } finally {
       setFormLoading(false);
     }

@@ -9,6 +9,7 @@ from src.models.payment import Payment
 from src.models.trading_program import TradingProgram as Program
 from src.utils.decorators import token_required, admin_required
 from src.utils.validators import validate_required_fields, validate_email_format
+from src.utils.error_messages import format_error_response
 from datetime import datetime, timedelta
 from sqlalchemy import func, and_, or_
 
@@ -193,40 +194,70 @@ def get_user(user_id):
 @token_required
 @admin_required
 def create_user():
-    """Create a new user"""
+    """Create a new user with comprehensive error handling"""
     try:
         data = request.get_json()
         
         # Validate required fields
-        valid, message = validate_required_fields(
-            data, 
-            ['email', 'password', 'first_name', 'last_name', 'role']
-        )
-        if not valid:
-            return jsonify({'error': message}), 400
+        required_fields = ['email', 'password', 'first_name', 'last_name', 'role']
+        missing_fields = [field for field in required_fields if not data.get(field)]
         
-        # Validate email
+        if missing_fields:
+            return jsonify(format_error_response(
+                'MISSING_REQUIRED_FIELDS',
+                lang='he',
+                fields=', '.join(missing_fields)
+            )), 400
+        
+        # Validate email format
         valid, result = validate_email_format(data['email'])
         if not valid:
-            return jsonify({'error': f'Invalid email: {result}'}), 400
+            return jsonify(format_error_response(
+                'INVALID_EMAIL_FORMAT',
+                lang='he',
+                email=data['email']
+            )), 400
         
-        # Check if user exists
+        # Check if user already exists
         if User.query.filter_by(email=data['email']).first():
-            return jsonify({'error': 'User already exists'}), 400
+            return jsonify(format_error_response(
+                'USER_ALREADY_EXISTS',
+                lang='he'
+            )), 400
         
-        # Only supermaster can create users without verification requirements
-        # All other roles (admin, agent, trader) must have verified email and phone
+        # Validate role
+        allowed_roles = ['supermaster', 'admin', 'agent', 'trader']
+        if data['role'] not in allowed_roles:
+            return jsonify(format_error_response(
+                'INVALID_ROLE',
+                lang='he',
+                roles=', '.join(allowed_roles)
+            )), 400
+        
+        # Phone number validation and verification logic
         is_verified = False
+        
         if g.current_user.role == 'supermaster':
             # Supermaster can create users with or without verification
             is_verified = data.get('is_verified', False)
         else:
             # Other roles must create verified users only
             if data['role'] in ['admin', 'agent', 'trader']:
-                # These roles require email and phone verification
+                # These roles require phone number
                 if not data.get('phone'):
-                    return jsonify({'error': 'Phone number is required for this role'}), 400
-                is_verified = True  # Force verification for non-supermaster created users
+                    role_names = {
+                        'admin': 'Master',
+                        'agent': 'Agent',
+                        'trader': 'Trader'
+                    }
+                    return jsonify(format_error_response(
+                        'PHONE_REQUIRED_FOR_ROLE',
+                        lang='he',
+                        role=role_names.get(data['role'], data['role'])
+                    )), 400
+                
+                # Force verification for non-supermaster created users
+                is_verified = True
         
         # Create user
         user = User(
@@ -251,19 +282,26 @@ def create_user():
         
         return jsonify({
             'message': 'User created successfully',
+            'message_he': 'משתמש נוצר בהצלחה',
             'user': {
                 'id': user.id,
                 'email': user.email,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'role': user.role,
-                'is_active': user.is_active
+                'is_active': user.is_active,
+                'referral_code': user.referral_code if hasattr(user, 'referral_code') else None
             }
         }), 201
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        # Log the actual error for debugging
+        print(f"Error creating user: {str(e)}")
+        return jsonify(format_error_response(
+            'DATABASE_ERROR',
+            lang='he'
+        )), 500
 
 
 @admin_bp.route('/users/<int:user_id>', methods=['PUT'])
