@@ -205,7 +205,6 @@ def create_user():
         if missing_fields:
             return jsonify(format_error_response(
                 'MISSING_REQUIRED_FIELDS',
-                lang='he',
                 fields=', '.join(missing_fields)
             )), 400
         
@@ -214,15 +213,13 @@ def create_user():
         if not valid:
             return jsonify(format_error_response(
                 'INVALID_EMAIL_FORMAT',
-                lang='he',
                 email=data['email']
             )), 400
         
         # Check if user already exists
         if User.query.filter_by(email=data['email']).first():
             return jsonify(format_error_response(
-                'USER_ALREADY_EXISTS',
-                lang='he'
+                'USER_ALREADY_EXISTS'
             )), 400
         
         # Validate role
@@ -230,7 +227,6 @@ def create_user():
         if data['role'] not in allowed_roles:
             return jsonify(format_error_response(
                 'INVALID_ROLE',
-                lang='he',
                 roles=', '.join(allowed_roles)
             )), 400
         
@@ -252,7 +248,6 @@ def create_user():
                     }
                     return jsonify(format_error_response(
                         'PHONE_REQUIRED_FOR_ROLE',
-                        lang='he',
                         role=role_names.get(data['role'], data['role'])
                     )), 400
                 
@@ -282,7 +277,6 @@ def create_user():
         
         return jsonify({
             'message': 'User created successfully',
-            'message_he': 'משתמש נוצר בהצלחה',
             'user': {
                 'id': user.id,
                 'email': user.email,
@@ -299,8 +293,7 @@ def create_user():
         # Log the actual error for debugging
         print(f"Error creating user: {str(e)}")
         return jsonify(format_error_response(
-            'DATABASE_ERROR',
-            lang='he'
+            'DATABASE_ERROR'
         )), 500
 
 

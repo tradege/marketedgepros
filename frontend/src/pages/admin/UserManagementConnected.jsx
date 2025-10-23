@@ -20,7 +20,7 @@ function UserManagement() {
     email: '',
     password: '',
     phone: '',
-    country_code: '+972',
+    country_code: '+1',
     role: 'trader'
   });
   const [formError, setFormError] = useState('');
@@ -105,7 +105,7 @@ function UserManagement() {
         email: '',
         password: '',
         phone: '',
-        country_code: '+972',
+        country_code: '+1',
         role: 'trader'
       });
       setShowAddModal(false);
@@ -113,9 +113,9 @@ function UserManagement() {
       // Refresh users list
       fetchUsers();
     } catch (err) {
-      // Display error in Hebrew if available, fallback to English, then generic message
+      // Display error message with error code
       const errorData = err.response?.data;
-      const errorMessage = errorData?.error_he || errorData?.error || errorData?.message || 'Failed to create user / יצירת משתמש נכשלה';
+      const errorMessage = errorData?.error || errorData?.message || 'Failed to create user';
       const errorCode = errorData?.error_code ? ` (${errorData.error_code})` : '';
       setFormError(errorMessage + errorCode);
     } finally {
@@ -522,7 +522,6 @@ function UserManagement() {
                     value={formData.country_code}
                     onChange={(e) => setFormData({ ...formData, country_code: e.target.value })}
                   >
-                    <option value="+972">🇮🇱 +972</option>
                     <option value="+1">🇺🇸 +1</option>
                     <option value="+44">🇬🇧 +44</option>
                     <option value="+971">🇦🇪 +971</option>
@@ -550,10 +549,10 @@ function UserManagement() {
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                 >
-                  <option value="trader">Trader (משתמש)</option>
-                  <option value="agent">Agent (סוכן)</option>
-                  <option value="admin">Master (מנהל)</option>
-                  <option value="super_admin">Super Master (סופר מנהל)</option>
+                  <option value="trader">Trader</option>
+                  <option value="agent">Agent</option>
+                  <option value="admin">Master</option>
+                  <option value="supermaster">Super Master</option>
                 </select>
               </div>
 

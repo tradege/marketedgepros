@@ -143,15 +143,13 @@ def get_error_message(error_key, lang='en', **kwargs):
 
 def format_error_response(error_key, lang='en', **kwargs):
     """
-    Format error response for API
+    Format error response for API - English only
     
     Returns:
         dict suitable for jsonify()
     """
-    error_info = get_error_message(error_key, lang, **kwargs)
+    error_info = get_error_message(error_key, 'en', **kwargs)
     return {
-        'error': error_info['message'],
-        'error_code': error_info['code'],
-        'error_en': error_info['message_en'],
-        'error_he': error_info['message_he']
+        'error': error_info['message_en'],
+        'error_code': error_info['code']
     }

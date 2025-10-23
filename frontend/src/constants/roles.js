@@ -15,7 +15,7 @@ export const ROLE_CONFIG = {
   [ROLES.SUPERMASTER]: {
     value: 'supermaster',
     label: 'Super Master',
-    labelHe: 'סופר מנהל',
+
     color: 'bg-purple-100 text-purple-800',
     darkColor: 'dark:bg-purple-900 dark:text-purple-200',
     icon: '👑',
@@ -33,7 +33,7 @@ export const ROLE_CONFIG = {
   [ROLES.SUPER_ADMIN]: {
     value: 'super_admin',
     label: 'Super Admin',
-    labelHe: 'מנהל על',
+
     color: 'bg-purple-100 text-purple-800',
     darkColor: 'dark:bg-purple-900 dark:text-purple-200',
     icon: '👑',
@@ -51,7 +51,7 @@ export const ROLE_CONFIG = {
   [ROLES.ADMIN]: {
     value: 'admin',
     label: 'Master',
-    labelHe: 'מנהל',
+
     color: 'bg-blue-100 text-blue-800',
     darkColor: 'dark:bg-blue-900 dark:text-blue-200',
     icon: '⭐',
@@ -69,7 +69,7 @@ export const ROLE_CONFIG = {
   [ROLES.AGENT]: {
     value: 'agent',
     label: 'Agent',
-    labelHe: 'סוכן',
+
     color: 'bg-green-100 text-green-800',
     darkColor: 'dark:bg-green-900 dark:text-green-200',
     icon: '🤝',
@@ -87,7 +87,7 @@ export const ROLE_CONFIG = {
   [ROLES.TRADER]: {
     value: 'trader',
     label: 'Trader',
-    labelHe: 'משתמש',
+
     color: 'bg-gray-100 text-gray-800',
     darkColor: 'dark:bg-gray-700 dark:text-gray-200',
     icon: '📊',
@@ -125,9 +125,9 @@ export const getRoleBadge = (role) => {
 /**
  * Get role label
  */
-export const getRoleLabel = (role, lang = 'en') => {
+export const getRoleLabel = (role) => {
   const config = getRoleConfig(role);
-  return lang === 'he' ? config.labelHe : config.label;
+  return config.label;
 };
 
 /**
