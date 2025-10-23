@@ -107,6 +107,7 @@ def create_app(config_name=None):
     from src.routes.tenants import tenants_bp
     from src.routes.roles import roles_bp
     from src.routes.analytics import analytics_bp
+    from src.routes.commissions import commissions_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/v1/auth')
     app.register_blueprint(users_bp, url_prefix='/api/v1/users')
@@ -128,6 +129,7 @@ def create_app(config_name=None):
     app.register_blueprint(tenants_bp, url_prefix='/api/v1/tenants')
     app.register_blueprint(roles_bp, url_prefix='/api/v1')
     app.register_blueprint(analytics_bp, url_prefix='/api/v1/analytics')
+    app.register_blueprint(commissions_bp)
     
     # Health check endpoint
     @app.route('/health', methods=['GET'])

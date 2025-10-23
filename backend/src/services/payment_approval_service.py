@@ -7,6 +7,7 @@ import logging
 from src.database import db
 from src.models import PaymentApprovalRequest, Challenge, Payment, User
 from src.services.email_service import EmailService
+from src.services.commission_service import CommissionService
 
 
 class PaymentApprovalService:
@@ -135,6 +136,15 @@ class PaymentApprovalService:
                 challenge.approved_at = datetime.utcnow()
                 challenge.payment_status = 'paid'
                 challenge.status = 'active'  # Activate the challenge
+                
+                # Calculate and create commission if applicable
+                try:
+                    CommissionService.calculate_and_create_commission(
+                        challenge_id=challenge.id,
+                        sale_amount=approval_request.amount
+                    )
+                except Exception as commission_error:
+                    logging.error(f"Failed to create commission: {commission_error}")
         
         # Update payment
         if approval_request.payment_id:

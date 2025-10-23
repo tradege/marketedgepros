@@ -21,47 +21,55 @@ export default function Commissions() {
   const loadCommissions = async () => {
     try {
       setIsLoading(true);
-      const response = await api.get('/agent/commissions');
-      setCommissions(response.data.commissions || []);
-      calculateStats(response.data.commissions || []);
+      
+      // Fetch commissions from real API
+      const commissionsResponse = await api.get('/api/v1/commissions');
+      const commissionsData = commissionsResponse.data.commissions || [];
+      
+      // Transform API data to match component format
+      const transformedCommissions = commissionsData.map(commission => ({
+        id: commission.id,
+        date: commission.created_at,
+        trader: {
+          name: commission.referral?.referred_user?.name || 'N/A',
+          email: commission.referral?.referred_user?.email || 'N/A'
+        },
+        type: 'enrollment', // Default type
+        program: `Challenge #${commission.challenge_id}`,
+        amount: commission.commission_amount,
+        rate: commission.commission_rate,
+        status: commission.status,
+        payout_date: commission.paid_at
+      }));
+      
+      setCommissions(transformedCommissions);
+      
+      // Fetch stats from real API
+      const statsResponse = await api.get('/api/v1/commissions/stats');
+      const statsData = statsResponse.data;
+      
+      setStats({
+        totalEarned: statsData.total_earned || 0,
+        pendingCommissions: statsData.pending_balance || 0,
+        paidCommissions: statsData.paid?.amount || 0,
+        thisMonth: statsData.pending?.amount || 0 // Approximation
+      });
+      
     } catch (error) {
       console.error('Error loading commissions:', error);
       setCommissions([]);
-      calculateStats([]);
+      setStats({
+        totalEarned: 0,
+        pendingCommissions: 0,
+        paidCommissions: 0,
+        thisMonth: 0
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const calculateStats = (commissionsData) => {
-    const stats = {
-      totalEarned: 0,
-      pendingCommissions: 0,
-      paidCommissions: 0,
-      thisMonth: 0,
-    };
-
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-
-    commissionsData.forEach((commission) => {
-      const commissionDate = new Date(commission.date);
-      
-      if (commission.status === 'paid') {
-        stats.totalEarned += commission.amount;
-        stats.paidCommissions += commission.amount;
-      } else if (commission.status === 'pending') {
-        stats.pendingCommissions += commission.amount;
-      }
-
-      if (commissionDate.getMonth() === currentMonth && commissionDate.getFullYear() === currentYear) {
-        stats.thisMonth += commission.amount;
-      }
-    });
-
-    setStats(stats);
-  };
+  // Removed calculateStats - now fetched from API
 
   const exportCommissions = () => {
     const headers = ['Date', 'Trader', 'Type', 'Program', 'Amount', 'Rate', 'Status', 'Payout Date'];
