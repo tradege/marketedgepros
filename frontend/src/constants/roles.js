@@ -12,6 +12,32 @@ export const ROLES = {
   TRADER: 'trader'
 };
 
+/**
+ * Role Arrays - Predefined role groups
+ * Use these constants instead of hardcoding arrays
+ */
+export const ADMIN_ROLES = [
+  ROLES.SUPERMASTER,
+  ROLES.SUPER_ADMIN,
+  ROLES.MASTER,
+  ROLES.ADMIN
+];
+
+export const MANAGEMENT_ROLES = [
+  ROLES.SUPERMASTER,
+  ROLES.SUPER_ADMIN,
+  ROLES.MASTER
+];
+
+export const ALL_ROLES = [
+  ROLES.SUPERMASTER,
+  ROLES.SUPER_ADMIN,
+  ROLES.MASTER,
+  ROLES.ADMIN,
+  ROLES.AGENT,
+  ROLES.TRADER
+];
+
 export const ROLE_CONFIG = {
   [ROLES.SUPERMASTER]: {
     value: 'supermaster',

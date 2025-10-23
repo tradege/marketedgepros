@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, User, Mail, Phone, Calendar, Shield, Activity, Users } from 'lucide-react';
 import axios from 'axios';
-import { getRoleConfig } from '../constants/roles';
+import { getRoleConfig, getRoleBadge } from '../constants/roles';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -45,13 +45,7 @@ function UserDetailsModal({ userId, onClose }) {
     }
   };
 
-  const getRoleBadge = (role) => {
-    const config = getRoleConfig(role);
-    return {
-      color: config.color,
-      label: config.label
-    };
-  };
+  // getRoleBadge is now imported from constants/roles
 
   const getKYCBadge = (status) => {
     const badges = {
