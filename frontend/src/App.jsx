@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './store/authStore';
 import Notification from './components/Notification';
 import ChatWidget from './components/ChatWidget';
+import { ADMIN_ROLES } from './constants/roles';
 
 // Auth Pages (Lazy Loaded)
 const Login = lazy(() => import('./pages/Login'));
@@ -77,8 +78,7 @@ function ProtectedRoute({ children, adminOnly = false, userOnly = false }) {
   }
 
   // Check if admin trying to access user-only pages
-  const adminRoles = ['supermaster', 'admin_master', 'master', 'super_admin', 'admin'];
-  const isAdmin = user && adminRoles.includes(user.role);
+  const isAdmin = user && ADMIN_ROLES.includes(user.role);
   
   if (userOnly && isAdmin) {
     return <Navigate to="/admin" replace />;
@@ -104,9 +104,7 @@ function PublicRoute({ children }) {
 
   if (isAuthenticated && user) {
     // Redirect based on user role
-    const adminRoles = ['supermaster', 'admin_master', 'master', 'super_admin', 'admin'];
-    
-    if (adminRoles.includes(user.role)) {
+    if (ADMIN_ROLES.includes(user.role)) {
       return <Navigate to="/admin" replace />;
     }
     
