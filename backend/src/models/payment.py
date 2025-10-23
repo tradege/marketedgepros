@@ -38,7 +38,8 @@ class Payment(db.Model):
     completed_at = db.Column(db.DateTime)
     
     # Relationships
-    user = db.relationship("User", backref="payments")
+    user = db.relationship("User", foreign_keys=[user_id], backref="payments")
+    approver = db.relationship("User", foreign_keys=[approved_by])
 
     # Add indexes for performance
     __table_args__ = (db.Index("ix_payment_user_id", "user_id"), db.Index("ix_payment_status", "status"))
