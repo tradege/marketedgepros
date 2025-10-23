@@ -176,7 +176,7 @@ def upload_avatar():
         file_ext = file.filename.rsplit(".", 1)[1].lower() if "." in file.filename else ""
         
         if file_ext not in allowed_extensions:
-            return jsonify({"error": f"Invalid file type. Allowed: {", ".join(allowed_extensions)}"}), 400
+            return jsonify({"error": f"Invalid file type. Allowed: {', '.join(allowed_extensions)}"}), 400
         
         # Validate file size (max 5MB)
         file.seek(0, 2)  # Seek to end

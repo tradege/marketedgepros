@@ -120,7 +120,7 @@ def validate_boolean(value):
 def validate_choice(value, choices):
     """Validate that a value is one of the allowed choices"""
     if value not in choices:
-        return False, f'Invalid choice. Must be one of: {', '.join(choices)}'
+        return False, f"Invalid choice. Must be one of: {', '.join(str(c) for c in choices)}"
     
     return True, 'Value is a valid choice'
 
