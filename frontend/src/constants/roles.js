@@ -6,6 +6,7 @@
 export const ROLES = {
   SUPERMASTER: 'supermaster',
   SUPER_ADMIN: 'super_admin',
+  MASTER: 'master',
   ADMIN: 'admin',
   AGENT: 'agent',
   TRADER: 'trader'
@@ -48,9 +49,27 @@ export const ROLE_CONFIG = {
       canManagePayments: true
     }
   },
+  [ROLES.MASTER]: {
+    value: 'master',
+    label: 'Master',
+
+    color: 'bg-blue-100 text-blue-800',
+    darkColor: 'dark:bg-blue-900 dark:text-blue-200',
+    icon: '⭐',
+    hierarchy: 2,
+    permissions: {
+      canCreateUsers: true,
+      canCreateWithoutVerification: false,
+      canManageCommissions: false,
+      canViewAllUsers: false,
+      canDeleteUsers: false,
+      canManagePrograms: false,
+      canManagePayments: false
+    }
+  },
   [ROLES.ADMIN]: {
     value: 'admin',
-    label: 'Master',
+    label: 'Admin',
 
     color: 'bg-blue-100 text-blue-800',
     darkColor: 'dark:bg-blue-900 dark:text-blue-200',
@@ -159,8 +178,8 @@ export const getCreatableRoles = (currentRole) => {
     return Object.values(ROLE_CONFIG);
   }
   
-  // Admin can create Agent and Trader
-  if (currentRole === ROLES.ADMIN) {
+  // Master/Admin can create Agent and Trader
+  if (currentRole === ROLES.MASTER || currentRole === ROLES.ADMIN) {
     return [ROLE_CONFIG[ROLES.AGENT], ROLE_CONFIG[ROLES.TRADER]];
   }
   

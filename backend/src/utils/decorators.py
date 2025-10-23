@@ -1,10 +1,9 @@
-"""
-Decorators for authentication and authorization
-"""
+"""Decorators for authentication and authorization"""
 from functools import wraps
 from flask import request, jsonify, g
 from src.models import User
 from src.services.auth_service import AuthService
+from src.constants.roles import Rolesce
 
 
 def token_required(f):
@@ -102,7 +101,7 @@ def admin_required(f):
         if not hasattr(g, 'current_user'):
             return jsonify({'error': 'Authentication required'}), 401
         
-        if g.current_user.role not in ['admin', 'super_admin', 'supermaster', 'master']:
+        if not Roles.is_admin(g.current_user.role):
             return jsonify({'error': 'Admin access required'}), 403
         
         return f(*args, **kwargs)

@@ -1,6 +1,4 @@
-"""
-User model with authentication and security features
-"""
+"""User model with authentication and security features"""
 from src.database import db, TimestampMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import pyotp
@@ -8,6 +6,7 @@ import secrets
 from datetime import datetime, timedelta
 import jwt
 from flask import current_app
+from src.constants.roles import Roles, ROLE_HIERARCHYpp
 
 
 class User(db.Model, TimestampMixin):
@@ -114,7 +113,7 @@ class User(db.Model, TimestampMixin):
         import string
         
         # Only agents and masters get referral codes
-        if self.role not in ['supermaster', 'super_admin', 'admin', 'agent']:
+        if not Roles.is_admin(self.role) and self.role != Roles.AGENT:
             return None
         
         # Generate unique 8-character code
@@ -243,14 +242,7 @@ class User(db.Model, TimestampMixin):
     
     def can_create_user(self, target_role):
         """Check if this user can create a user with target_role"""
-        role_hierarchy = {
-            'supermaster': ['supermaster', 'master', 'agent', 'trader', 'guest'],
-            'master': ['master', 'agent', 'trader', 'guest'],
-            'agent': ['agent', 'trader', 'guest'],
-            'trader': [],  # Traders cannot create users
-            'guest': []  # Guests cannot create users
-        }
-        return target_role in role_hierarchy.get(self.role, [])
+        return target_role in ROLE_HIERARCHY.get(self.role, [])
     
     def get_downline_count(self):
         """Get total count of users in downline"""

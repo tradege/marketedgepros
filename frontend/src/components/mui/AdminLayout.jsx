@@ -36,6 +36,8 @@ import {
   Approval,
 } from '@mui/icons-material';
 import useAuthStore from '../../store/authStore';
+import { ROLES, ROLE_CONFIG, getRoleLabel } from '../../constants/roles';
+import { getRoleColor } from '../../constants/roleColors';
 
 const drawerWidth = 280;
 
@@ -49,27 +51,7 @@ const menuItems = [
   { title: 'Settings', path: '/admin/settings', icon: Settings, color: '#a8edea' },
 ];
 
-const roleColors = {
-  supermaster: '#f093fb',
-  super_admin: '#f093fb',
-  master: '#667eea',
-  admin: '#667eea',
-  operator: '#4facfe',
-  agent: '#43e97b',
-  trader: '#94a3b8',
-  player: '#94a3b8',
-};
-
-const roleLabels = {
-  supermaster: 'Super Admin',
-  super_admin: 'Super Admin',
-  master: 'Master',
-  admin: 'Admin',
-  operator: 'Operator',
-  agent: 'Agent',
-  trader: 'Trader',
-  player: 'Player',
-};
+// Role colors and labels are now imported from constants/roles.js
 
 export default function AdminLayout({ children }) {
   const theme = useTheme();
@@ -146,9 +128,9 @@ export default function AdminLayout({ children }) {
         {menuItems
           .filter(item => {
             // Hide supermaster-only items from non-supermasters
-            if (item.superAdminOnly && user?.role !== 'supermaster') return false;
+            if (item.superAdminOnly && ![ROLES.SUPERMASTER, ROLES.SUPER_ADMIN].includes(user?.role)) return false;
             // Hide admin-only items (like Users) from agents and traders
-            if (item.adminOnly && !['supermaster', 'master', 'admin'].includes(user?.role)) return false;
+            if (item.adminOnly && ![ROLES.SUPERMASTER, ROLES.SUPER_ADMIN, ROLES.MASTER, ROLES.ADMIN].includes(user?.role)) return false;
             return true;
           })
           .map((item) => {
@@ -217,14 +199,14 @@ export default function AdminLayout({ children }) {
               {user?.email}
             </Typography>
             <Chip
-              label={roleLabels[user?.role] || user?.role}
+              label={getRoleLabel(user?.role)}
               size="small"
               sx={{
                 height: 20,
                 fontSize: '0.7rem',
                 mt: 0.5,
-                backgroundColor: `${roleColors[user?.role]}20`,
-                color: roleColors[user?.role],
+                backgroundColor: `${getRoleColor(user?.role)}20`,
+                color: getRoleColor(user?.role),
                 fontWeight: 600,
               }}
             />
