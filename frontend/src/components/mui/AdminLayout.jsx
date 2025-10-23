@@ -142,7 +142,7 @@ export default function AdminLayout({ children }) {
             // Hide supermaster-only items from non-supermasters
             if (item.superAdminOnly && user?.role !== 'supermaster') return false;
             // Hide admin-only items (like Users) from agents and traders
-            if (item.adminOnly && !['supermaster', 'admin'].includes(user?.role)) return false;
+            if (item.adminOnly && !['supermaster', 'master', 'admin'].includes(user?.role)) return false;
             return true;
           })
           .map((item) => {
