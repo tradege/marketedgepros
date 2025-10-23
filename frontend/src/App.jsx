@@ -36,6 +36,7 @@ const ChallengeDetails = lazy(() => import('./pages/ChallengeDetails'));
 // Admin Pages (Lazy Loaded)
 const AdminLayout = lazy(() => import('./components/mui/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboardConnected'));
+const AnalyticsDashboard = lazy(() => import('./pages/admin/AnalyticsDashboard'));
 const UserManagement = lazy(() => import('./pages/admin/UserManagementConnected'));
 const ProgramsManagement = lazy(() => import('./pages/admin/ProgramsManagement_mui'));
 const PaymentsManagement = lazy(() => import('./pages/admin/PaymentsManagementConnected'));
@@ -240,6 +241,18 @@ function App() {
               <RoleGuard allowedRoles={ADMIN_ROLES}>
                 <AdminLayout>
                   <AdminDashboard />
+                </AdminLayout>
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/analytics"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
+                <AdminLayout>
+                  <AnalyticsDashboard />
                 </AdminLayout>
               </RoleGuard>
             </ProtectedRoute>

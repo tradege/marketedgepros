@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   People,
   AttachMoney,
@@ -12,6 +13,7 @@ import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 function AdminDashboard() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -127,13 +129,21 @@ function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Admin Dashboard
-        </h1>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Overview of platform metrics and activity
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Admin Dashboard
+          </h1>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Overview of platform metrics and activity
+          </p>
+        </div>
+        <button
+          onClick={() => navigate('/admin/analytics')}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-md"
+        >
+          📊 View Analytics
+        </button>
       </div>
 
       {/* Stats Cards */}
