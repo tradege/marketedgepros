@@ -1,0 +1,15 @@
+Deployment triggered at: 2025-10-23 12:15:00
+Reason: Deploy duplicate fixes to production
+Commits included:
+- b401328: Fix duplicates: Remove getRoleBadge from UserDetailsModal, add role array constants
+- d4a9f28: Replace hardcoded admin role arrays with ADMIN_ROLES constant in App.jsx
+- c94deb6: Replace hardcoded admin role array with ADMIN_ROLES in RoleBasedDashboard
+- dcb09dc: Replace 6 hardcoded role arrays in RoleGuard with ADMIN_ROLES constant
+- e59d1ef: Add comprehensive documentation for duplicate fixes
+
+Expected changes:
+- Role dropdown will show correct roles based on user hierarchy
+- All role arrays now use ADMIN_ROLES constant
+- Single source of truth in constants/roles.js
+- Build tested successfully (28.03s)
+
