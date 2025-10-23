@@ -10,7 +10,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+import secrets
+
 class Config:
+    WTF_CSRF_ENABLED = True
     """Base configuration"""
     
     # Application

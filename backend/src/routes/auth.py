@@ -2,6 +2,7 @@
 Authentication routes
 """
 from flask import Blueprint, request, jsonify, g
+from src import limiter
 from src.services.auth_service import AuthService
 from src.services.email_service import EmailService
 from src.utils.decorators import token_required
@@ -14,7 +15,8 @@ from src.utils.validators import (
 auth_bp = Blueprint('auth', __name__)
 
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route("/register", methods=["POST"])
+@limiter.limit("5 per hour")
 def register():
     """Register a new user"""
     data = request.get_json()
@@ -67,6 +69,7 @@ def register():
 
 
 @auth_bp.route('/login', methods=['POST'])
+@limiter.limit("10 per minute")
 def login():
     """Login user"""
     data = request.get_json()
@@ -118,7 +121,8 @@ def login():
         return jsonify({'error': f'Login failed: {str(e)}'}), 500
 
 
-@auth_bp.route('/login/2fa', methods=['POST'])
+@auth_bp.route("/login/2fa", methods=["POST"])
+@limiter.limit("10 per minute")
 def login_2fa():
     """Complete login with 2FA"""
     data = request.get_json()
@@ -169,7 +173,8 @@ def logout():
         return jsonify({'error': 'Logout failed'}), 500
 
 
-@auth_bp.route('/refresh', methods=['POST'])
+@auth_bp.route("/refresh", methods=["POST"])
+@limiter.limit("30 per minute")
 def refresh_token():
     """Refresh access token"""
     data = request.get_json()
@@ -303,7 +308,8 @@ def verify_email_with_code():
         return jsonify({'error': 'Email verification failed'}), 500
 
 
-@auth_bp.route('/resend-verification', methods=['POST'])
+@auth_bp.route("/resend-verification", methods=["POST"])
+@limiter.limit("5 per hour")
 def resend_verification():
     """Resend verification code"""
     data = request.get_json()
@@ -330,7 +336,8 @@ def resend_verification():
         return jsonify({'error': 'Failed to resend verification code'}), 500
 
 
-@auth_bp.route('/password/reset-request', methods=['POST'])
+@auth_bp.route("/password/reset-request", methods=["POST"])
+@limiter.limit("5 per hour")
 def request_password_reset():
     """Request password reset"""
     data = request.get_json()
@@ -355,7 +362,8 @@ def request_password_reset():
         return jsonify({'error': 'Password reset request failed'}), 500
 
 
-@auth_bp.route('/password/reset', methods=['POST'])
+@auth_bp.route("/password/reset", methods=["POST"])
+@limiter.limit("5 per hour")
 def reset_password():
     """Reset password with token (URL-based)"""
     data = request.get_json()
@@ -384,7 +392,8 @@ def reset_password():
         return jsonify({'error': 'Password reset failed'}), 500
 
 
-@auth_bp.route('/password/verify-code', methods=['POST'])
+@auth_bp.route("/password/verify-code", methods=["POST"])
+@limiter.limit("10 per minute")
 def verify_reset_code():
     """Verify password reset code"""
     data = request.get_json()
@@ -412,7 +421,8 @@ def verify_reset_code():
         return jsonify({'error': 'Code verification failed'}), 500
 
 
-@auth_bp.route('/password/reset-with-code', methods=['POST'])
+@auth_bp.route("/password/reset-with-code", methods=["POST"])
+@limiter.limit("5 per hour")
 def reset_password_with_code():
     """Reset password with 6-digit code"""
     data = request.get_json()

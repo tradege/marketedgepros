@@ -3,8 +3,11 @@ Main Flask application factory
 """
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_talisman import Talisman
+from src import limiter
 from src.config import get_config
 from src.database import db, init_db
 from src.middleware.tenant_middleware import init_tenant_middleware
@@ -34,6 +37,7 @@ def create_app(config_name=None):
     init_tenant_middleware(app)
     
     # Enable CORS
+    csrf = CSRFProtect(app)
     cors_origins = app.config.get('CORS_ORIGINS', '*')
     if isinstance(cors_origins, str):
         cors_origins = cors_origins.split(',')
@@ -55,9 +59,12 @@ def create_app(config_name=None):
             storage_uri=app.config.get('RATELIMIT_STORAGE_URL'),
             default_limits=["5000 per day", "1000 per hour"]
         )
+        limiter.init_app(app)
         app.limiter = limiter
     
-    # Security Headers
+    # Initialize Talisman for security headers
+    Talisman(app)
+
     @app.after_request
     def add_security_headers(response):
         response.headers['X-Content-Type-Options'] = 'nosniff'
