@@ -102,7 +102,7 @@ def admin_required(f):
         if not hasattr(g, 'current_user'):
             return jsonify({'error': 'Authentication required'}), 401
         
-        if g.current_user.role not in ['admin', 'super_admin', 'supermaster']:
+        if g.current_user.role not in ['admin', 'super_admin', 'supermaster', 'master']:
             return jsonify({'error': 'Admin access required'}), 403
         
         return f(*args, **kwargs)

@@ -50,18 +50,24 @@ const menuItems = [
 ];
 
 const roleColors = {
+  supermaster: '#f093fb',
   super_admin: '#f093fb',
+  master: '#667eea',
   admin: '#667eea',
   operator: '#4facfe',
   agent: '#43e97b',
+  trader: '#94a3b8',
   player: '#94a3b8',
 };
 
 const roleLabels = {
+  supermaster: 'Super Admin',
   super_admin: 'Super Admin',
+  master: 'Master',
   admin: 'Admin',
   operator: 'Operator',
   agent: 'Agent',
+  trader: 'Trader',
   player: 'Player',
 };
 
