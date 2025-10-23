@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
+import { ADMIN_ROLES } from '../constants/roles';
 
 export default function RoleBasedDashboard() {
   const { user } = useAuthStore();
@@ -8,9 +9,7 @@ export default function RoleBasedDashboard() {
     return <Navigate to="/login" replace />;
   }
 
-  const adminRoles = ['supermaster', 'admin_master', 'master', 'super_admin', 'admin'];
-  
-  if (adminRoles.includes(user.role)) {
+  if (ADMIN_ROLES.includes(user.role)) {
     return <Navigate to="/admin" replace />;
   }
   
