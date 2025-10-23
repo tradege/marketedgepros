@@ -3,7 +3,7 @@ from functools import wraps
 from flask import request, jsonify, g
 from src.models import User
 from src.services.auth_service import AuthService
-from src.constants.roles import Rolesce
+from src.constants.roles import Roles
 
 
 def token_required(f):
