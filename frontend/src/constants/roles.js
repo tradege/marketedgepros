@@ -173,9 +173,19 @@ export const getRolesForDropdown = () => {
 export const getCreatableRoles = (currentRole) => {
   const currentConfig = getRoleConfig(currentRole);
   
-  // Only supermaster/super_admin can create all roles
-  if (currentRole === ROLES.SUPERMASTER || currentRole === ROLES.SUPER_ADMIN) {
+  // Only supermaster can create all roles
+  if (currentRole === ROLES.SUPERMASTER) {
     return Object.values(ROLE_CONFIG);
+  }
+  
+  // Super Admin can create Master, Admin, Agent, and Trader
+  if (currentRole === ROLES.SUPER_ADMIN) {
+    return [
+      ROLE_CONFIG[ROLES.MASTER],
+      ROLE_CONFIG[ROLES.ADMIN],
+      ROLE_CONFIG[ROLES.AGENT],
+      ROLE_CONFIG[ROLES.TRADER]
+    ];
   }
   
   // Master/Admin can create Agent and Trader
