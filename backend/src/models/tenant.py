@@ -42,7 +42,10 @@ class Tenant(db.Model, TimestampMixin):
     # Relationships
     parent = db.relationship('Tenant', remote_side=[id], backref='children')
     users = db.relationship('User', back_populates='tenant', lazy='dynamic')
-    programs = db.relationship('TradingProgram', back_populates='tenant', lazy='dynamic')
+    programs = db.relationship("TradingProgram", back_populates="tenant", lazy="dynamic")
+
+    # Add indexes for performance
+    __table_args__ = (db.Index("ix_tenant_status", "status"),)
     
     def __repr__(self):
         return f'<Tenant {self.name}>'

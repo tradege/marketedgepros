@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Grid, Card, CardContent, LinearProgress, Chip, CircularProgress, Alert } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import LinearProgress from '@mui/material/LinearProgress';
+import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 import { TrendingUp, AttachMoney, EmojiEvents, Schedule } from '@mui/icons-material';
 import StatsCard from '../../components/mui/StatsCard';
 import api from '../../services/api';

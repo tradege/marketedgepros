@@ -94,6 +94,9 @@ class User(db.Model, TimestampMixin):
     
     # Hierarchy Relationships
     parent = db.relationship('User', remote_side=[id], backref='children', foreign_keys=[parent_id])
+
+    # Add indexes for performance
+    __table_args__ = (db.Index('ix_user_tenant_id', 'tenant_id'),)
     # children accessible via backref
     
     def __repr__(self):
@@ -213,11 +216,9 @@ class User(db.Model, TimestampMixin):
     # Hierarchy Methods
     def get_all_descendants(self):
         """Get all users in the downline (recursive)"""
-        descendants = []
-        for child in self.children:
-            descendants.append(child)
-            descendants.extend(child.get_all_descendants())
-        return descendants
+        if not self.tree_path:
+            return []
+        return User.query.filter(User.tree_path.startswith(self.tree_path + '/')).all()
     
     def get_direct_children(self):
         """Get only direct children (1 level down)"""

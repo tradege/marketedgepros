@@ -26,6 +26,10 @@ def create_app(config_name=None):
     # Initialize extensions
     init_db(app)
     
+    # Initialize caching
+    from src import cache
+    cache.init_app(app, config={'CACHE_TYPE': 'simple'})
+    
     # Initialize tenant middleware
     init_tenant_middleware(app)
     

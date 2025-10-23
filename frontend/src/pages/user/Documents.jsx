@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Upload, FileText, CheckCircle, Clock, XCircle, AlertCircle } from 'lucide-react';
-import { Box, Typography, Grid, Card, CardContent, LinearProgress, Alert, CircularProgress, Button, Chip } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import LinearProgress from '@mui/material/LinearProgress';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 import api from '../../services/api';
 
 export default function Documents() {

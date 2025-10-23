@@ -1,4 +1,12 @@
-import { Box, Typography, Card, CardContent, Grid, TextField, Button, Switch, FormControlLabel } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { Save } from '@mui/icons-material';
 
 export default function Settings() {

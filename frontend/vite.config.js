@@ -1,31 +1,28 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import viteCompression from 'vite-plugin-compression';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), viteCompression()],
   envDir: '.',
   build: {
-    // Optimize bundle size
     target: 'es2015',
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: false, // Keep console.log for debugging
+        drop_console: false,
         drop_debugger: true,
       },
     },
-    // Chunk splitting strategy
     rollupOptions: {
       output: {
         manualChunks: {
-          // Vendor chunks
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'mui-vendor': ['@mui/material', '@mui/icons-material'],
           'utils': ['axios', 'zustand'],
         },
       },
     },
-    // Increase chunk size warning limit
     chunkSizeWarningLimit: 1000,
   },
   server: {
@@ -36,5 +33,5 @@ export default defineConfig({
     host: true,
     port: 3000
   }
-})
+});
 

@@ -2,6 +2,7 @@
 Admin routes for system management
 """
 from flask import Blueprint, request, jsonify, g
+from src import cache
 import logging
 from src.database import db
 from src.models.user import User
@@ -17,7 +18,8 @@ from sqlalchemy import func, and_, or_
 admin_bp = Blueprint('admin', __name__)
 
 
-@admin_bp.route('/dashboard/stats', methods=['GET'])
+@admin_bp.route("/dashboard/stats", methods=["GET"])
+@cache.cached(timeout=300)
 @token_required
 @admin_required
 def get_dashboard_stats():
@@ -698,7 +700,7 @@ def get_user_full_details(user_id):
         downline_data = []
         if user.role in ['supermaster', 'admin', 'agent']:
             # Get direct referrals
-            children = User.query.filter_by(parent_id=user.id).all()
+            children = user.children
             for child in children:
                 downline_data.append({
                     'id': child.id,
@@ -712,7 +714,7 @@ def get_user_full_details(user_id):
         
         # Trading challenges
         challenges_data = []
-        challenges = Challenge.query.filter_by(user_id=user.id).all()
+        challenges = user.challenges
         for challenge in challenges:
             challenges_data.append({
                 'id': challenge.id,
@@ -726,7 +728,7 @@ def get_user_full_details(user_id):
         
         # Payments
         payments_data = []
-        payments = Payment.query.filter_by(user_id=user.id).all()
+        payments = user.payments
         for payment in payments:
             payments_data.append({
                 'id': payment.id,

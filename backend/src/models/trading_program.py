@@ -42,7 +42,10 @@ class TradingProgram(db.Model, TimestampMixin):
     # Relationships
     tenant = db.relationship('Tenant', back_populates='programs')
     challenges = db.relationship('Challenge', back_populates='program', lazy='dynamic')
-    addons = db.relationship('ProgramAddOn', back_populates='program', lazy='dynamic')
+    addons = db.relationship("ProgramAddOn", back_populates="program", lazy="dynamic")
+
+    # Add indexes for performance
+    __table_args__ = (db.Index("ix_trading_program_tenant_id", "tenant_id"),)
     
     def __repr__(self):
         return f'<TradingProgram {self.name}>'
@@ -179,7 +182,10 @@ class Challenge(db.Model, TimestampMixin):
     user = db.relationship('User', back_populates='challenges', foreign_keys=[user_id])
     creator = db.relationship('User', back_populates='created_challenges', foreign_keys=[created_by])
     approver = db.relationship('User', foreign_keys=[approved_by])
-    program = db.relationship('TradingProgram', back_populates='challenges')
+    program = db.relationship("TradingProgram", back_populates="challenges")
+
+    # Add indexes for performance
+    __table_args__ = (db.Index("ix_challenge_user_id", "user_id"), db.Index("ix_challenge_status", "status"))
     
     def __repr__(self):
         return f'<Challenge {self.id} - User {self.user_id}>'

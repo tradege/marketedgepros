@@ -38,6 +38,11 @@ class Payment(db.Model):
     completed_at = db.Column(db.DateTime)
     
     # Relationships
+    user = db.relationship("User", backref="payments")
+
+    # Add indexes for performance
+    __table_args__ = (db.Index("ix_payment_user_id", "user_id"), db.Index("ix_payment_status", "status"))
+
     # Note: payment_id in Challenge is a string (Stripe payment intent ID), not a foreign key
     
     def to_dict(self):
