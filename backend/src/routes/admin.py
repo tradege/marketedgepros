@@ -144,8 +144,9 @@ def get_users():
                 'kyc_status': user.kyc_status,
                 'phone': user.phone,
                 'country_code': user.country_code,
-                'parent_id': user.parent_id,
-                'level': user.level,
+                'parent_id': user.parent_id if hasattr(user, 'parent_id') else None,
+                'level': user.level if hasattr(user, 'level') else 0,
+                'referral_code': user.referral_code if hasattr(user, 'referral_code') else None,
                 'created_at': user.created_at.isoformat() if user.created_at else None,
                 'last_login_at': user.last_login_at.isoformat() if user.last_login_at else None
             } for user in pagination.items],

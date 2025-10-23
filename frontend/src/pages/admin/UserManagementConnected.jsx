@@ -4,6 +4,7 @@ import axios from 'axios';
 import UserDetailsModal from '../../components/UserDetailsModal';
 import UserEditModal from '../../components/UserEditModal';
 import { getCreatableRoles } from '../../constants/roles';
+import ReferralCodeDisplay from '../../components/ReferralCodeDisplay';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -370,6 +371,9 @@ function UserManagement() {
                   Last Login
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Referral Code
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Created
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -407,6 +411,13 @@ function UserManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {user.last_login_at ? new Date(user.last_login_at).toLocaleDateString() : 'Never'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {user.referral_code ? (
+                      <ReferralCodeDisplay code={user.referral_code} size="sm" />
+                    ) : (
+                      <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {new Date(user.created_at).toLocaleDateString()}
