@@ -768,3 +768,99 @@ def get_user_full_details(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+
+
+@admin_bp.route('/users/hierarchy', methods=['GET'])
+@token_required
+@admin_required
+def get_users_hierarchy():
+    """Get users in current user's hierarchy (downline)"""
+    try:
+        current_user = g.current_user
+        
+        # Get query parameters
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        role = request.args.get('role')
+        status = request.args.get('status')
+        search = request.args.get('search')
+        
+        # Build base query for hierarchy
+        # If supermaster, show all users
+        # Otherwise, show only users in their downline
+        if current_user.role == 'supermaster':
+            query = User.query
+        else:
+            # Get all users where tree_path starts with current user's path
+            user_path = current_user.tree_path or str(current_user.id)
+            query = User.query.filter(
+                db.or_(
+                    User.tree_path.like(f"{user_path}/%"),
+                    User.parent_id == current_user.id,
+                    User.id == current_user.id
+                )
+            )
+        
+        # Apply filters
+        if role:
+            query = query.filter_by(role=role)
+        if status:
+            if status == 'active':
+                query = query.filter_by(is_active=True)
+            elif status == 'inactive':
+                query = query.filter_by(is_active=False)
+        if search:
+            search_pattern = f'%{search}%'
+            query = query.filter(
+                db.or_(
+                    User.email.ilike(search_pattern),
+                    User.first_name.ilike(search_pattern),
+                    User.last_name.ilike(search_pattern)
+                )
+            )
+        
+        # Order by creation date (newest first)
+        query = query.order_by(User.created_at.desc())
+        
+        # Paginate
+        paginated = query.paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )
+        
+        # Format users
+        users_data = []
+        for user in paginated.items:
+            users_data.append({
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'role': user.role,
+                'is_active': user.is_active,
+                'kyc_status': user.kyc_status,
+                'phone': user.phone,
+                'country_code': user.country_code,
+                'referral_code': user.referral_code,
+                'parent_id': user.parent_id,
+                'level': user.level,
+                'created_at': user.created_at.isoformat(),
+                'updated_at': user.updated_at.isoformat(),
+                'last_login_at': user.last_login_at.isoformat() if user.last_login_at else None,
+            })
+        
+        return jsonify({
+            'users': users_data,
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total': paginated.total,
+                'pages': paginated.pages
+            }
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
