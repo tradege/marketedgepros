@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import NotificationBell from '../notifications/NotificationBell';
 import {
   Box,
   Drawer,
@@ -276,6 +277,9 @@ export default function AdminLayout({ children }) {
             ))}
           </Breadcrumbs>
 
+          {/* Notifications */}
+          <NotificationBell />
+          
           {/* Profile Menu */}
           <IconButton onClick={handleProfileMenuOpen} sx={{ ml: 2 }}>
             <Avatar

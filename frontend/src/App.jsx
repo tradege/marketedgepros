@@ -45,6 +45,10 @@ const PaymentApprovals = lazy(() => import('./pages/admin/PaymentApprovals'));
 const Settings = lazy(() => import('./pages/admin/Settings_mui'));
 const WithdrawalManagement = lazy(() => import('./pages/admin/WithdrawalManagement'));
 
+// Notification Pages (Lazy Loaded)
+const Notifications = lazy(() => import('./pages/Notifications'));
+const NotificationSettings = lazy(() => import('./pages/settings/NotificationSettings'));
+
 // Agent Pages (Lazy Loaded)
 const AgentDashboard = lazy(() => import('./pages/agent/AgentDashboard'));
 const TradersManagement = lazy(() => import('./pages/agent/TradersManagement'));
@@ -230,6 +234,22 @@ function App() {
           element={
             <ProtectedRoute userOnly={true}>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationSettings />
             </ProtectedRoute>
           }
         />
