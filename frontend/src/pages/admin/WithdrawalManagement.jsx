@@ -252,9 +252,7 @@ export default function WithdrawalManagement() {
         <div className="bg-white rounded-lg shadow">
           <DataTable
             columns={columns}
-            data={withdrawals}
-            isLoading={isLoading}
-            emptyMessage="No withdrawals found"
+            rows={withdrawals}
           />
         </div>
 
