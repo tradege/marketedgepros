@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import NotificationBell from '../notifications/NotificationBell';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import AppBar from '@mui/material/AppBar';
@@ -196,6 +197,11 @@ export default function UserLayout({ children }) {
               </Typography>
             ))}
           </Breadcrumbs>
+          
+          {/* Notifications */}
+          <Box sx={{ ml: 'auto' }}>
+            <NotificationBell />
+          </Box>
         </Toolbar>
       </AppBar>
 

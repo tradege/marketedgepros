@@ -9,6 +9,7 @@ from datetime import datetime
 from sqlalchemy import desc, or_
 from src.services.storage_service import storage_service
 from src.services.email_service import EmailService
+from src.services.notification_service import NotificationService
 
 kyc_bp = Blueprint('kyc', __name__)
 
@@ -310,6 +311,16 @@ def approve_kyc(user_id):
         
         db.session.commit()
         
+        # Send notification
+        NotificationService.create_notification(
+            user_id=user.id,
+            notification_type='kyc',
+            title='KYC Approved',
+            message='Your KYC verification has been approved. You can now access all features.',
+            data={'kyc_status': 'approved'},
+            priority='high'
+        )
+        
         # Send KYC approval email
         try:
             EmailService.send_kyc_approved_email(user)
@@ -364,6 +375,16 @@ def reject_kyc(user_id):
         user.updated_at = datetime.utcnow()
         
         db.session.commit()
+        
+        # Send notification
+        NotificationService.create_notification(
+            user_id=user.id,
+            notification_type='kyc',
+            title='KYC Rejected',
+            message=f'Your KYC verification has been rejected. Reason: {data["reason"]}',
+            data={'kyc_status': 'rejected', 'reason': data['reason']},
+            priority='high'
+        )
         
         # Send KYC rejection email
         try:

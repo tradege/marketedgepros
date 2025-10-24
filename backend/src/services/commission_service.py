@@ -7,6 +7,7 @@ from src.models import Commission, Agent, Referral, Challenge, User
 from datetime import datetime
 from decimal import Decimal
 import logging
+from src.services.notification_service import NotificationService
 
 logger = logging.getLogger(__name__)
 
@@ -91,15 +92,17 @@ class CommissionService:
             
             db.session.commit()
             
+            # Send notification to agent
+            NotificationService.create_notification(
+                user_id=agent.user_id,
+                notification_type='commission',
+                title='New Commission Earned',
+                message=f'You earned ${commission_amount} commission from a sale of ${sale_amount}.',
+                data={'commission_id': commission.id, 'amount': float(commission_amount), 'sale_amount': float(sale_amount)},
+                priority='normal'
+            )
+            
             logger.info(f"Commission created: {commission.id} for agent {agent.id}, amount: {commission_amount}")
-            
-            # Send email notification
-            try:
-                from src.services.email_service import EmailService
-                EmailService.send_commission_earned_email(agent.user, commission, challenge)
-            except Exception as email_error:
-                logger.error(f"Failed to send commission email: {email_error}")
-            
             return commission
             
         except Exception as e:
@@ -132,6 +135,18 @@ class CommissionService:
             commission.approved_at = datetime.utcnow()
             
             db.session.commit()
+            
+            # Send notification to agent
+            agent = Agent.query.get(commission.agent_id)
+            if agent:
+                NotificationService.create_notification(
+                    user_id=agent.user_id,
+                    notification_type='commission',
+                    title='Commission Approved',
+                    message=f'Your commission of ${commission.commission_amount} has been approved.',
+                    data={'commission_id': commission.id, 'amount': float(commission.commission_amount)},
+                    priority='high'
+                )
             
             logger.info(f"Commission {commission_id} approved by user {approved_by_id}")
             
@@ -181,6 +196,16 @@ class CommissionService:
             agent.total_withdrawn = (agent.total_withdrawn or Decimal('0')) + commission.commission_amount
             
             db.session.commit()
+            
+            # Send notification to agent
+            NotificationService.create_notification(
+                user_id=agent.user_id,
+                notification_type='commission',
+                title='Commission Paid',
+                message=f'Your commission of ${commission.commission_amount} has been paid via {payment_method}.',
+                data={'commission_id': commission.id, 'amount': float(commission.commission_amount), 'payment_method': payment_method, 'transaction_id': transaction_id},
+                priority='normal'
+            )
             
             logger.info(f"Commission {commission_id} marked as paid")
             

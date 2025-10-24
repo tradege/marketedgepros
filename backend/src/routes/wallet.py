@@ -6,6 +6,7 @@ from src.database import db
 from src.models.wallet import Wallet, Transaction
 from src.models.withdrawal import Withdrawal
 from src.services.wallet_service import WalletService
+from src.services.notification_service import NotificationService
 from src.middleware.auth import jwt_required, admin_required, get_current_user
 from datetime import datetime
 
@@ -212,6 +213,16 @@ def approve_withdrawal(withdrawal_id):
         
         db.session.commit()
         
+        # Send notification
+        NotificationService.create_notification(
+            user_id=withdrawal.agent.user_id,
+            notification_type='withdrawal',
+            title='Withdrawal Approved',
+            message=f'Your withdrawal request of ${withdrawal.net_amount} has been approved.',
+            data={'withdrawal_id': withdrawal.id, 'amount': float(withdrawal.net_amount)},
+            priority='high'
+        )
+        
         return jsonify({
             'message': 'Withdrawal approved successfully',
             'withdrawal': withdrawal.to_dict()
@@ -251,6 +262,16 @@ def reject_withdrawal(withdrawal_id):
         
         db.session.commit()
         
+        # Send notification
+        NotificationService.create_notification(
+            user_id=withdrawal.agent.user_id,
+            notification_type='withdrawal',
+            title='Withdrawal Rejected',
+            message=f'Your withdrawal request of ${withdrawal.net_amount} has been rejected. Reason: {reason}',
+            data={'withdrawal_id': withdrawal.id, 'amount': float(withdrawal.net_amount), 'reason': reason},
+            priority='high'
+        )
+        
         return jsonify({
             'message': 'Withdrawal rejected successfully',
             'withdrawal': withdrawal.to_dict()
@@ -283,6 +304,16 @@ def complete_withdrawal(withdrawal_id):
         withdrawal.transaction_id = transaction_id
         
         db.session.commit()
+        
+        # Send notification
+        NotificationService.create_notification(
+            user_id=withdrawal.agent.user_id,
+            notification_type='withdrawal',
+            title='Withdrawal Completed',
+            message=f'Your withdrawal of ${withdrawal.net_amount} has been completed successfully.',
+            data={'withdrawal_id': withdrawal.id, 'amount': float(withdrawal.net_amount), 'transaction_id': transaction_id},
+            priority='normal'
+        )
         
         return jsonify({
             'message': 'Withdrawal marked as completed',
