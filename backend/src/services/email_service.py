@@ -688,3 +688,189 @@ class EmailService:
             html_content=html_content
         )
 
+
+
+    
+    # ==================== NOTIFICATION EMAILS ====================
+    
+    @staticmethod
+    def send_notification_email(notification):
+        """
+        Send email for a notification
+        
+        Args:
+            notification: Notification object
+        """
+        from src.models.user import User
+        
+        # Get user
+        user = User.query.get(notification.user_id)
+        if not user or not user.email:
+            return False
+        
+        # Generate email content
+        subject = f"[MarketEdgePros] {notification.title}"
+        html_content = EmailService._generate_notification_html(notification, user)
+        
+        return EmailService._send_email(
+            to_email=user.email,
+            subject=subject,
+            html_content=html_content
+        )
+    
+    @staticmethod
+    def _generate_notification_html(notification, user):
+        """Generate HTML email body for notification"""
+        # Priority color
+        priority_colors = {
+            'low': '#6B7280',
+            'normal': '#3B82F6',
+            'high': '#F59E0B',
+            'urgent': '#EF4444'
+        }
+        priority_color = priority_colors.get(notification.priority, '#3B82F6')
+        
+        # Action button (if applicable)
+        action_button = ''
+        if notification.type == 'withdrawal':
+            action_button = f'<a href="https://marketedgepros.com/trader/withdrawals" style="display: inline-block; padding: 12px 24px; background-color: {priority_color}; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px;">View Withdrawals</a>'
+        elif notification.type == 'commission':
+            action_button = f'<a href="https://marketedgepros.com/agent/commissions" style="display: inline-block; padding: 12px 24px; background-color: {priority_color}; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px;">View Commissions</a>'
+        elif notification.type == 'kyc':
+            action_button = f'<a href="https://marketedgepros.com/kyc" style="display: inline-block; padding: 12px 24px; background-color: {priority_color}; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px;">View KYC Status</a>'
+        
+        user_name = user.first_name or user.name or 'User'
+        
+        return f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #F3F4F6;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F3F4F6; padding: 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+                            <h1 style="margin: 0; color: white; font-size: 24px;">MarketEdgePros</h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <p style="margin: 0 0 10px 0; color: #6B7280; font-size: 14px;">Hi {user_name},</p>
+                            
+                            <h2 style="margin: 20px 0; color: #111827; font-size: 20px;">{notification.title}</h2>
+                            
+                            <div style="background-color: #F9FAFB; border-left: 4px solid {priority_color}; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                                <p style="margin: 0; color: #374151; font-size: 16px; line-height: 1.6;">{notification.message}</p>
+                            </div>
+                            
+                            {action_button}
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #F9FAFB; padding: 20px 30px; text-align: center; border-top: 1px solid #E5E7EB;">
+                            <p style="margin: 0 0 10px 0; color: #6B7280; font-size: 12px;">
+                                This is an automated notification from MarketEdgePros.
+                            </p>
+                            <p style="margin: 0; color: #6B7280; font-size: 12px;">
+                                <a href="https://marketedgepros.com/settings" style="color: #3B82F6; text-decoration: none;">Manage notification preferences</a>
+                            </p>
+                            <p style="margin: 10px 0 0 0; color: #9CA3AF; font-size: 11px;">
+                                © 2025 MarketEdgePros. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+        """.strip()
+    
+    @staticmethod
+    def queue_email(user_id, to_email, subject, html_body):
+        """
+        Queue email for async sending (using EmailQueue model)
+        
+        Args:
+            user_id: User ID
+            to_email: Recipient email address
+            subject: Email subject
+            html_body: HTML body
+        
+        Returns:
+            EmailQueue object
+        """
+        from src.models.notification import EmailQueue
+        from src.database import db
+        
+        email = EmailQueue(
+            user_id=user_id,
+            to_email=to_email,
+            subject=subject,
+            body='',  # We use html_body primarily
+            html_body=html_body
+        )
+        
+        db.session.add(email)
+        db.session.commit()
+        
+        return email
+    
+    @staticmethod
+    def process_email_queue(batch_size=10):
+        """
+        Process pending emails in queue
+        
+        Args:
+            batch_size: Number of emails to process in this batch
+        
+        Returns:
+            dict: Statistics about processed emails
+        """
+        from src.models.notification import EmailQueue
+        
+        # Get pending emails
+        pending_emails = EmailQueue.query.filter_by(status='pending').limit(batch_size).all()
+        
+        stats = {
+            'processed': 0,
+            'sent': 0,
+            'failed': 0
+        }
+        
+        for email in pending_emails:
+            stats['processed'] += 1
+            
+            # Skip if max attempts reached
+            if email.attempts >= email.max_attempts:
+                email.mark_as_failed('Max attempts reached')
+                stats['failed'] += 1
+                continue
+            
+            # Try to send
+            success = EmailService._send_email(
+                to_email=email.to_email,
+                subject=email.subject,
+                html_content=email.html_body or email.body
+            )
+            
+            if success:
+                email.mark_as_sent()
+                stats['sent'] += 1
+            else:
+                email.mark_as_failed('SendGrid error')
+                stats['failed'] += 1
+        
+        return stats
+
