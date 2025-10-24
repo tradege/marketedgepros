@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DollarSign, CheckCircle, XCircle, Clock, Eye, Download } from 'lucide-react';
-import AdminLayout from '../../components/admin/AdminLayout';
+import AdminLayout from '../../components/mui/AdminLayout';
 import DataTable from '../../components/common/DataTable';
 import api from '../../services/api';
 
