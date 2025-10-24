@@ -6,8 +6,8 @@ import {
   TrendingUp,
   Assignment,
 } from '@mui/icons-material';
-import StatsCard from '../../components/mui/StatsCard';
-import DataTable from '../../components/mui/DataTable';
+import StatsCard from '../../components/common/StatsCard';
+import DataTable from '../../components/common/DataTable';
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
@@ -44,7 +44,7 @@ function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-xl">Loading...</div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -156,7 +156,7 @@ function AdminDashboard() {
       {/* Challenge Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2">Completed</h3>
+          <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Completed</h3>
           <p className="text-3xl font-bold text-green-600">{stats.challenges.completed}</p>
           <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
             <div 
@@ -164,13 +164,13 @@ function AdminDashboard() {
               style={{ width: `${(stats.challenges.completed / stats.challenges.total * 100) || 0}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             {((stats.challenges.completed / stats.challenges.total * 100) || 0).toFixed(0)}% success rate
           </p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2">Failed</h3>
+          <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Failed</h3>
           <p className="text-3xl font-bold text-red-600">{stats.challenges.failed}</p>
           <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
             <div 
@@ -178,13 +178,13 @@ function AdminDashboard() {
               style={{ width: `${(stats.challenges.failed / stats.challenges.total * 100) || 0}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             {((stats.challenges.failed / stats.challenges.total * 100) || 0).toFixed(0)}% failure rate
           </p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2">Funded</h3>
+          <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Funded</h3>
           <p className="text-3xl font-bold text-blue-600">{stats.challenges.funded}</p>
           <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
             <div 
@@ -192,7 +192,7 @@ function AdminDashboard() {
               style={{ width: `${(stats.challenges.funded / stats.challenges.total * 100) || 0}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             {((stats.challenges.funded / stats.challenges.total * 100) || 0).toFixed(0)}% funded accounts
           </p>
         </div>
@@ -201,7 +201,7 @@ function AdminDashboard() {
       {/* Recent Users */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold">Recent Users</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Users</h2>
         </div>
         <DataTable
           columns={recentUsersColumns}
@@ -213,7 +213,7 @@ function AdminDashboard() {
       {/* Recent Payments */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold">Recent Payments</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Payments</h2>
         </div>
         <DataTable
           columns={recentPaymentsColumns}

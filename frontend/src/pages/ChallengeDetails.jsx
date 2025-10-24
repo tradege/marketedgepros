@@ -5,6 +5,7 @@ import {
   Target, AlertCircle, CheckCircle, XCircle, Award,
   BarChart3, Activity, ArrowLeft
 } from 'lucide-react';
+import api from '../services/api';
 
 export default function ChallengeDetails() {
   const { id } = useParams();
@@ -18,50 +19,14 @@ export default function ChallengeDetails() {
 
   const loadChallenge = async () => {
     try {
-      // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock data
-      setChallenge({
-        id: parseInt(id),
-        program_name: 'Two Phase Challenge - $100,000',
-        status: 'active',
-        phase: 1,
-        total_phases: 2,
-        account_size: 100000,
-        current_balance: 105250,
-        profit_target: 8000,
-        current_profit: 5250,
-        max_daily_loss: 5000,
-        max_total_loss: 10000,
-        profit_split: 80,
-        start_date: '2025-01-10',
-        days_active: 7,
-        trades_count: 45,
-        winning_trades: 28,
-        losing_trades: 17,
-        win_rate: 62.2,
-        best_trade: 850,
-        worst_trade: -320,
-        average_win: 250,
-        average_loss: -180,
-        rules: {
-          profit_target: 8000,
-          max_daily_loss: 5000,
-          max_total_loss: 10000,
-          min_trading_days: 5,
-          max_trading_days: 60,
-          consistency_rule: true,
-        },
-        recent_trades: [
-          { id: 1, symbol: 'EURUSD', type: 'buy', profit: 450, date: '2025-01-16 14:30' },
-          { id: 2, symbol: 'GBPUSD', type: 'sell', profit: -120, date: '2025-01-16 12:15' },
-          { id: 3, symbol: 'USDJPY', type: 'buy', profit: 320, date: '2025-01-16 10:00' },
-          { id: 4, symbol: 'EURUSD', type: 'sell', profit: 180, date: '2025-01-15 16:45' },
-          { id: 5, symbol: 'GBPJPY', type: 'buy', profit: -90, date: '2025-01-15 14:20' },
-        ],
-      });
+      setIsLoading(true);
+      const response = await api.get(`/traders/challenges/${id}`);
+      setChallenge(response.data.challenge);
     } catch (error) {
+      console.error('Failed to load challenge:', error);
+      // Show error message
+      alert('Failed to load challenge details');
+      navigate('/dashboard');
     } finally {
       setIsLoading(false);
     }

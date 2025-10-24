@@ -30,33 +30,54 @@ export default function AgentDashboard() {
   const loadDashboardData = async () => {
     try {
       setIsLoading(true);
-      // TODO: Replace with actual API calls
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock data
+      // Fetch real data from API
+      const [dashboardResponse, commissionsResponse] = await Promise.all([
+        api.get('/reports/agent/dashboard'),
+        api.get('/commissions')
+      ]);
+
+      const dashboardData = dashboardResponse.data;
+      const commissionsData = commissionsResponse.data;
+
+      // Set stats from API
       setStats({
-        totalTraders: 47,
-        activeTraders: 32,
-        totalCommissions: 12450,
-        pendingCommissions: 2340,
-        activeChallenges: 28,
-        passedChallenges: 15,
-        failedChallenges: 4,
-        fundedAccounts: 11,
+        totalTraders: dashboardData.total_referrals || 0,
+        activeTraders: dashboardData.active_traders || 0,
+        totalCommissions: dashboardData.total_earned || 0,
+        pendingCommissions: dashboardData.pending_balance || 0,
+        activeChallenges: dashboardData.active_challenges || 0,
+        passedChallenges: dashboardData.passed_challenges || 0,
+        failedChallenges: dashboardData.failed_challenges || 0,
+        fundedAccounts: dashboardData.funded_accounts || 0,
       });
 
-      setRecentTraders([
-        { id: 1, name: 'John Trader', email: 'john@example.com', status: 'active', enrolled: '2 days ago', program: 'Two Phase $100K' },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'active', enrolled: '5 days ago', program: 'One Phase $50K' },
-        { id: 3, name: 'Bob Wilson', email: 'bob@example.com', status: 'funded', enrolled: '1 week ago', program: 'Instant Funding $200K' },
-      ]);
+      // Set recent traders
+      if (dashboardData.recent_referrals) {
+        setRecentTraders(dashboardData.recent_referrals.map(trader => ({
+          id: trader.id,
+          name: `${trader.first_name} ${trader.last_name}`,
+          email: trader.email,
+          status: trader.status || 'active',
+          enrolled: new Date(trader.created_at).toLocaleDateString(),
+          program: trader.program_name || 'N/A'
+        })));
+      }
 
-      setRecentCommissions([
-        { id: 1, trader: 'John Trader', amount: 299, type: 'enrollment', status: 'paid', date: '2 days ago' },
-        { id: 2, trader: 'Jane Smith', amount: 450, type: 'profit_share', status: 'paid', date: '5 days ago' },
-        { id: 3, trader: 'Bob Wilson', amount: 199, type: 'enrollment', status: 'pending', date: '1 week ago' },
-      ]);
+      // Set recent commissions
+      if (commissionsData.commissions) {
+        setRecentCommissions(commissionsData.commissions.slice(0, 5).map(commission => ({
+          id: commission.id,
+          trader: commission.trader_name || 'N/A',
+          amount: commission.amount,
+          type: commission.type || 'enrollment',
+          status: commission.status,
+          date: new Date(commission.created_at).toLocaleDateString()
+        })));
+      }
     } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+      // Keep default empty state on error
     } finally {
       setIsLoading(false);
     }

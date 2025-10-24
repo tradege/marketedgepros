@@ -21,7 +21,7 @@ export default function Withdrawals() {
   const loadWithdrawals = async () => {
     try {
       setIsLoading(true);
-      const response = await api.get('/trader/withdrawals');
+      const response = await api.get('/traders/withdrawals');
       setWithdrawals(response.data.withdrawals || []);
     } catch (error) {
       // Mock data for development
@@ -69,7 +69,7 @@ export default function Withdrawals() {
     }
 
     try {
-      await api.post('/trader/withdrawals', formData);
+      await api.post('/traders/withdrawals', formData);
       loadWithdrawals();
       setShowModal(false);
       setFormData({ amount: '', method: 'bank_transfer', accountDetails: '' });

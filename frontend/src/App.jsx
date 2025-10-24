@@ -51,7 +51,7 @@ const Commissions = lazy(() => import('./pages/agent/Commissions'));
 const Reports = lazy(() => import('./pages/agent/Reports'));
 
 // Trader Pages (Lazy Loaded)
-const TraderDashboard = lazy(() => import('./pages/user/UserDashboard_mui'));
+const TraderDashboard = lazy(() => import('./pages/user/UserDashboard'));
 const TradingHistory = lazy(() => import('./pages/trader/TradingHistory'));
 const Withdrawals = lazy(() => import('./pages/trader/Withdrawals'));
 const Documents = lazy(() => import('./pages/user/Documents'));
