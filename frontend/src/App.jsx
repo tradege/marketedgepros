@@ -316,7 +316,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/kyc"
+          path="/admin/kyc-approval"
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={ADMIN_ROLES}>
@@ -331,7 +331,7 @@ function App() {
           path="/admin/payment-approvals"
           element={
             <ProtectedRoute>
-              <RoleGuard allowedRoles={['supermaster']}>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
                 <AdminLayout>
                   <PaymentApprovals />
                 </AdminLayout>
