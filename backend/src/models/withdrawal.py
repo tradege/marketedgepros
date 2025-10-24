@@ -10,7 +10,9 @@ class Withdrawal(db.Model, TimestampMixin):
     __tablename__ = 'withdrawals'
     
     id = db.Column(db.Integer, primary_key=True)
-    agent_id = db.Column(db.Integer, db.ForeignKey('agents.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    agent_id = db.Column(db.Integer, db.ForeignKey('agents.id'), nullable=True)
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'), nullable=True)
     
     # Amount
     amount = db.Column(db.Numeric(12, 2), nullable=False)
@@ -19,7 +21,9 @@ class Withdrawal(db.Model, TimestampMixin):
     
     # Payment details
     payment_method = db.Column(db.String(50), nullable=False)  # bank_transfer, paypal, crypto
+    withdrawal_method = db.Column(db.String(50))  # Alias for payment_method
     payment_details = db.Column(db.JSON)  # Account number, PayPal email, wallet address, etc.
+    account_details = db.Column(db.JSON)  # Alias for payment_details
     
     # Status
     status = db.Column(db.String(20), default='pending', nullable=False)  # pending, approved, processing, completed, rejected
@@ -34,7 +38,9 @@ class Withdrawal(db.Model, TimestampMixin):
     notes = db.Column(db.Text)
     
     # Relationships
+    user = db.relationship('User', foreign_keys=[user_id], backref='withdrawals')
     agent = db.relationship('Agent', backref='withdrawals')
+    challenge = db.relationship('Challenge', backref='withdrawals')
     approver = db.relationship('User', foreign_keys=[approved_by])
     
     def to_dict(self):

@@ -13,6 +13,7 @@ from src.models.withdrawal import Withdrawal
 from src.models.trade import Trade
 from src.models.payment import Payment
 from src.models.payment_approval import PaymentApprovalRequest
+from src.models.wallet import Wallet, Transaction
 
 __all__ = [
     'User',
@@ -32,7 +33,9 @@ __all__ = [
     'PaymentApprovalRequest',
     'Lead',
     'LeadActivity',
-    'LeadNote'
+    'LeadNote',
+    'Wallet',
+    'Transaction'
 ]
 
 # Alias for backward compatibility

@@ -34,6 +34,7 @@ import {
   Home,
   ChevronRight,
   Approval,
+  AccountBalance,
 } from '@mui/icons-material';
 import useAuthStore from '../../store/authStore';
 import { ROLES, ROLE_CONFIG, getRoleLabel, getRoleConfig, getRoleColor } from '../../constants/roles';
@@ -45,6 +46,7 @@ const menuItems = [
   { title: 'Users', path: '/admin/users', icon: People, color: '#f093fb', adminOnly: true },
   { title: 'Programs', path: '/admin/programs', icon: Assessment, color: '#4facfe' },
   { title: 'Payments', path: '/admin/payments', icon: Payment, color: '#43e97b' },
+  { title: 'Withdrawals', path: '/admin/withdrawals', icon: AccountBalance, color: '#38b2ac' },
   { title: 'Payment Approvals', path: '/admin/payment-approvals', icon: Approval, color: '#ff6b6b', superAdminOnly: true },
   { title: 'KYC Approval', path: '/admin/kyc', icon: VerifiedUser, color: '#fa709a' },
   { title: 'Settings', path: '/admin/settings', icon: Settings, color: '#a8edea' },
