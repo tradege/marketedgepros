@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, TrendingUp, DollarSign, FileText, 
-  User, Settings, LogOut, Menu, X 
+  User, Settings, LogOut, Menu, X, Wallet 
 } from 'lucide-react';
 import { useState } from 'react';
 import useAuthStore from '../../store/authStore';
@@ -14,11 +14,11 @@ export default function TraderLayout({ children }) {
 
   const navigation = [
     { name: 'Dashboard', href: '/trader', icon: LayoutDashboard },
+    { name: 'Wallet', href: '/wallet', icon: Wallet },
     { name: 'Trading History', href: '/trader/history', icon: TrendingUp },
     { name: 'Withdrawals', href: '/trader/withdrawals', icon: DollarSign },
     { name: 'Documents', href: '/trader/documents', icon: FileText },
     { name: 'Profile', href: '/profile', icon: User },
-    { name: 'Settings', href: '/trader/settings', icon: Settings },
   ];
 
   const handleLogout = () => {

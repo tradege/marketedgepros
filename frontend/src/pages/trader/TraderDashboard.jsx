@@ -43,43 +43,83 @@ export default function TraderDashboard() {
   const loadDashboardData = async () => {
     try {
       setIsLoading(true);
-      // TODO: Replace with actual API calls
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock recent trades
-      setRecentTrades([
-        {
-          id: 1,
-          symbol: 'EUR/USD',
-          type: 'buy',
-          openTime: '2024-10-18 10:30',
-          closeTime: '2024-10-18 14:45',
-          lots: 0.5,
-          profit: 245,
-          pips: 49,
-        },
-        {
-          id: 2,
-          symbol: 'GBP/USD',
-          type: 'sell',
-          openTime: '2024-10-18 09:15',
-          closeTime: '2024-10-18 11:30',
-          lots: 0.3,
-          profit: -85,
-          pips: -28,
-        },
-        {
-          id: 3,
-          symbol: 'USD/JPY',
-          type: 'buy',
-          openTime: '2024-10-17 15:20',
-          closeTime: '2024-10-17 18:45',
-          lots: 0.4,
-          profit: 180,
-          pips: 45,
-        },
-      ]);
+      // Fetch real data from API
+      const response = await api.get('/traders/dashboard');
+      const data = response.data;
+      
+      if (!data.has_challenge) {
+        // No active challenge
+        setAccountData({
+          balance: 0,
+          equity: 0,
+          profitLoss: 0,
+          profitLossPercent: 0,
+          dailyProfitLoss: 0,
+          drawdown: 0,
+          maxDrawdown: 0,
+          challengePhase: 'No Active Challenge',
+          daysTraded: 0,
+          minDaysRequired: 0,
+          profitTarget: 0,
+          profitAchieved: 0,
+        });
+        setStats({
+          totalTrades: 0,
+          winningTrades: 0,
+          losingTrades: 0,
+          winRate: 0,
+          avgWin: 0,
+          avgLoss: 0,
+          profitFactor: 0,
+        });
+        setRecentTrades([]);
+        return;
+      }
+      
+      // Set account data from API
+      setAccountData({
+        balance: data.account.balance,
+        equity: data.account.equity,
+        profitLoss: data.account.total_pnl,
+        profitLossPercent: data.account.total_pnl_percentage,
+        dailyProfitLoss: 0, // Not provided by API
+        drawdown: data.drawdown.current,
+        maxDrawdown: data.drawdown.max_allowed,
+        challengePhase: data.challenge.phase || 'Phase 1',
+        daysTraded: data.progress.days.completed,
+        minDaysRequired: data.progress.days.required,
+        profitTarget: data.progress.profit.target,
+        profitAchieved: data.progress.profit.achieved,
+      });
+      
+      // Set statistics from API
+      setStats({
+        totalTrades: data.statistics.total_trades,
+        winningTrades: data.statistics.winning_trades,
+        losingTrades: data.statistics.losing_trades,
+        winRate: data.statistics.win_rate,
+        avgWin: data.statistics.average_win,
+        avgLoss: Math.abs(data.statistics.average_loss),
+        profitFactor: data.statistics.profit_factor,
+      });
+      
+      // Set recent trades from API
+      if (data.recent_trades) {
+        setRecentTrades(data.recent_trades.map(trade => ({
+          id: trade.id,
+          symbol: trade.symbol,
+          type: trade.type,
+          openTime: new Date(trade.open_time).toLocaleString(),
+          closeTime: trade.close_time ? new Date(trade.close_time).toLocaleString() : 'Open',
+          lots: trade.lots,
+          profit: trade.profit,
+          pips: trade.pips,
+        })));
+      }
     } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+      // Keep default mock data on error
     } finally {
       setIsLoading(false);
     }
