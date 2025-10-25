@@ -14,7 +14,8 @@ class Roles:
     TRADER = 'trader'
     GUEST = 'guest'
     
-    # All admin roles (can access admin panel)
+    # All admin roles (can access admin panel and create users)
+    # Note: AGENT is NOT included - agents use referral codes, not direct user creation
     ADMIN_ROLES = [SUPERMASTER, SUPER_ADMIN, MASTER, ADMIN]
     
     # All supermaster roles (highest level)

@@ -73,6 +73,7 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
     
     # Role and Permissions
     role = db.Column(db.String(20), default='guest', nullable=False)  # supermaster, master, agent, trader, guest
+    can_create_same_role = db.Column(db.Boolean, default=False, nullable=False)  # Only root supermaster can create another supermaster
     
     # Hierarchy (MLM Structure)
     parent_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)  # Who created this user
@@ -301,9 +302,13 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
         Returns:
             SQLAlchemy filter condition or None (if supermaster)
         """
-        # Supermaster sees all users
-        if current_user.role == 'supermaster':
-            return None
+        # Only ROOT supermasters (parent_id=None) see all users
+        # Created supermasters are filtered by hierarchy like everyone else
+        if hasattr(current_user, 'role') and current_user.role == 'supermaster':
+            parent_id = getattr(current_user, 'parent_id', None)
+            if parent_id is None:
+                # Root supermaster - sees everything
+                return None
         
         # Filter by tree_path - only users in this user's hierarchy
         # tree_path LIKE 'current_user_path%' means all descendants

@@ -12,6 +12,7 @@ from src.models.trading_program import TradingProgram as Program
 from src.utils.decorators import token_required, admin_required
 from src.utils.validators import validate_required_fields, validate_email_format
 from src.utils.error_messages import format_error_response
+from src.utils.hierarchy_scoping import without_hierarchy_scope
 from datetime import datetime, timedelta
 from sqlalchemy import func, and_, or_
 
@@ -19,7 +20,6 @@ admin_bp = Blueprint('admin', __name__)
 
 
 @admin_bp.route("/dashboard/stats", methods=["GET"])
-@cache.cached(timeout=300)
 @token_required
 @admin_required
 def get_dashboard_stats():
@@ -226,30 +226,46 @@ def create_user():
                 email=data['email']
             )), 400
         
-        # Check if user already exists
-        if User.query.filter_by(email=data['email']).first():
-            return jsonify(format_error_response(
-                'USER_ALREADY_EXISTS'
-            )), 400
+        # Check if user already exists (without hierarchy filtering)
+        with without_hierarchy_scope(db.session):
+            if User.query.filter_by(email=data['email']).first():
+                return jsonify(format_error_response(
+                    'USER_ALREADY_EXISTS'
+                )), 400
         
         # Validate role
-        allowed_roles = ['supermaster', 'admin', 'agent', 'trader']
+        allowed_roles = ['supermaster', 'super_admin', 'master', 'admin', 'agent', 'trader']
         if data['role'] not in allowed_roles:
             return jsonify(format_error_response(
                 'INVALID_ROLE',
                 roles=', '.join(allowed_roles)
             )), 400
         
+        # Check if user can create same role
+        if data['role'] == g.current_user.role:
+            if not g.current_user.can_create_same_role:
+                role_names = {
+                    'supermaster': 'Supermaster',
+                    'super_admin': 'Super Admin',
+                    'master': 'Master',
+                    'admin': 'Admin',
+                    'agent': 'Agent'
+                }
+                return jsonify(format_error_response(
+                    'CANNOT_CREATE_SAME_ROLE',
+                    role=role_names.get(data['role'], data['role'])
+                )), 403
+        
         # Phone number validation and verification logic
         is_verified = False
         
-        if g.current_user.role == 'supermaster':
-            # Supermaster can create users with or without verification
-            is_verified = data.get('is_verified', False)
+        # Supermaster, super_admin, and admin can create users without phone
+        # Note: agent is NOT included - agents cannot create users directly
+        if g.current_user.role in ['supermaster', 'super_admin', 'admin']:
+            is_verified = data.get('is_verified', True)  # Default to verified for admin-created users
         else:
-            # Other roles must create verified users only
+            # Only non-admin roles require phone
             if data['role'] in ['admin', 'agent', 'trader']:
-                # These roles require phone number
                 if not data.get('phone'):
                     role_names = {
                         'admin': 'Master',
@@ -261,24 +277,34 @@ def create_user():
                         role=role_names.get(data['role'], data['role'])
                     )), 400
                 
-                # Force verification for non-supermaster created users
+                # Force verification
                 is_verified = True
         
-        # Create user
-        user = User(
-            email=data['email'],
-            first_name=data['first_name'],
-            last_name=data['last_name'],
-            role=data['role'],
-            is_active=data.get('is_active', True),
-            phone=data.get('phone'),
-            country_code=data.get('country_code'),
-            is_verified=is_verified
-        )
-        user.set_password(data['password'])
-        
-        db.session.add(user)
-        db.session.commit()
+        # Create user WITHOUT hierarchy scoping to avoid recursion
+        with without_hierarchy_scope(db.session):
+            user = User(
+                email=data['email'],
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                role=data['role'],
+                is_active=data.get('is_active', True),
+                phone=data.get('phone'),
+                country_code=data.get('country_code'),
+                is_verified=is_verified,
+                parent_id=g.current_user.id,  # Set parent to current user
+                level=g.current_user.level + 1 if hasattr(g.current_user, 'level') else 1
+            )
+            user.set_password(data['password'])
+            
+            db.session.add(user)
+            db.session.commit()
+            
+            # Build tree_path after commit
+            if g.current_user.tree_path:
+                user.tree_path = f"{g.current_user.tree_path}.{user.id}"
+            else:
+                user.tree_path = str(user.id)
+            db.session.commit()
         
         # Generate referral code AFTER commit (to avoid NOT NULL issues)
         if user.role in ['supermaster', 'super_admin', 'admin', 'agent']:
