@@ -1,13 +1,20 @@
-import { useEffect, useState } from 'react';
-import { DollarSign, Clock, CheckCircle, XCircle, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { DollarSign, Clock, CheckCircle, XCircle, Plus, AlertCircle } from 'lucide-react';
 import TraderLayout from '../../components/trader/TraderLayout';
 import api from '../../services/api';
 
 export default function Withdrawals() {
   const [withdrawals, setWithdrawals] = useState([]);
+  const [statistics, setStatistics] = useState({
+    available_balance: 0,
+    total_withdrawn: 0,
+    pending_withdrawals: 0,
+    completed_count: 0
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [availableBalance, setAvailableBalance] = useState(5450);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     amount: '',
     method: 'bank_transfer',
@@ -21,39 +28,22 @@ export default function Withdrawals() {
   const loadWithdrawals = async () => {
     try {
       setIsLoading(true);
-      const response = await api.get('/traders/withdrawals');
-      setWithdrawals(response.data.withdrawals || []);
+      setError(null);
+      
+      const response = await api.get('/api/v1/traders/withdrawals');
+      
+      if (response.data) {
+        setWithdrawals(response.data.withdrawals || []);
+        setStatistics(response.data.statistics || {
+          available_balance: 0,
+          total_withdrawn: 0,
+          pending_withdrawals: 0,
+          completed_count: 0
+        });
+      }
     } catch (error) {
-      // Mock data for development
-      setWithdrawals([
-        {
-          id: 1,
-          amount: 2500,
-          method: 'bank_transfer',
-          status: 'completed',
-          requested_date: '2024-10-10T10:30:00Z',
-          processed_date: '2024-10-12T14:20:00Z',
-          transaction_id: 'WD-2024-001',
-        },
-        {
-          id: 2,
-          amount: 1800,
-          method: 'paypal',
-          status: 'pending',
-          requested_date: '2024-10-15T09:15:00Z',
-          processed_date: null,
-          transaction_id: 'WD-2024-002',
-        },
-        {
-          id: 3,
-          amount: 3200,
-          method: 'bank_transfer',
-          status: 'processing',
-          requested_date: '2024-10-17T11:45:00Z',
-          processed_date: null,
-          transaction_id: 'WD-2024-003',
-        },
-      ]);
+      console.error('Failed to load withdrawals:', error);
+      setError('Failed to load withdrawal data. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -63,19 +53,52 @@ export default function Withdrawals() {
     e.preventDefault();
     
     const amount = parseFloat(formData.amount);
-    if (amount <= 0 || amount > availableBalance) {
-      alert('Invalid withdrawal amount');
+    
+    // Validation
+    if (!amount || amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+    
+    if (amount < 100) {
+      alert('Minimum withdrawal amount is $100');
+      return;
+    }
+    
+    if (amount > statistics.available_balance) {
+      alert(`Insufficient balance. Available: $${statistics.available_balance.toFixed(2)}`);
+      return;
+    }
+
+    if (!formData.accountDetails || formData.accountDetails.trim() === '') {
+      alert('Please provide account details');
       return;
     }
 
     try {
-      await api.post('/traders/withdrawals', formData);
-      loadWithdrawals();
+      setIsSubmitting(true);
+      setError(null);
+      
+      await api.post('/api/v1/traders/withdrawals', {
+        amount: amount,
+        method: formData.method,
+        account_details: formData.accountDetails
+      });
+      
+      // Reload data
+      await loadWithdrawals();
+      
+      // Reset form and close modal
       setShowModal(false);
       setFormData({ amount: '', method: 'bank_transfer', accountDetails: '' });
-      alert('Withdrawal request submitted successfully');
+      
+      alert('Withdrawal request submitted successfully!');
     } catch (error) {
-      alert('Failed to submit withdrawal request. Please try again.');
+      console.error('Failed to submit withdrawal:', error);
+      const errorMessage = error.response?.data?.error || 'Failed to submit withdrawal request. Please try again.';
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -84,6 +107,7 @@ export default function Withdrawals() {
       case 'completed':
         return 'bg-green-100 text-green-800';
       case 'processing':
+      case 'approved':
         return 'bg-blue-100 text-blue-800';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
@@ -99,6 +123,7 @@ export default function Withdrawals() {
       case 'completed':
         return <CheckCircle className="w-5 h-5 text-green-600" />;
       case 'processing':
+      case 'approved':
       case 'pending':
         return <Clock className="w-5 h-5 text-yellow-600" />;
       case 'rejected':
@@ -108,10 +133,16 @@ export default function Withdrawals() {
     }
   };
 
-  const stats = {
-    totalWithdrawn: withdrawals.filter(w => w.status === 'completed').reduce((sum, w) => sum + w.amount, 0),
-    pendingWithdrawals: withdrawals.filter(w => w.status === 'pending' || w.status === 'processing').reduce((sum, w) => sum + w.amount, 0),
-    completedCount: withdrawals.filter(w => w.status === 'completed').length,
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   if (isLoading) {
@@ -140,7 +171,7 @@ export default function Withdrawals() {
               </div>
               <button
                 onClick={() => setShowModal(true)}
-                className="btn btn-primary flex items-center gap-2"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
               >
                 <Plus className="w-5 h-5" />
                 New Withdrawal
@@ -150,14 +181,25 @@ export default function Withdrawals() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-red-800 font-medium">Error</p>
+                <p className="text-red-700 text-sm mt-1">{error}</p>
+              </div>
+            </div>
+          )}
+
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="card">
+            <div className="bg-white rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Available Balance</p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
-                    ${availableBalance.toLocaleString()}
+                    ${statistics.available_balance?.toFixed(2) || '0.00'}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -166,12 +208,12 @@ export default function Withdrawals() {
               </div>
             </div>
 
-            <div className="card">
+            <div className="bg-white rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Total Withdrawn</p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
-                    ${stats.totalWithdrawn.toLocaleString()}
+                    ${statistics.total_withdrawn?.toFixed(2) || '0.00'}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -180,12 +222,12 @@ export default function Withdrawals() {
               </div>
             </div>
 
-            <div className="card">
+            <div className="bg-white rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Pending</p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
-                    ${stats.pendingWithdrawals.toLocaleString()}
+                    ${statistics.pending_withdrawals?.toFixed(2) || '0.00'}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
@@ -194,194 +236,175 @@ export default function Withdrawals() {
               </div>
             </div>
 
-            <div className="card">
+            <div className="bg-white rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Completed</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">{stats.completedCount}</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                    {statistics.completed_count || 0}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Total requests</p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-purple-600" />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Withdrawals List */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Transaction ID
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Amount
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Method
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Requested Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Processed Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {withdrawals.map((withdrawal) => (
-                    <tr key={withdrawal.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {withdrawal.transaction_id}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                        ${withdrawal.amount.toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
-                        {withdrawal.method.replace('_', ' ')}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(withdrawal.status)}
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(withdrawal.status)}`}>
-                            {withdrawal.status}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {new Date(withdrawal.requested_date).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {withdrawal.processed_date 
-                          ? new Date(withdrawal.processed_date).toLocaleDateString()
-                          : '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {/* Withdrawals Table */}
+          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Withdrawal History</h2>
             </div>
 
-            {withdrawals.length === 0 && (
-              <div className="text-center py-12">
+            {withdrawals.length === 0 ? (
+              <div className="p-12 text-center">
                 <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">No withdrawal requests yet</p>
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="btn btn-primary"
-                >
-                  Request Your First Withdrawal
-                </button>
+                <p className="text-gray-600 font-medium">No withdrawals yet</p>
+                <p className="text-sm text-gray-500 mt-2">Click "New Withdrawal" to request your first payout</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Amount
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Method
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Processed
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Notes
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {withdrawals.map((withdrawal) => (
+                      <tr key={withdrawal.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {formatDate(withdrawal.requested_at)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          ${withdrawal.amount?.toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                          {withdrawal.method?.replace('_', ' ').toUpperCase()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(withdrawal.status)}`}>
+                            {getStatusIcon(withdrawal.status)}
+                            {withdrawal.status?.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                          {withdrawal.processed_at ? formatDate(withdrawal.processed_at) : '-'}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
+                          {withdrawal.notes || '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
-
-          {/* Info Box */}
-          <div className="mt-8 card bg-blue-50 border-blue-200">
-            <h3 className="text-lg font-bold text-blue-900 mb-2">Withdrawal Information</h3>
-            <ul className="space-y-2 text-sm text-blue-800">
-              <li>• Minimum withdrawal amount: $100</li>
-              <li>• Processing time: 1-3 business days</li>
-              <li>• Withdrawals are processed on weekdays only</li>
-              <li>• You can only withdraw profits from funded accounts</li>
-              <li>• Bank transfer fees may apply depending on your bank</li>
-            </ul>
-          </div>
         </div>
-      </div>
 
-      {/* Withdrawal Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">New Withdrawal Request</h2>
-            </div>
-
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Available Balance
-                </label>
-                <div className="text-3xl font-bold text-green-600">
-                  ${availableBalance.toLocaleString()}
+        {/* Withdrawal Modal */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Request Withdrawal</h2>
+              
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Amount ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="100"
+                    max={statistics.available_balance}
+                    value={formData.amount}
+                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter amount"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Available: ${statistics.available_balance?.toFixed(2)} | Minimum: $100
+                  </p>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Withdrawal Amount ($) *
-                </label>
-                <input
-                  type="number"
-                  required
-                  min="100"
-                  max={availableBalance}
-                  step="0.01"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="input w-full"
-                  placeholder="Enter amount"
-                />
-                <p className="text-xs text-gray-600 mt-1">
-                  Minimum: $100 | Maximum: ${availableBalance.toLocaleString()}
-                </p>
-              </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Withdrawal Method
+                  </label>
+                  <select
+                    value={formData.method}
+                    onChange={(e) => setFormData({ ...formData, method: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="wire">Wire Transfer</option>
+                    <option value="crypto">Cryptocurrency</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Withdrawal Method *
-                </label>
-                <select
-                  required
-                  value={formData.method}
-                  onChange={(e) => setFormData({ ...formData, method: e.target.value })}
-                  className="input w-full"
-                >
-                  <option value="bank_transfer">Bank Transfer</option>
-                  <option value="paypal">PayPal</option>
-                  <option value="crypto">Cryptocurrency</option>
-                </select>
-              </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Account Details
+                  </label>
+                  <textarea
+                    value={formData.accountDetails}
+                    onChange={(e) => setFormData({ ...formData, accountDetails: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows="3"
+                    placeholder="Enter your account details (account number, PayPal email, wallet address, etc.)"
+                    required
+                  ></textarea>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Account Details *
-                </label>
-                <textarea
-                  required
-                  value={formData.accountDetails}
-                  onChange={(e) => setFormData({ ...formData, accountDetails: e.target.value })}
-                  className="input w-full"
-                  rows="4"
-                  placeholder="Enter your account details (bank account number, PayPal email, crypto wallet address, etc.)"
-                />
-              </div>
-
-              <div className="flex gap-4 pt-4">
-                <button type="submit" className="btn btn-primary flex-1">
-                  Submit Request
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowModal(false);
-                    setFormData({ amount: '', method: 'bank_transfer', accountDetails: '' });
-                  }}
-                  className="btn btn-secondary flex-1"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowModal(false);
+                      setFormData({ amount: '', method: 'bank_transfer', accountDetails: '' });
+                    }}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors duration-200"
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </TraderLayout>
   );
 }
