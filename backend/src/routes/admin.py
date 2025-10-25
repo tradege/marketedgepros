@@ -226,7 +226,7 @@ def create_user():
             )), 400
         
         # Validate role
-        allowed_roles = ['supermaster', 'admin', 'agent', 'trader']
+        allowed_roles = ['supermaster', 'super_admin', 'master', 'admin', 'agent', 'trader']
         if data['role'] not in allowed_roles:
             return jsonify(format_error_response(
                 'INVALID_ROLE',
@@ -236,13 +236,12 @@ def create_user():
         # Phone number validation and verification logic
         is_verified = False
         
-        if g.current_user.role == 'supermaster':
-            # Supermaster can create users with or without verification
-            is_verified = data.get('is_verified', False)
+        # Supermaster and super_admin can create users without phone
+        if g.current_user.role in ['supermaster', 'super_admin']:
+            is_verified = data.get('is_verified', True)  # Default to verified for admin-created users
         else:
-            # Other roles must create verified users only
+            # Other roles must provide phone for verification
             if data['role'] in ['admin', 'agent', 'trader']:
-                # These roles require phone number
                 if not data.get('phone'):
                     role_names = {
                         'admin': 'Master',
@@ -254,7 +253,7 @@ def create_user():
                         role=role_names.get(data['role'], data['role'])
                     )), 400
                 
-                # Force verification for non-supermaster created users
+                # Force verification for non-admin created users
                 is_verified = True
         
         # Create user

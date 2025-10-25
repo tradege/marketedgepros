@@ -14,8 +14,8 @@ class Roles:
     TRADER = 'trader'
     GUEST = 'guest'
     
-    # All admin roles (can access admin panel)
-    ADMIN_ROLES = [SUPERMASTER, SUPER_ADMIN, MASTER, ADMIN]
+    # All admin roles (can access admin panel and create users)
+    ADMIN_ROLES = [SUPERMASTER, SUPER_ADMIN, MASTER, ADMIN, AGENT]
     
     # All supermaster roles (highest level)
     SUPERMASTER_ROLES = [SUPERMASTER, SUPER_ADMIN]
