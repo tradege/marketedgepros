@@ -89,6 +89,7 @@ def set_request_hierarchy_scope(session, current_user):
         # Store user data to avoid accessing current_user object in Event Hook
         g.hierarchy_scope_role = getattr(current_user, 'role', None)
         g.hierarchy_scope_tree_path = getattr(current_user, 'tree_path', None)
+        g.hierarchy_scope_parent_id = getattr(current_user, 'parent_id', None)
         g.hierarchy_scope_enabled = True
 
 
@@ -164,12 +165,14 @@ def init_hierarchy_scoping(db, user_model):
         # Skip if no current user data
         role_value = getattr(g, 'hierarchy_scope_role', None)
         tree_path = getattr(g, 'hierarchy_scope_tree_path', None)
+        parent_id = getattr(g, 'hierarchy_scope_parent_id', None)
         
         if not role_value or not tree_path:
             return
         
-        # Skip if supermaster (sees everything)
-        if role_value == 'supermaster':
+        # Skip if ROOT supermaster (parent_id=None) - sees everything
+        # Created supermasters (parent_id != None) are filtered like others
+        if role_value == 'supermaster' and parent_id is None:
             return
         
         # Skip if explicitly bypassed
