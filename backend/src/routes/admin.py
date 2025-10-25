@@ -131,10 +131,16 @@ def get_users():
                 )
             )
         
-        # Paginate
-        pagination = query.order_by(User.created_at.desc()).paginate(
-            page=page, per_page=per_page, error_out=False
-        )
+        # Get total count with hierarchy filtering applied
+        # We need to count manually because paginate() doesn't apply our event-based filters to COUNT queries
+        total_count = query.count()
+        
+        # Calculate pagination values
+        total_pages = (total_count + per_page - 1) // per_page  # Ceiling division
+        
+        # Get the items for current page
+        offset = (page - 1) * per_page
+        users = query.order_by(User.created_at.desc()).limit(per_page).offset(offset).all()
         
         return jsonify({
             'users': [{
@@ -152,12 +158,12 @@ def get_users():
                 'referral_code': user.referral_code if hasattr(user, 'referral_code') else None,
                 'created_at': user.created_at.isoformat() if user.created_at else None,
                 'last_login_at': user.last_login_at.isoformat() if user.last_login_at else None
-            } for user in pagination.items],
+            } for user in users],
             'pagination': {
-                'page': pagination.page,
-                'per_page': pagination.per_page,
-                'total': pagination.total,
-                'pages': pagination.pages
+                'page': page,
+                'per_page': per_page,
+                'total': total_count,
+                'pages': total_pages
             }
         }), 200
         
