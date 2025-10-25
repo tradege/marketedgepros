@@ -17,7 +17,7 @@ export default function AgentLayout({ children }) {
     { name: 'My Traders', href: '/agent/traders', icon: Users },
     { name: 'Commissions', href: '/agent/commissions', icon: DollarSign },
     { name: 'Reports', href: '/agent/reports', icon: BarChart3 },
-    { name: 'Settings', href: '/agent/settings', icon: Settings },
+    { name: 'Profile', href: '/profile', icon: Settings },
   ];
 
   const handleLogout = () => {
