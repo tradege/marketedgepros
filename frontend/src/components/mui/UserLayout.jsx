@@ -26,6 +26,7 @@ import {
   Settings,
   Logout,
   Home,
+  AccountBalanceWallet,
 } from '@mui/icons-material';
 import useAuthStore from '../../store/authStore';
 import Layout from '../layout/Layout';
@@ -35,6 +36,7 @@ const drawerWidth = 260;
 const menuItems = [
   { text: 'Dashboard', icon: Dashboard, path: '/dashboard', color: '#667eea' },
   { text: 'Profile', icon: Person, path: '/profile', color: '#f093fb' },
+  { text: 'Wallet', icon: AccountBalanceWallet, path: '/wallet', color: '#00d2ff' },
   { text: 'Challenges', icon: EmojiEvents, path: '/challenges', color: '#4facfe' },
   { text: 'Documents', icon: Description, path: '/documents', color: '#43e97b' },
   { text: 'Settings', icon: Settings, path: '/settings', color: '#fa709a' },

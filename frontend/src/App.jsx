@@ -60,6 +60,7 @@ const TraderDashboard = lazy(() => import('./pages/user/UserDashboard'));
 const TradingHistory = lazy(() => import('./pages/trader/TradingHistory'));
 const Withdrawals = lazy(() => import('./pages/trader/Withdrawals'));
 const Documents = lazy(() => import('./pages/user/Documents'));
+const Wallet = lazy(() => import('./pages/user/Wallet'));
 
 // Guards
 import RoleGuard from './components/guards/RoleGuard';
@@ -226,6 +227,14 @@ function App() {
           element={
             <ProtectedRoute userOnly={true}>
               <Documents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/wallet"
+          element={
+            <ProtectedRoute userOnly={true}>
+              <Wallet />
             </ProtectedRoute>
           }
         />
