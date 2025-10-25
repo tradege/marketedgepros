@@ -12,6 +12,7 @@ from src.models.trading_program import TradingProgram as Program
 from src.utils.decorators import token_required, admin_required
 from src.utils.validators import validate_required_fields, validate_email_format
 from src.utils.error_messages import format_error_response
+from src.utils.hierarchy_scoping import without_hierarchy_scope
 from datetime import datetime, timedelta
 from sqlalchemy import func, and_, or_
 
@@ -256,21 +257,31 @@ def create_user():
                 # Force verification for non-admin created users
                 is_verified = True
         
-        # Create user
-        user = User(
-            email=data['email'],
-            first_name=data['first_name'],
-            last_name=data['last_name'],
-            role=data['role'],
-            is_active=data.get('is_active', True),
-            phone=data.get('phone'),
-            country_code=data.get('country_code'),
-            is_verified=is_verified
-        )
-        user.set_password(data['password'])
-        
-        db.session.add(user)
-        db.session.commit()
+        # Create user WITHOUT hierarchy scoping to avoid recursion
+        with without_hierarchy_scope(db.session):
+            user = User(
+                email=data['email'],
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                role=data['role'],
+                is_active=data.get('is_active', True),
+                phone=data.get('phone'),
+                country_code=data.get('country_code'),
+                is_verified=is_verified,
+                parent_id=g.current_user.id,  # Set parent to current user
+                level=g.current_user.level + 1 if hasattr(g.current_user, 'level') else 1
+            )
+            user.set_password(data['password'])
+            
+            db.session.add(user)
+            db.session.commit()
+            
+            # Build tree_path after commit
+            if g.current_user.tree_path:
+                user.tree_path = f"{g.current_user.tree_path}.{user.id}"
+            else:
+                user.tree_path = str(user.id)
+            db.session.commit()
         
         # Generate referral code AFTER commit (to avoid NOT NULL issues)
         if user.role in ['supermaster', 'super_admin', 'admin', 'agent']:
