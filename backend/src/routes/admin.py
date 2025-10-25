@@ -51,8 +51,19 @@ def get_dashboard_stats():
         failed_challenges = Challenge.query.filter_by(status='failed').count()
         funded_challenges = Challenge.query.filter_by(status='funded').count()
         
-        # Recent users (last 5)
-        recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
+        # Recent users (last 5) - filtered by hierarchy
+        current_user = User.query.get(get_jwt_identity())
+        if current_user.role == 'supermaster':
+            # Supermaster sees all users
+            recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
+        else:
+            # Other roles see only their hierarchy
+            recent_users = User.query.filter(
+                or_(
+                    User.id == current_user.id,
+                    User.tree_path.like(f"{current_user.tree_path}%")
+                )
+            ).order_by(User.created_at.desc()).limit(5).all()
         
         # Recent payments (last 5)
         recent_payments = Payment.query.order_by(Payment.created_at.desc()).limit(5).all()
