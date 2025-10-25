@@ -42,7 +42,7 @@ const ProgramsManagement = lazy(() => import('./pages/admin/ProgramsManagement_m
 const PaymentsManagement = lazy(() => import('./pages/admin/PaymentsManagementConnected'));
 const KYCApproval = lazy(() => import('./pages/admin/KYCApprovalConnected'));
 const PaymentApprovals = lazy(() => import('./pages/admin/PaymentApprovals'));
-const Settings = lazy(() => import('./pages/admin/Settings_mui'));
+const Settings = lazy(() => import('./pages/admin/Settings'));
 const WithdrawalManagement = lazy(() => import('./pages/admin/WithdrawalManagement'));
 
 // Notification Pages (Lazy Loaded)
