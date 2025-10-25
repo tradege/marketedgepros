@@ -50,12 +50,14 @@ const Notifications = lazy(() => import('./pages/Notifications'));
 const NotificationSettings = lazy(() => import('./pages/settings/NotificationSettings'));
 
 // Agent Pages (Lazy Loaded)
+const AgentLayout = lazy(() => import('./components/agent/AgentLayout'));
 const AgentDashboard = lazy(() => import('./pages/agent/AgentDashboard'));
 const TradersManagement = lazy(() => import('./pages/agent/TradersManagement'));
 const Commissions = lazy(() => import('./pages/agent/Commissions'));
 const Reports = lazy(() => import('./pages/agent/Reports'));
 
 // Trader Pages (Lazy Loaded)
+const TraderLayout = lazy(() => import('./components/trader/TraderLayout'));
 const TraderDashboard = lazy(() => import('./pages/user/UserDashboard'));
 const TradingHistory = lazy(() => import('./pages/trader/TradingHistory'));
 const Withdrawals = lazy(() => import('./pages/trader/Withdrawals'));
@@ -379,7 +381,9 @@ function App() {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={['agent']}>
-                <AgentDashboard />
+                <AgentLayout>
+                  <AgentDashboard />
+                </AgentLayout>
               </RoleGuard>
             </ProtectedRoute>
           }
@@ -389,7 +393,9 @@ function App() {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={['agent']}>
-                <TradersManagement />
+                <AgentLayout>
+                  <TradersManagement />
+                </AgentLayout>
               </RoleGuard>
             </ProtectedRoute>
           }
@@ -399,7 +405,9 @@ function App() {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={['agent']}>
-                <Commissions />
+                <AgentLayout>
+                  <Commissions />
+                </AgentLayout>
               </RoleGuard>
             </ProtectedRoute>
           }
@@ -409,7 +417,9 @@ function App() {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={['agent']}>
-                <Reports />
+                <AgentLayout>
+                  <Reports />
+                </AgentLayout>
               </RoleGuard>
             </ProtectedRoute>
           }
@@ -421,7 +431,9 @@ function App() {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={['trader']}>
-                <TraderDashboard />
+                <TraderLayout>
+                  <TraderDashboard />
+                </TraderLayout>
               </RoleGuard>
             </ProtectedRoute>
           }
@@ -431,7 +443,9 @@ function App() {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={['trader']}>
-                <TradingHistory />
+                <TraderLayout>
+                  <TradingHistory />
+                </TraderLayout>
               </RoleGuard>
             </ProtectedRoute>
           }
@@ -441,7 +455,9 @@ function App() {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={['trader']}>
-                <Withdrawals />
+                <TraderLayout>
+                  <Withdrawals />
+                </TraderLayout>
               </RoleGuard>
             </ProtectedRoute>
           }
@@ -451,7 +467,9 @@ function App() {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={['trader']}>
-                <Documents />
+                <TraderLayout>
+                  <Documents />
+                </TraderLayout>
               </RoleGuard>
             </ProtectedRoute>
           }
