@@ -1,0 +1,218 @@
+"""
+Centralized Hierarchy Filtering System
+
+This module provides automatic hierarchy-based filtering for all SQLAlchemy queries.
+Add HierarchyScopedMixin to any model that should be filtered by user hierarchy.
+
+Usage:
+    1. Add mixin to model: class User(db.Model, HierarchyScopedMixin)
+    2. Initialize in app: init_hierarchy_scoping(db, User)
+    3. Set scope in auth: set_request_hierarchy_scope(db.session, current_user)
+    4. All queries are now automatically filtered!
+
+Author: Manus AI
+Date: October 25, 2025
+"""
+
+from sqlalchemy import event
+from sqlalchemy.orm import with_loader_criteria
+from flask import g, has_request_context
+
+
+class HierarchyScopedMixin:
+    """
+    Add this mixin to any model that should be filtered by hierarchy.
+    
+    Requirements:
+    - Model must have a relationship to User (directly or indirectly)
+    - Override __hierarchy_user_fk__ if FK is not 'user_id'
+    
+    Example:
+        class Withdrawal(db.Model, HierarchyScopedMixin):
+            __hierarchy_user_fk__ = 'user_id'  # Default
+            ...
+        
+        class Commission(db.Model, HierarchyScopedMixin):
+            __hierarchy_user_fk__ = 'agent_id'  # Custom FK
+            ...
+    """
+    
+    __hierarchy_user_fk__ = 'user_id'  # Override in model if different
+    
+    @classmethod
+    def hierarchy_filter_for_entity(cls, current_user):
+        """
+        Returns the filter condition for this model.
+        Override for custom logic.
+        
+        Args:
+            current_user: The current logged-in user
+            
+        Returns:
+            SQLAlchemy filter condition or None (if supermaster)
+        """
+        from src.models.user import User
+        
+        # Supermaster sees everything
+        if current_user.role == 'supermaster':
+            return None
+        
+        # Get FK column name
+        fk_col = getattr(cls, cls.__hierarchy_user_fk__)
+        
+        # Filter: user_id IN (SELECT id FROM users WHERE tree_path LIKE 'current_user_path%')
+        return fk_col.in_(
+            User.query.filter(
+                User.tree_path.like(f"{current_user.tree_path}%")
+            ).with_entities(User.id)
+        )
+
+
+def set_request_hierarchy_scope(session, current_user):
+    """
+    Call this ONCE per request in @token_required.
+    Sets g.hierarchy_scope_user for the request.
+    
+    Args:
+        session: SQLAlchemy session
+        current_user: The current logged-in user
+        
+    Example:
+        @token_required
+        def decorated(*args, **kwargs):
+            current_user = User.query.get(user_id)
+            set_request_hierarchy_scope(db.session, current_user)
+            return f(*args, **kwargs)
+    """
+    if has_request_context():
+        g.hierarchy_scope_user = current_user
+        g.hierarchy_scope_enabled = True
+
+
+def without_hierarchy_scope(session):
+    """
+    Context manager to temporarily disable hierarchy scoping.
+    Use this for admin reports or operations that need ALL data.
+    
+    Args:
+        session: SQLAlchemy session
+        
+    Returns:
+        Context manager
+        
+    Example:
+        with without_hierarchy_scope(db.session):
+            all_users = User.query.all()  # Gets ALL users, bypassing hierarchy
+    """
+    class _ScopeDisabler:
+        def __enter__(self):
+            if has_request_context():
+                self._previous_state = getattr(g, 'hierarchy_scope_enabled', True)
+                g.hierarchy_scope_enabled = False
+            return self
+        
+        def __exit__(self, *args):
+            if has_request_context():
+                g.hierarchy_scope_enabled = getattr(self, '_previous_state', True)
+    
+    return _ScopeDisabler()
+
+
+def init_hierarchy_scoping(db, user_model):
+    """
+    Initialize the hierarchy scoping system.
+    Call this ONCE during app startup.
+    
+    This sets up SQLAlchemy event listeners that intercept ALL queries
+    and automatically apply hierarchy filtering.
+    
+    Args:
+        db: SQLAlchemy database instance
+        user_model: User model class
+        
+    Example:
+        def create_app():
+            app = Flask(__name__)
+            db.init_app(app)
+            
+            with app.app_context():
+                init_hierarchy_scoping(db, User)
+            
+            return app
+    """
+    
+    @event.listens_for(db.session, "do_orm_execute")
+    def _apply_hierarchy_scope(execute_state):
+        """
+        This event fires for EVERY ORM query.
+        We intercept and add hierarchy filtering automatically.
+        
+        This is the MAGIC that makes everything work!
+        """
+        
+        # Skip if not in request context
+        if not has_request_context():
+            return
+        
+        # Skip if scoping is disabled
+        if not getattr(g, 'hierarchy_scope_enabled', False):
+            return
+        
+        # Skip if no current user
+        current_user = getattr(g, 'hierarchy_scope_user', None)
+        if not current_user:
+            return
+        
+        # Skip if supermaster (sees everything)
+        if current_user.role == 'supermaster':
+            return
+        
+        # Skip if explicitly bypassed
+        if execute_state.execution_options.get('skip_hierarchy_scope', False):
+            return
+        
+        # Check if this is a SELECT statement
+        if not hasattr(execute_state.statement, 'column_descriptions'):
+            return
+        
+        # Apply filtering to each entity in the query
+        for entity in execute_state.statement.column_descriptions:
+            model = entity.get('entity')
+            
+            # Skip if not a model or doesn't have the mixin
+            if not model or not isinstance(model, type):
+                continue
+            
+            if not issubclass(model, HierarchyScopedMixin):
+                continue
+            
+            # Get the filter for this model
+            filter_condition = model.hierarchy_filter_for_entity(current_user)
+            
+            if filter_condition is not None:
+                # Apply the filter using with_loader_criteria
+                execute_state.statement = execute_state.statement.options(
+                    with_loader_criteria(
+                        model,
+                        filter_condition,
+                        include_aliases=True
+                    )
+                )
+
+
+# Utility function for explicit bypass using execution_options
+def unscoped_query(query):
+    """
+    Bypass hierarchy scoping for a specific query.
+    
+    Args:
+        query: SQLAlchemy query object
+        
+    Returns:
+        Query with hierarchy scoping disabled
+        
+    Example:
+        all_users = unscoped_query(User.query).all()
+    """
+    return query.execution_options(skip_hierarchy_scope=True)
+

@@ -78,7 +78,7 @@ function UserManagement() {
       if (filters.search) params.append('search', filters.search);
 
       const response = await axios.get(
-        `${API_BASE_URL}/admin/users/hierarchy?${params.toString()}`,
+        `${API_BASE_URL}/admin/users?${params.toString()}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`

@@ -29,6 +29,12 @@ def create_app(config_name=None):
     # Initialize extensions
     init_db(app)
     
+    # Initialize hierarchy scoping system
+    with app.app_context():
+        from src.utils.hierarchy_scoping import init_hierarchy_scoping
+        from src.models.user import User
+        init_hierarchy_scoping(db, User)
+    
     # Initialize caching
     from src import cache
     cache.init_app(app, config={'CACHE_TYPE': 'simple'})

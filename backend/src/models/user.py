@@ -7,10 +7,11 @@ from datetime import datetime, timedelta
 import jwt
 from flask import current_app
 from src.constants.roles import Roles, ROLE_HIERARCHY
+from src.utils.hierarchy_scoping import HierarchyScopedMixin
 
 
-class User(db.Model, TimestampMixin):
-    """User model with authentication support"""
+class User(db.Model, TimestampMixin, HierarchyScopedMixin):
+    """User model with authentication support and hierarchy filtering"""
     
     __tablename__ = 'users'
     
@@ -287,6 +288,26 @@ class User(db.Model, TimestampMixin):
             data['kyc_verified_at'] = self.kyc_verified_at.isoformat() if self.kyc_verified_at else None
         
         return data
+    
+    @classmethod
+    def hierarchy_filter_for_entity(cls, current_user):
+        """
+        Custom hierarchy filter for User model.
+        Returns users in current_user's hierarchy (downline).
+        
+        Args:
+            current_user: The current logged-in user
+            
+        Returns:
+            SQLAlchemy filter condition or None (if supermaster)
+        """
+        # Supermaster sees all users
+        if current_user.role == 'supermaster':
+            return None
+        
+        # Filter by tree_path - only users in this user's hierarchy
+        # tree_path LIKE 'current_user_path%' means all descendants
+        return cls.tree_path.like(f"{current_user.tree_path}%")
 
 
 class EmailVerificationToken(db.Model, TimestampMixin):

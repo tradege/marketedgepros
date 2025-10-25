@@ -40,6 +40,11 @@ def jwt_required(f):
             # Store in g object
             g.current_user = current_user
             
+            # Set hierarchy scope for automatic filtering
+            from src.utils.hierarchy_scoping import set_request_hierarchy_scope
+            from src.database import db
+            set_request_hierarchy_scope(db.session, current_user)
+            
         except jwt.ExpiredSignatureError:
             return jsonify({'error': 'Token has expired'}), 401
         except jwt.InvalidTokenError:
