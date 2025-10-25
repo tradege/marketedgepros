@@ -26,10 +26,10 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const RiskDisclosure = lazy(() => import('./pages/RiskDisclosure'));
 
 // Shared Pages (Lazy Loaded)
-const Dashboard = lazy(() => import('./pages/Dashboard_mui'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 import RoleBasedDashboard from './components/RoleBasedDashboard';
 const KYC = lazy(() => import('./pages/KYC'));
-const Profile = lazy(() => import('./pages/user/Profile_mui'));
+const Profile = lazy(() => import('./pages/user/Profile'));
 const MyChallenges = lazy(() => import('./pages/user/MyChallenges'));
 const ChallengeDetails = lazy(() => import('./pages/ChallengeDetails'));
 
@@ -38,7 +38,7 @@ const AdminLayout = lazy(() => import('./components/mui/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboardConnected'));
 const AnalyticsDashboard = lazy(() => import('./pages/admin/AnalyticsDashboard'));
 const UserManagement = lazy(() => import('./pages/admin/UserManagementConnected'));
-const ProgramsManagement = lazy(() => import('./pages/admin/ProgramsManagement_mui'));
+const ProgramsManagement = lazy(() => import('./pages/admin/ProgramsManagement'));
 const PaymentsManagement = lazy(() => import('./pages/admin/PaymentsManagementConnected'));
 const KYCApproval = lazy(() => import('./pages/admin/KYCApprovalConnected'));
 const PaymentApprovals = lazy(() => import('./pages/admin/PaymentApprovals'));
