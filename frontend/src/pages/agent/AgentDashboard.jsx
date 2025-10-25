@@ -76,7 +76,6 @@ export default function AgentDashboard() {
         })));
       }
     } catch (error) {
-      console.error('Failed to load dashboard data:', error);
       // Keep default empty state on error
     } finally {
       setIsLoading(false);

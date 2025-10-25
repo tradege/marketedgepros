@@ -40,9 +40,9 @@ def get_trader_dashboard():
         total_pnl = balance - initial_balance
         total_pnl_percentage = (total_pnl / initial_balance) * 100 if initial_balance > 0 else 0
         
-        # Calculate drawdown
+        # Calculate drawdown (relative to initial balance)
         max_balance = float(active_challenge.max_balance or initial_balance)
-        current_drawdown = ((max_balance - balance) / max_balance) * 100 if max_balance > 0 else 0
+        current_drawdown = ((max_balance - balance) / initial_balance) * 100 if initial_balance > 0 else 0
         max_drawdown = float(active_challenge.max_total_drawdown)
         
         # Get trading statistics

@@ -72,7 +72,6 @@ const UserEditModal = ({ userId, isOpen, onClose, onSuccess }) => {
       );
       setRoles(response.data.roles || []);
     } catch (err) {
-      console.error('Failed to fetch roles:', err);
     }
   };
 

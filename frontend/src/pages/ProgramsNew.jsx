@@ -27,7 +27,6 @@ export default function ProgramsNew() {
       const response = await axios.get('/api/v1/programs/');
       setPrograms(response.data.programs || []);
     } catch (error) {
-      console.error('Error loading programs:', error);
       setError(error.message || 'Failed to load programs');
     } finally {
       setIsLoading(false);

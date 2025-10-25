@@ -67,7 +67,6 @@ const PaymentApprovals = () => {
 
       setError(null);
     } catch (err) {
-      console.error('Error fetching approval requests:', err);
       setError(err.response?.data?.error || 'Failed to load approval requests');
     } finally {
       setLoading(false);
@@ -111,7 +110,6 @@ const PaymentApprovals = () => {
       // Show success message
       alert('Payment approved successfully!');
     } catch (err) {
-      console.error('Error approving request:', err);
       alert(err.response?.data?.error || 'Failed to approve request');
     } finally {
       setProcessing(false);
@@ -145,7 +143,6 @@ const PaymentApprovals = () => {
       // Show success message
       alert('Payment rejected');
     } catch (err) {
-      console.error('Error rejecting request:', err);
       alert(err.response?.data?.error || 'Failed to reject request');
     } finally {
       setProcessing(false);

@@ -20,7 +20,6 @@ export default function TradingHistory() {
       const response = await api.get('/trader/trades');
       setTrades(response.data.trades || []);
     } catch (error) {
-      console.error('Error loading trades:', error);
       setTrades([]);
     } finally {
       setIsLoading(false);

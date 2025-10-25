@@ -23,7 +23,6 @@ export default function ChallengeDetails() {
       const response = await api.get(`/traders/challenges/${id}`);
       setChallenge(response.data.challenge);
     } catch (error) {
-      console.error('Failed to load challenge:', error);
       // Show error message
       alert('Failed to load challenge details');
       navigate('/dashboard');

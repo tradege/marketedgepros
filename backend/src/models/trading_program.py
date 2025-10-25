@@ -211,8 +211,12 @@ class Challenge(db.Model, TimestampMixin):
         if not self.program or not self.program.max_total_loss:
             return False
         
+        if not self.initial_balance:
+            return False
+        
         max_loss_amount = (self.initial_balance * self.program.max_total_loss / 100)
-        return self.total_loss >= max_loss_amount
+        # Use absolute value since total_loss might be negative
+        return abs(self.total_loss) >= max_loss_amount
     
     def to_dict(self):
         """Convert challenge to dictionary"""

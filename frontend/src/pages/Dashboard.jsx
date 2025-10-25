@@ -45,7 +45,6 @@ export default function Dashboard() {
         totalProfit: challengesData.reduce((sum, c) => sum + (c.profit || 0), 0),
       });
     } catch (error) {
-      console.error('Failed to load challenges:', error);
     } finally {
       setIsLoading(false);
     }

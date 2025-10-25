@@ -36,7 +36,6 @@ export default function LoginForm() {
         navigate('/dashboard');
       }
     } catch (err) {
-      console.error('Login error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +49,6 @@ export default function LoginForm() {
       await login2FA(userId, twoFactorToken);
       navigate('/dashboard');
     } catch (err) {
-      console.error('2FA error:', err);
     } finally {
       setIsLoading(false);
     }

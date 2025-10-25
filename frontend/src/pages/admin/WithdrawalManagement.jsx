@@ -23,7 +23,6 @@ export default function WithdrawalManagement() {
       const response = await api.get('/wallet/admin/withdrawals', { params });
       setWithdrawals(response.data.withdrawals || []);
     } catch (error) {
-      console.error('Failed to load withdrawals:', error);
     } finally {
       setIsLoading(false);
     }
