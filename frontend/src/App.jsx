@@ -121,6 +121,10 @@ function PublicRoute({ children }) {
       return <Navigate to="/agent" replace />;
     }
     
+    if (user.role === 'trader') {
+      return <Navigate to="/trader" replace />;
+    }
+    
     // Regular users go to home
     return <Navigate to="/" replace />;
   }
