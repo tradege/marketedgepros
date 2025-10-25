@@ -220,11 +220,12 @@ def create_user():
                 email=data['email']
             )), 400
         
-        # Check if user already exists
-        if User.query.filter_by(email=data['email']).first():
-            return jsonify(format_error_response(
-                'USER_ALREADY_EXISTS'
-            )), 400
+        # Check if user already exists (without hierarchy filtering)
+        with without_hierarchy_scope(db.session):
+            if User.query.filter_by(email=data['email']).first():
+                return jsonify(format_error_response(
+                    'USER_ALREADY_EXISTS'
+                )), 400
         
         # Validate role
         allowed_roles = ['supermaster', 'super_admin', 'master', 'admin', 'agent', 'trader']
@@ -237,11 +238,11 @@ def create_user():
         # Phone number validation and verification logic
         is_verified = False
         
-        # Supermaster and super_admin can create users without phone
-        if g.current_user.role in ['supermaster', 'super_admin']:
+        # Supermaster, super_admin, and agent can create users without phone
+        if g.current_user.role in ['supermaster', 'super_admin', 'admin', 'agent']:
             is_verified = data.get('is_verified', True)  # Default to verified for admin-created users
         else:
-            # Other roles must provide phone for verification
+            # Only non-admin roles require phone
             if data['role'] in ['admin', 'agent', 'trader']:
                 if not data.get('phone'):
                     role_names = {
@@ -254,7 +255,7 @@ def create_user():
                         role=role_names.get(data['role'], data['role'])
                     )), 400
                 
-                # Force verification for non-admin created users
+                # Force verification
                 is_verified = True
         
         # Create user WITHOUT hierarchy scoping to avoid recursion
