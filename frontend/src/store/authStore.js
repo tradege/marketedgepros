@@ -25,7 +25,6 @@ const useAuthStore = create((set, get) => ({
     const timer = setTimeout(() => {
       const { isAuthenticated, logout } = get();
       if (isAuthenticated) {
-        console.log('User inactive for 15 minutes, logging out...');
         logout();
       }
     }, INACTIVITY_TIMEOUT);
@@ -149,7 +148,6 @@ const useAuthStore = create((set, get) => ({
     try {
       await authAPI.logout();
     } catch (error) {
-      console.error('Logout error:', error);
     } finally {
       // Clear inactivity timer
       const state = get();

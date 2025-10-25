@@ -46,7 +46,6 @@ const AnalyticsDashboard = () => {
       
       setAnalyticsData(response.data.data);
     } catch (err) {
-      console.error('Error fetching analytics:', err);
       setError('Failed to load analytics data. Please try again.');
     } finally {
       setLoading(false);

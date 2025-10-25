@@ -42,7 +42,6 @@ const useNotificationStore = create((set, get) => ({
       });
     } catch (error) {
       set({ error: error.message, loading: false });
-      console.error('Failed to fetch notifications:', error);
     }
   },
   
@@ -51,7 +50,6 @@ const useNotificationStore = create((set, get) => ({
       const response = await api.get('/notifications/unread-count');
       set({ unreadCount: response.data.count });
     } catch (error) {
-      console.error('Failed to fetch unread count:', error);
     }
   },
   
@@ -67,7 +65,6 @@ const useNotificationStore = create((set, get) => ({
         unreadCount: Math.max(0, state.unreadCount - 1),
       }));
     } catch (error) {
-      console.error('Failed to mark notification as read:', error);
     }
   },
   
@@ -81,7 +78,6 @@ const useNotificationStore = create((set, get) => ({
         unreadCount: 0,
       }));
     } catch (error) {
-      console.error('Failed to mark all notifications as read:', error);
     }
   },
   
@@ -94,7 +90,6 @@ const useNotificationStore = create((set, get) => ({
         notifications: state.notifications.filter((n) => n.id !== notificationId),
       }));
     } catch (error) {
-      console.error('Failed to delete notification:', error);
     }
   },
   
@@ -103,7 +98,6 @@ const useNotificationStore = create((set, get) => ({
       const response = await api.get('/notifications/preferences');
       set({ preferences: response.data });
     } catch (error) {
-      console.error('Failed to fetch preferences:', error);
     }
   },
   
@@ -113,7 +107,6 @@ const useNotificationStore = create((set, get) => ({
       set({ preferences: response.data.preferences });
       return true;
     } catch (error) {
-      console.error('Failed to update preferences:', error);
       return false;
     }
   },

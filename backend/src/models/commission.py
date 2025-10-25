@@ -32,6 +32,28 @@ class Commission(db.Model, TimestampMixin):
     referral = db.relationship('Referral', backref='commissions')
     challenge = db.relationship('Challenge', backref='commission_records')
     
+    # Add indexes for performance
+    __table_args__ = (
+        db.Index('ix_commission_agent_id', 'agent_id'),
+        db.Index('ix_commission_status', 'status'),
+    )
+    
+    @staticmethod
+    def calculate_commission(sale_amount, commission_rate):
+        """Calculate commission amount from sale amount and rate"""
+        if not sale_amount or not commission_rate:
+            return 0
+        if commission_rate < 0 or commission_rate > 100:
+            raise ValueError('Commission rate must be between 0 and 100')
+        return (sale_amount * commission_rate / 100)
+    
+    def validate_commission(self):
+        """Validate that commission amount matches calculation"""
+        expected = self.calculate_commission(float(self.sale_amount), float(self.commission_rate))
+        actual = float(self.commission_amount)
+        # Allow small floating point differences (0.01)
+        return abs(expected - actual) < 0.01
+    
     def to_dict(self):
         """Convert to dictionary"""
         return {

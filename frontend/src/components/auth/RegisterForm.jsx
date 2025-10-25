@@ -41,7 +41,6 @@ export default function RegisterForm() {
       await register(registerData);
       setSuccess(true);
     } catch (err) {
-      console.error('Registration error:', err);
     } finally {
       setIsLoading(false);
     }

@@ -118,7 +118,6 @@ export default function TraderDashboard() {
         })));
       }
     } catch (error) {
-      console.error('Failed to load dashboard data:', error);
       // Keep default mock data on error
     } finally {
       setIsLoading(false);

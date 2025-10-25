@@ -26,7 +26,6 @@ export default function Wallet() {
       const transactionsResponse = await api.get('/api/v1/wallet/transactions');
       setTransactions(transactionsResponse.data.transactions || []);
     } catch (error) {
-      console.error('Failed to load wallet data:', error);
     } finally {
       setIsLoading(false);
     }

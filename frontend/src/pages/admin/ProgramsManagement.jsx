@@ -102,14 +102,12 @@ export default function ProgramsManagement() {
 
   const handleSave = () => {
     // TODO: Implement save functionality
-    console.log('Saving program:', formData);
     handleCloseDialog();
   };
 
   const handleDelete = (program) => {
     if (window.confirm(`Are you sure you want to delete ${program.name}?`)) {
       // TODO: Implement delete functionality
-      console.log('Deleting program:', program.id);
     }
   };
 

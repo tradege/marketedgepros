@@ -56,7 +56,6 @@ export default function Commissions() {
       });
       
     } catch (error) {
-      console.error('Error loading commissions:', error);
       setCommissions([]);
       setStats({
         totalEarned: 0,

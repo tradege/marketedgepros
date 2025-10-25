@@ -42,7 +42,6 @@ export default function Withdrawals() {
         });
       }
     } catch (error) {
-      console.error('Failed to load withdrawals:', error);
       setError('Failed to load withdrawal data. Please try again.');
     } finally {
       setIsLoading(false);
@@ -94,7 +93,6 @@ export default function Withdrawals() {
       
       alert('Withdrawal request submitted successfully!');
     } catch (error) {
-      console.error('Failed to submit withdrawal:', error);
       const errorMessage = error.response?.data?.error || 'Failed to submit withdrawal request. Please try again.';
       alert(errorMessage);
     } finally {
