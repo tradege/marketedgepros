@@ -45,6 +45,11 @@ ERROR_MESSAGES = {
         'he': 'תפקיד לא תקין. תפקידים מותרים: {roles}',
         'code': 'ERR_008'
     },
+    'CANNOT_CREATE_SAME_ROLE': {
+        'en': 'You do not have permission to create another {role}. Only the root administrator can create users of the same role.',
+        'he': 'אין לך הרשאה ליצור {role} נוסף. רק מנהל הראשי יכול ליצור משתמשים באותה דרגה.',
+        'code': 'ERR_009'
+    },
     
     # User Update Errors
     'USER_NOT_FOUND': {

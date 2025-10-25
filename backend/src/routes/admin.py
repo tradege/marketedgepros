@@ -235,11 +235,27 @@ def create_user():
                 roles=', '.join(allowed_roles)
             )), 400
         
+        # Check if user can create same role
+        if data['role'] == g.current_user.role:
+            if not g.current_user.can_create_same_role:
+                role_names = {
+                    'supermaster': 'Supermaster',
+                    'super_admin': 'Super Admin',
+                    'master': 'Master',
+                    'admin': 'Admin',
+                    'agent': 'Agent'
+                }
+                return jsonify(format_error_response(
+                    'CANNOT_CREATE_SAME_ROLE',
+                    role=role_names.get(data['role'], data['role'])
+                )), 403
+        
         # Phone number validation and verification logic
         is_verified = False
         
-        # Supermaster, super_admin, and agent can create users without phone
-        if g.current_user.role in ['supermaster', 'super_admin', 'admin', 'agent']:
+        # Supermaster, super_admin, and admin can create users without phone
+        # Note: agent is NOT included - agents cannot create users directly
+        if g.current_user.role in ['supermaster', 'super_admin', 'admin']:
             is_verified = data.get('is_verified', True)  # Default to verified for admin-created users
         else:
             # Only non-admin roles require phone

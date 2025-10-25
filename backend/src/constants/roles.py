@@ -15,7 +15,8 @@ class Roles:
     GUEST = 'guest'
     
     # All admin roles (can access admin panel and create users)
-    ADMIN_ROLES = [SUPERMASTER, SUPER_ADMIN, MASTER, ADMIN, AGENT]
+    # Note: AGENT is NOT included - agents use referral codes, not direct user creation
+    ADMIN_ROLES = [SUPERMASTER, SUPER_ADMIN, MASTER, ADMIN]
     
     # All supermaster roles (highest level)
     SUPERMASTER_ROLES = [SUPERMASTER, SUPER_ADMIN]

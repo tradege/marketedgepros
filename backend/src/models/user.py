@@ -73,6 +73,7 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
     
     # Role and Permissions
     role = db.Column(db.String(20), default='guest', nullable=False)  # supermaster, master, agent, trader, guest
+    can_create_same_role = db.Column(db.Boolean, default=False, nullable=False)  # Only root supermaster can create another supermaster
     
     # Hierarchy (MLM Structure)
     parent_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)  # Who created this user
