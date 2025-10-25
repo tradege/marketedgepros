@@ -49,7 +49,7 @@ const menuItems = [
   { title: 'Payments', path: '/admin/payments', icon: Payment, color: '#43e97b' },
   { title: 'Withdrawals', path: '/admin/withdrawals', icon: AccountBalance, color: '#38b2ac' },
   { title: 'Payment Approvals', path: '/admin/payment-approvals', icon: Approval, color: '#ff6b6b', superAdminOnly: true },
-  { title: 'KYC Approval', path: '/admin/kyc', icon: VerifiedUser, color: '#fa709a' },
+  { title: 'KYC Approval', path: '/admin/kyc-approval', icon: VerifiedUser, color: '#fa709a' },
   { title: 'Settings', path: '/admin/settings', icon: Settings, color: '#a8edea' },
 ];
 
