@@ -33,7 +33,17 @@ export default function LoginForm() {
         setRequires2FA(true);
         setUserId(result.userId);
       } else {
-        navigate('/dashboard');
+        // Redirect based on user role
+        const role = result.user?.role;
+        if (role === 'trader') {
+          navigate('/trader');
+        } else if (role === 'agent') {
+          navigate('/agent');
+        } else if (['admin', 'master', 'supermaster'].includes(role)) {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       }
     } catch (err) {
     } finally {
@@ -46,8 +56,18 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      await login2FA(userId, twoFactorToken);
-      navigate('/dashboard');
+      const result = await login2FA(userId, twoFactorToken);
+      // Redirect based on user role
+      const role = result.user?.role;
+      if (role === 'trader') {
+        navigate('/trader');
+      } else if (role === 'agent') {
+        navigate('/agent');
+      } else if (['admin', 'master', 'supermaster'].includes(role)) {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
     } finally {
       setIsLoading(false);
