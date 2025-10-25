@@ -19,7 +19,6 @@ admin_bp = Blueprint('admin', __name__)
 
 
 @admin_bp.route("/dashboard/stats", methods=["GET"])
-@cache.cached(timeout=300)
 @token_required
 @admin_required
 def get_dashboard_stats():
