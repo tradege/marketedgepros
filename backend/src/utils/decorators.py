@@ -4,6 +4,8 @@ from flask import request, jsonify, g
 from src.models import User
 from src.services.auth_service import AuthService
 from src.constants.roles import Roles
+from src.utils.hierarchy_scoping import set_request_hierarchy_scope
+from src.database import db
 
 
 def token_required(f):
@@ -40,6 +42,9 @@ def token_required(f):
         # Store user in g
         g.current_user = current_user
         g.token = token
+        
+        # Enable hierarchy scoping for this request
+        set_request_hierarchy_scope(db.session, current_user)
         
         return f(*args, **kwargs)
     

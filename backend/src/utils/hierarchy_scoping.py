@@ -14,7 +14,7 @@ Author: Manus AI
 Date: October 25, 2025
 """
 
-from sqlalchemy import event
+from sqlalchemy import event, inspect
 from sqlalchemy.orm import with_loader_criteria
 from flask import g, has_request_context
 
@@ -70,8 +70,8 @@ class HierarchyScopedMixin:
 
 def set_request_hierarchy_scope(session, current_user):
     """
-    Call this ONCE per request in @token_required.
-    Sets g.hierarchy_scope_user for the request.
+    Set the hierarchy scope for the current request.
+    Call this in your auth decorator after loading the current user.
     
     Args:
         session: SQLAlchemy session
@@ -86,6 +86,10 @@ def set_request_hierarchy_scope(session, current_user):
     """
     if has_request_context():
         g.hierarchy_scope_user = current_user
+        # Store user data to avoid accessing current_user object in Event Hook
+        g.hierarchy_scope_role = getattr(current_user, 'role', None)
+        g.hierarchy_scope_tree_path = getattr(current_user, 'tree_path', None)
+        g.hierarchy_scope_parent_id = getattr(current_user, 'parent_id', None)
         g.hierarchy_scope_enabled = True
 
 
@@ -158,13 +162,17 @@ def init_hierarchy_scoping(db, user_model):
         if not getattr(g, 'hierarchy_scope_enabled', False):
             return
         
-        # Skip if no current user
-        current_user = getattr(g, 'hierarchy_scope_user', None)
-        if not current_user:
+        # Skip if no current user data
+        role_value = getattr(g, 'hierarchy_scope_role', None)
+        tree_path = getattr(g, 'hierarchy_scope_tree_path', None)
+        parent_id = getattr(g, 'hierarchy_scope_parent_id', None)
+        
+        if not role_value or not tree_path:
             return
         
-        # Skip if supermaster (sees everything)
-        if current_user.role == 'supermaster':
+        # Skip if ROOT supermaster (parent_id=None) - sees everything
+        # Created supermasters (parent_id != None) are filtered like others
+        if role_value == 'supermaster' and parent_id is None:
             return
         
         # Skip if explicitly bypassed
@@ -187,7 +195,15 @@ def init_hierarchy_scoping(db, user_model):
                 continue
             
             # Get the filter for this model
-            filter_condition = model.hierarchy_filter_for_entity(current_user)
+            # Create a simple object with tree_path, role, and parent_id to avoid accessing current_user
+            class _ScopeData:
+                def __init__(self, tree_path, role, parent_id):
+                    self.tree_path = tree_path
+                    self.role = role
+                    self.parent_id = parent_id
+            
+            scope_data = _ScopeData(tree_path, role_value, parent_id)
+            filter_condition = model.hierarchy_filter_for_entity(scope_data)
             
             if filter_condition is not None:
                 # Apply the filter using with_loader_criteria
