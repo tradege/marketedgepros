@@ -14,7 +14,7 @@ Author: Manus AI
 Date: October 25, 2025
 """
 
-from sqlalchemy import event
+from sqlalchemy import event, inspect
 from sqlalchemy.orm import with_loader_criteria
 from flask import g, has_request_context
 
@@ -164,7 +164,14 @@ def init_hierarchy_scoping(db, user_model):
             return
         
         # Skip if supermaster (sees everything)
-        if current_user.role == 'supermaster':
+        # Use object.__getattribute__ to avoid triggering lazy load which causes recursion
+        try:
+            role_value = object.__getattribute__(current_user, 'role')
+        except AttributeError:
+            # If role not loaded, skip filtering (safer than triggering a query)
+            return
+        
+        if role_value == 'supermaster':
             return
         
         # Skip if explicitly bypassed
