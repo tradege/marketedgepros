@@ -192,12 +192,13 @@ def init_hierarchy_scoping(db, user_model):
                 continue
             
             # Get the filter for this model
-            # Create a simple object with tree_path to avoid accessing current_user
+            # Create a simple object with tree_path and role to avoid accessing current_user
             class _ScopeData:
-                def __init__(self, tree_path):
+                def __init__(self, tree_path, role):
                     self.tree_path = tree_path
+                    self.role = role
             
-            scope_data = _ScopeData(tree_path)
+            scope_data = _ScopeData(tree_path, role_value)
             filter_condition = model.hierarchy_filter_for_entity(scope_data)
             
             if filter_condition is not None:
