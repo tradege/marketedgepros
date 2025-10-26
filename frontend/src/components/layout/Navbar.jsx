@@ -26,6 +26,7 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Programs', path: '/programs' },
+    { name: 'Free Course', path: '/free-course', highlight: true },
     { name: 'How It Works', path: '/how-it-works' },
     { name: 'About', path: '/about' },
     { name: 'FAQ', path: '/faq' },
@@ -50,7 +51,7 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className="text-gray-300 hover:text-white transition-colors"
+                className={link.highlight ? "text-green-400 hover:text-green-300 transition-colors font-semibold" : "text-gray-300 hover:text-white transition-colors"}
               >
                 {link.name}
               </Link>
