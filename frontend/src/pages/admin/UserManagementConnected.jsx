@@ -185,9 +185,9 @@ function UserManagement() {
       approved: 'bg-green-100 text-green-800',
       pending: 'bg-yellow-100 text-yellow-800',
       rejected: 'bg-red-100 text-red-800',
-      not_submitted: 'bg-gray-100 text-gray-800'
+      not_submitted: 'bg-slate-700/50 text-gray-100'
     };
-    return colors[kycStatus] || 'bg-gray-100 text-gray-800';
+    return colors[kycStatus] || 'bg-slate-700/50 text-gray-100';
   };
 
   // Count users by role
@@ -211,10 +211,10 @@ function UserManagement() {
       <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-white dark:text-white">
             User Management
           </h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-gray-300 dark:text-gray-400">
             Manage user accounts and permissions
           </p>
         </div>
@@ -285,22 +285,22 @@ function UserManagement() {
           </div>
         </div>
 
-        <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+        <div className="bg-slate-900 dark:bg-gray-700 p-6 rounded-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Traders</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <p className="text-sm text-gray-300 dark:text-gray-400">Traders</p>
+              <p className="text-2xl font-bold text-white dark:text-gray-100">
                 {userCounts.trader}
               </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Registered traders</p>
+              <p className="text-xs text-gray-300 dark:text-gray-400 mt-1">Registered traders</p>
             </div>
-            <UserX className="w-12 h-12 text-gray-600 dark:text-gray-400" />
+            <UserX className="w-12 h-12 text-gray-300 dark:text-gray-400" />
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+      <div className="bg-slate-800/50 dark:bg-gray-800 p-4 rounded-lg shadow">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium mb-2">Search</label>
@@ -342,46 +342,46 @@ function UserManagement() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="bg-slate-800/50 dark:bg-gray-800 rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            <thead className="bg-slate-900 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                   KYC
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                   Last Login
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                   Referral Code
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                   Created
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-slate-800/50 dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <tr key={user.id} className="hover:bg-slate-900 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                      <div className="text-sm font-medium text-white dark:text-white">
                         {user.first_name} {user.last_name}
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                      <div className="text-sm text-gray-400 dark:text-gray-400">
                         {user.email}
                       </div>
                     </div>
@@ -401,17 +401,17 @@ function UserManagement() {
                       {user.kyc_status.replace('_', ' ')}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 dark:text-gray-400">
                     {user.last_login_at ? new Date(user.last_login_at).toLocaleDateString() : 'Never'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {user.referral_code ? (
                       <ReferralCodeDisplay code={user.referral_code} size="sm" />
                     ) : (
-                      <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-400">—</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 dark:text-gray-400">
                     {new Date(user.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -447,8 +447,8 @@ function UserManagement() {
         </div>
 
         {/* Pagination */}
-        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-3 flex items-center justify-between">
-          <div className="text-sm text-gray-700 dark:text-gray-300">
+        <div className="bg-slate-900 dark:bg-gray-700 px-6 py-3 flex items-center justify-between">
+          <div className="text-sm text-gray-200 dark:text-gray-300">
             Showing {((pagination.page - 1) * pagination.per_page) + 1} to {Math.min(pagination.page * pagination.per_page, pagination.total)} of {pagination.total} users
           </div>
           <div className="flex gap-2">
@@ -476,12 +476,12 @@ function UserManagement() {
       {/* Add User Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+          <div className="bg-slate-800/50 dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Add New User</h2>
+              <h2 className="text-2xl font-bold text-white dark:text-white">Add New User</h2>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="text-gray-400 hover:text-gray-200 dark:text-gray-400 dark:hover:text-gray-200"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -495,7 +495,7 @@ function UserManagement() {
 
             <form onSubmit={handleAddUser} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium mb-2 text-gray-200 dark:text-gray-300">
                   First Name
                 </label>
                 <input
@@ -508,7 +508,7 @@ function UserManagement() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium mb-2 text-gray-200 dark:text-gray-300">
                   Last Name
                 </label>
                 <input
@@ -521,7 +521,7 @@ function UserManagement() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium mb-2 text-gray-200 dark:text-gray-300">
                   Email
                 </label>
                 <input
@@ -534,7 +534,7 @@ function UserManagement() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium mb-2 text-gray-200 dark:text-gray-300">
                   Password
                 </label>
                 <input
@@ -548,7 +548,7 @@ function UserManagement() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium mb-2 text-gray-200 dark:text-gray-300">
                   Phone Number
                 </label>
                 <div className="flex gap-2">
@@ -569,13 +569,13 @@ function UserManagement() {
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">
                   Required for Master, Agent, and Trader roles
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium mb-2 text-gray-200 dark:text-gray-300">
                   Role
                 </label>
                 <select
@@ -603,7 +603,7 @@ function UserManagement() {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500"
+                  className="flex-1 px-4 py-2 bg-gray-300 text-gray-200 rounded-lg hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500"
                 >
                   Cancel
                 </button>

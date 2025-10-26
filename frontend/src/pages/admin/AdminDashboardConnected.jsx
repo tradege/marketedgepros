@@ -133,10 +133,10 @@ function AdminDashboard() {
       <div className="space-y-6 p-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-white dark:text-white">
             Admin Dashboard
           </h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-gray-300 dark:text-gray-400">
             Overview of platform metrics and activity
           </p>
         </div>
@@ -157,53 +157,53 @@ function AdminDashboard() {
 
       {/* Challenge Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Completed</h3>
+        <div className="bg-slate-800/50 dark:bg-gray-800 p-6 rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2 text-white dark:text-white">Completed</h3>
           <p className="text-3xl font-bold text-green-600">{stats.challenges.completed}</p>
-          <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+          <div className="mt-2 w-full bg-slate-700 rounded-full h-2">
             <div 
               className="bg-green-600 h-2 rounded-full" 
               style={{ width: `${(stats.challenges.completed / stats.challenges.total * 100) || 0}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm text-gray-300 dark:text-gray-400 mt-2">
             {((stats.challenges.completed / stats.challenges.total * 100) || 0).toFixed(0)}% success rate
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Failed</h3>
+        <div className="bg-slate-800/50 dark:bg-gray-800 p-6 rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2 text-white dark:text-white">Failed</h3>
           <p className="text-3xl font-bold text-red-600">{stats.challenges.failed}</p>
-          <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+          <div className="mt-2 w-full bg-slate-700 rounded-full h-2">
             <div 
               className="bg-red-600 h-2 rounded-full" 
               style={{ width: `${(stats.challenges.failed / stats.challenges.total * 100) || 0}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm text-gray-300 dark:text-gray-400 mt-2">
             {((stats.challenges.failed / stats.challenges.total * 100) || 0).toFixed(0)}% failure rate
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Funded</h3>
+        <div className="bg-slate-800/50 dark:bg-gray-800 p-6 rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2 text-white dark:text-white">Funded</h3>
           <p className="text-3xl font-bold text-blue-600">{stats.challenges.funded}</p>
-          <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+          <div className="mt-2 w-full bg-slate-700 rounded-full h-2">
             <div 
               className="bg-blue-600 h-2 rounded-full" 
               style={{ width: `${(stats.challenges.funded / stats.challenges.total * 100) || 0}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm text-gray-300 dark:text-gray-400 mt-2">
             {((stats.challenges.funded / stats.challenges.total * 100) || 0).toFixed(0)}% funded accounts
           </p>
         </div>
       </div>
 
       {/* Recent Users */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Users</h2>
+      <div className="bg-slate-800/50 dark:bg-gray-800 rounded-lg shadow">
+        <div className="p-6 border-b border-white/10 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-white dark:text-white">Recent Users</h2>
         </div>
         <DataTable
           columns={recentUsersColumns}
@@ -213,9 +213,9 @@ function AdminDashboard() {
       </div>
 
       {/* Recent Payments */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Payments</h2>
+      <div className="bg-slate-800/50 dark:bg-gray-800 rounded-lg shadow">
+        <div className="p-6 border-b border-white/10 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-white dark:text-white">Recent Payments</h2>
         </div>
         <DataTable
           columns={recentPaymentsColumns}

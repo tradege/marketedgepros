@@ -102,9 +102,9 @@ export default function TradersManagement() {
       case 'failed':
         return 'bg-red-100 text-red-800';
       case 'pending':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-700/50 text-gray-100';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-700/50 text-gray-100';
     }
   };
 
@@ -114,7 +114,7 @@ export default function TradersManagement() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="text-gray-600 mt-4">Loading traders...</p>
+            <p className="text-gray-300 mt-4">Loading traders...</p>
           </div>
         </div>
       </AgentLayout>
@@ -123,12 +123,12 @@ export default function TradersManagement() {
 
   return (
     <AgentLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-slate-800/50 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <h1 className="text-3xl font-bold text-gray-900">My Traders</h1>
-            <p className="text-gray-600 mt-2">Manage and monitor your traders' performance</p>
+            <h1 className="text-3xl font-bold text-white">My Traders</h1>
+            <p className="text-gray-300 mt-2">Manage and monitor your traders' performance</p>
           </div>
         </div>
 
@@ -136,31 +136,31 @@ export default function TradersManagement() {
           {/* Summary Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="card">
-              <p className="text-sm text-gray-600">Total Traders</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{traders.length}</p>
+              <p className="text-sm text-gray-300">Total Traders</p>
+              <p className="text-2xl font-bold text-white mt-1">{traders.length}</p>
             </div>
             <div className="card">
-              <p className="text-sm text-gray-600">Active</p>
+              <p className="text-sm text-gray-300">Active</p>
               <p className="text-2xl font-bold text-green-600 mt-1">
                 {traders.filter(t => t.status === 'active').length}
               </p>
             </div>
             <div className="card">
-              <p className="text-sm text-gray-600">Funded</p>
+              <p className="text-sm text-gray-300">Funded</p>
               <p className="text-2xl font-bold text-yellow-600 mt-1">
                 {traders.filter(t => t.status === 'funded').length}
               </p>
             </div>
             <div className="card">
-              <p className="text-sm text-gray-600">Avg Win Rate</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
+              <p className="text-sm text-gray-300">Avg Win Rate</p>
+              <p className="text-2xl font-bold text-white mt-1">
                 {(traders.reduce((acc, t) => acc + t.win_rate, 0) / traders.length).toFixed(1)}%
               </p>
             </div>
           </div>
 
           {/* Filters */}
-          <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <div className="bg-slate-800/50 rounded-lg shadow-sm p-4 mb-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -201,8 +201,8 @@ export default function TradersManagement() {
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">{trader.name}</h3>
-                      <p className="text-sm text-gray-600">{trader.email}</p>
+                      <h3 className="text-lg font-bold text-white">{trader.name}</h3>
+                      <p className="text-sm text-gray-300">{trader.email}</p>
                     </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(trader.status)}`}>
@@ -212,35 +212,35 @@ export default function TradersManagement() {
 
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Program</span>
-                    <span className="text-sm font-medium text-gray-900">{trader.program}</span>
+                    <span className="text-sm text-gray-300">Program</span>
+                    <span className="text-sm font-medium text-white">{trader.program}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Phase</span>
-                    <span className="text-sm font-medium text-gray-900">{trader.challenge_phase}</span>
+                    <span className="text-sm text-gray-300">Phase</span>
+                    <span className="text-sm font-medium text-white">{trader.challenge_phase}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Current Balance</span>
-                    <span className="text-sm font-bold text-gray-900">
+                    <span className="text-sm text-gray-300">Current Balance</span>
+                    <span className="text-sm font-bold text-white">
                       ${trader.current_balance.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">P&L</span>
+                    <span className="text-sm text-gray-300">P&L</span>
                     <span className={`text-sm font-bold ${trader.profit_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {trader.profit_loss >= 0 ? '+' : ''}${trader.profit_loss.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-slate-900 rounded-lg">
                   <div>
-                    <p className="text-xs text-gray-600">Total Trades</p>
-                    <p className="text-lg font-bold text-gray-900">{trader.total_trades}</p>
+                    <p className="text-xs text-gray-300">Total Trades</p>
+                    <p className="text-lg font-bold text-white">{trader.total_trades}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-600">Win Rate</p>
-                    <p className="text-lg font-bold text-gray-900">{trader.win_rate}%</p>
+                    <p className="text-xs text-gray-300">Win Rate</p>
+                    <p className="text-lg font-bold text-white">{trader.win_rate}%</p>
                   </div>
                 </div>
 
@@ -268,7 +268,7 @@ export default function TradersManagement() {
 
           {filteredTraders.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-600">No traders found</p>
+              <p className="text-gray-300">No traders found</p>
             </div>
           )}
         </div>
@@ -277,8 +277,8 @@ export default function TradersManagement() {
       {/* Details Modal */}
       {showDetailsModal && selectedTrader && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-slate-800/50 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
@@ -287,8 +287,8 @@ export default function TradersManagement() {
                     </span>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{selectedTrader.name}</h2>
-                    <p className="text-gray-600">{selectedTrader.email}</p>
+                    <h2 className="text-2xl font-bold text-white">{selectedTrader.name}</h2>
+                    <p className="text-gray-300">{selectedTrader.email}</p>
                   </div>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedTrader.status)}`}>
@@ -300,59 +300,59 @@ export default function TradersManagement() {
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Account Information</h3>
+                  <h3 className="text-lg font-bold text-white mb-4">Account Information</h3>
                   <div className="space-y-3">
                     <div>
-                      <p className="text-sm text-gray-600">Program</p>
-                      <p className="font-medium text-gray-900">{selectedTrader.program}</p>
+                      <p className="text-sm text-gray-300">Program</p>
+                      <p className="font-medium text-white">{selectedTrader.program}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Challenge Phase</p>
-                      <p className="font-medium text-gray-900">{selectedTrader.challenge_phase}</p>
+                      <p className="text-sm text-gray-300">Challenge Phase</p>
+                      <p className="font-medium text-white">{selectedTrader.challenge_phase}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Enrolled Date</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="text-sm text-gray-300">Enrolled Date</p>
+                      <p className="font-medium text-white">
                         {new Date(selectedTrader.enrolled_date).toLocaleDateString()}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Phone</p>
-                      <p className="font-medium text-gray-900">{selectedTrader.phone}</p>
+                      <p className="text-sm text-gray-300">Phone</p>
+                      <p className="font-medium text-white">{selectedTrader.phone}</p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Performance Metrics</h3>
+                  <h3 className="text-lg font-bold text-white mb-4">Performance Metrics</h3>
                   <div className="space-y-3">
                     <div>
-                      <p className="text-sm text-gray-600">Current Balance</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-sm text-gray-300">Current Balance</p>
+                      <p className="text-2xl font-bold text-white">
                         ${selectedTrader.current_balance.toLocaleString()}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Profit/Loss</p>
+                      <p className="text-sm text-gray-300">Profit/Loss</p>
                       <p className={`text-2xl font-bold ${selectedTrader.profit_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {selectedTrader.profit_loss >= 0 ? '+' : ''}${selectedTrader.profit_loss.toLocaleString()}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-600">Total Trades</p>
-                        <p className="text-xl font-bold text-gray-900">{selectedTrader.total_trades}</p>
+                        <p className="text-sm text-gray-300">Total Trades</p>
+                        <p className="text-xl font-bold text-white">{selectedTrader.total_trades}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Win Rate</p>
-                        <p className="text-xl font-bold text-gray-900">{selectedTrader.win_rate}%</p>
+                        <p className="text-sm text-gray-300">Win Rate</p>
+                        <p className="text-xl font-bold text-white">{selectedTrader.win_rate}%</p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="mt-6 pt-6 border-t border-white/10">
                 <div className="flex gap-3">
                   <button className="btn btn-primary flex-1 flex items-center justify-center gap-2">
                     <TrendingUp className="w-5 h-5" />
@@ -366,7 +366,7 @@ export default function TradersManagement() {
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-200">
+            <div className="p-6 border-t border-white/10">
               <button
                 onClick={() => setShowDetailsModal(false)}
                 className="btn btn-secondary w-full"

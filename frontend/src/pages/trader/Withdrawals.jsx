@@ -112,7 +112,7 @@ export default function Withdrawals() {
       case 'rejected':
         return 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-700/50 text-gray-100';
     }
   };
 
@@ -149,7 +149,7 @@ export default function Withdrawals() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="text-gray-600 mt-4">Loading withdrawals...</p>
+            <p className="text-gray-300 mt-4">Loading withdrawals...</p>
           </div>
         </div>
       </TraderLayout>
@@ -158,14 +158,14 @@ export default function Withdrawals() {
 
   return (
     <TraderLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-slate-800/50 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Withdrawals</h1>
-                <p className="text-gray-600 mt-2">Request and track your payouts</p>
+                <h1 className="text-3xl font-bold text-white">Withdrawals</h1>
+                <p className="text-gray-300 mt-2">Request and track your payouts</p>
               </div>
               <button
                 onClick={() => setShowModal(true)}
@@ -192,11 +192,11 @@ export default function Withdrawals() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-slate-800/50 rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Available Balance</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-sm text-gray-300">Available Balance</p>
+                  <p className="text-2xl font-bold text-white mt-1">
                     ${statistics.available_balance?.toFixed(2) || '0.00'}
                   </p>
                 </div>
@@ -206,11 +206,11 @@ export default function Withdrawals() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-slate-800/50 rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Withdrawn</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-sm text-gray-300">Total Withdrawn</p>
+                  <p className="text-2xl font-bold text-white mt-1">
                     ${statistics.total_withdrawn?.toFixed(2) || '0.00'}
                   </p>
                 </div>
@@ -220,11 +220,11 @@ export default function Withdrawals() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-slate-800/50 rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Pending</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-sm text-gray-300">Pending</p>
+                  <p className="text-2xl font-bold text-white mt-1">
                     ${statistics.pending_withdrawals?.toFixed(2) || '0.00'}
                   </p>
                 </div>
@@ -234,14 +234,14 @@ export default function Withdrawals() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-slate-800/50 rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Completed</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-sm text-gray-300">Completed</p>
+                  <p className="text-2xl font-bold text-white mt-1">
                     {statistics.completed_count || 0}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">Total requests</p>
+                  <p className="text-xs text-gray-400 mt-1">Total requests</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                   <CheckCircle className="w-6 h-6 text-purple-600" />
@@ -251,52 +251,52 @@ export default function Withdrawals() {
           </div>
 
           {/* Withdrawals Table */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Withdrawal History</h2>
+          <div className="bg-slate-800/50 rounded-lg shadow-md overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/10">
+              <h2 className="text-lg font-semibold text-white">Withdrawal History</h2>
             </div>
 
             {withdrawals.length === 0 ? (
               <div className="p-12 text-center">
                 <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 font-medium">No withdrawals yet</p>
-                <p className="text-sm text-gray-500 mt-2">Click "New Withdrawal" to request your first payout</p>
+                <p className="text-gray-300 font-medium">No withdrawals yet</p>
+                <p className="text-sm text-gray-400 mt-2">Click "New Withdrawal" to request your first payout</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-slate-900">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Date
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Amount
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Method
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Processed
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Notes
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-slate-800/50 divide-y divide-gray-200">
                     {withdrawals.map((withdrawal) => (
-                      <tr key={withdrawal.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <tr key={withdrawal.id} className="hover:bg-slate-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                           {formatDate(withdrawal.requested_at)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                           ${withdrawal.amount?.toFixed(2)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                           {withdrawal.method?.replace('_', ' ').toUpperCase()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -305,10 +305,10 @@ export default function Withdrawals() {
                             {withdrawal.status?.toUpperCase()}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                           {withdrawal.processed_at ? formatDate(withdrawal.processed_at) : '-'}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
+                        <td className="px-6 py-4 text-sm text-gray-300 max-w-xs truncate">
                           {withdrawal.notes || '-'}
                         </td>
                       </tr>
@@ -323,12 +323,12 @@ export default function Withdrawals() {
         {/* Withdrawal Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Request Withdrawal</h2>
+            <div className="bg-slate-800/50 rounded-lg max-w-md w-full p-6">
+              <h2 className="text-2xl font-bold text-white mb-4">Request Withdrawal</h2>
               
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
                     Amount ($)
                   </label>
                   <input
@@ -338,23 +338,23 @@ export default function Withdrawals() {
                     max={statistics.available_balance}
                     value={formData.amount}
                     onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter amount"
                     required
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-400 mt-1">
                     Available: ${statistics.available_balance?.toFixed(2)} | Minimum: $100
                   </p>
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
                     Withdrawal Method
                   </label>
                   <select
                     value={formData.method}
                     onChange={(e) => setFormData({ ...formData, method: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   >
                     <option value="bank_transfer">Bank Transfer</option>
@@ -365,13 +365,13 @@ export default function Withdrawals() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
                     Account Details
                   </label>
                   <textarea
                     value={formData.accountDetails}
                     onChange={(e) => setFormData({ ...formData, accountDetails: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     rows="3"
                     placeholder="Enter your account details (account number, PayPal email, wallet address, etc.)"
                     required
@@ -385,7 +385,7 @@ export default function Withdrawals() {
                       setShowModal(false);
                       setFormData({ amount: '', method: 'bank_transfer', accountDetails: '' });
                     }}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors duration-200"
+                    className="flex-1 px-4 py-2 border border-white/20 text-gray-200 rounded-lg hover:bg-slate-900 font-medium transition-colors duration-200"
                     disabled={isSubmitting}
                   >
                     Cancel

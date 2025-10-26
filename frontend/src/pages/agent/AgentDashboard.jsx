@@ -88,7 +88,7 @@ export default function AgentDashboard() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="text-gray-600 mt-4">Loading dashboard...</p>
+            <p className="text-gray-300 mt-4">Loading dashboard...</p>
           </div>
         </div>
       </AgentLayout>
@@ -97,12 +97,12 @@ export default function AgentDashboard() {
 
   return (
     <AgentLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-slate-800/50 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <h1 className="text-3xl font-bold text-gray-900">Agent Dashboard</h1>
-            <p className="text-gray-600 mt-2">Overview of your traders and commissions</p>
+            <h1 className="text-3xl font-bold text-white">Agent Dashboard</h1>
+            <p className="text-gray-300 mt-2">Overview of your traders and commissions</p>
           </div>
         </div>
 
@@ -113,8 +113,8 @@ export default function AgentDashboard() {
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Traders</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">{stats.totalTraders}</p>
+                  <p className="text-sm text-gray-300">Total Traders</p>
+                  <p className="text-2xl font-bold text-white mt-1">{stats.totalTraders}</p>
                   <p className="text-xs text-green-600 mt-1">
                     {stats.activeTraders} active
                   </p>
@@ -129,11 +129,11 @@ export default function AgentDashboard() {
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Commissions</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-sm text-gray-300">Total Commissions</p>
+                  <p className="text-2xl font-bold text-white mt-1">
                     ${stats.totalCommissions.toLocaleString()}
                   </p>
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs text-gray-300 mt-1">
                     ${stats.pendingCommissions} pending
                   </p>
                 </div>
@@ -147,9 +147,9 @@ export default function AgentDashboard() {
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Active Challenges</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">{stats.activeChallenges}</p>
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-sm text-gray-300">Active Challenges</p>
+                  <p className="text-2xl font-bold text-white mt-1">{stats.activeChallenges}</p>
+                  <p className="text-xs text-gray-300 mt-1">
                     {stats.passedChallenges} passed
                   </p>
                 </div>
@@ -163,8 +163,8 @@ export default function AgentDashboard() {
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Funded Accounts</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">{stats.fundedAccounts}</p>
+                  <p className="text-sm text-gray-300">Funded Accounts</p>
+                  <p className="text-2xl font-bold text-white mt-1">{stats.fundedAccounts}</p>
                   <p className="text-xs text-green-600 mt-1">
                     {((stats.fundedAccounts / stats.passedChallenges) * 100).toFixed(1)}% success rate
                   </p>
@@ -181,10 +181,10 @@ export default function AgentDashboard() {
             <div className="card">
               <div className="flex items-center gap-3 mb-2">
                 <CheckCircle className="w-5 h-5 text-green-600" />
-                <span className="text-sm font-medium text-gray-600">Passed</span>
+                <span className="text-sm font-medium text-gray-300">Passed</span>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{stats.passedChallenges}</p>
-              <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+              <p className="text-3xl font-bold text-white">{stats.passedChallenges}</p>
+              <div className="mt-2 w-full bg-slate-700 rounded-full h-2">
                 <div 
                   className="bg-green-600 h-2 rounded-full" 
                   style={{ width: `${(stats.passedChallenges / (stats.passedChallenges + stats.failedChallenges + stats.activeChallenges)) * 100}%` }}
@@ -195,10 +195,10 @@ export default function AgentDashboard() {
             <div className="card">
               <div className="flex items-center gap-3 mb-2">
                 <Clock className="w-5 h-5 text-blue-600" />
-                <span className="text-sm font-medium text-gray-600">In Progress</span>
+                <span className="text-sm font-medium text-gray-300">In Progress</span>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{stats.activeChallenges}</p>
-              <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+              <p className="text-3xl font-bold text-white">{stats.activeChallenges}</p>
+              <div className="mt-2 w-full bg-slate-700 rounded-full h-2">
                 <div 
                   className="bg-blue-600 h-2 rounded-full" 
                   style={{ width: `${(stats.activeChallenges / (stats.passedChallenges + stats.failedChallenges + stats.activeChallenges)) * 100}%` }}
@@ -209,10 +209,10 @@ export default function AgentDashboard() {
             <div className="card">
               <div className="flex items-center gap-3 mb-2">
                 <XCircle className="w-5 h-5 text-red-600" />
-                <span className="text-sm font-medium text-gray-600">Failed</span>
+                <span className="text-sm font-medium text-gray-300">Failed</span>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{stats.failedChallenges}</p>
-              <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+              <p className="text-3xl font-bold text-white">{stats.failedChallenges}</p>
+              <div className="mt-2 w-full bg-slate-700 rounded-full h-2">
                 <div 
                   className="bg-red-600 h-2 rounded-full" 
                   style={{ width: `${(stats.failedChallenges / (stats.passedChallenges + stats.failedChallenges + stats.activeChallenges)) * 100}%` }}
@@ -225,7 +225,7 @@ export default function AgentDashboard() {
             {/* Recent Traders */}
             <div className="card">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">Recent Traders</h2>
+                <h2 className="text-xl font-bold text-white">Recent Traders</h2>
                 <Link to="/agent/traders" className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-1">
                   View All
                   <ArrowUpRight className="w-4 h-4" />
@@ -234,14 +234,14 @@ export default function AgentDashboard() {
 
               <div className="space-y-4">
                 {recentTraders.map((trader) => (
-                  <div key={trader.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={trader.id} className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
                         <Users className="w-5 h-5 text-primary-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{trader.name}</p>
-                        <p className="text-sm text-gray-600">{trader.program}</p>
+                        <p className="font-medium text-white">{trader.name}</p>
+                        <p className="text-sm text-gray-300">{trader.program}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -250,11 +250,11 @@ export default function AgentDashboard() {
                           ? 'bg-yellow-100 text-yellow-800'
                           : trader.status === 'active' 
                           ? 'bg-green-100 text-green-800' 
-                          : 'bg-gray-100 text-gray-800'
+                          : 'bg-slate-700/50 text-gray-100'
                       }`}>
                         {trader.status}
                       </span>
-                      <p className="text-xs text-gray-500 mt-1">{trader.enrolled}</p>
+                      <p className="text-xs text-gray-400 mt-1">{trader.enrolled}</p>
                     </div>
                   </div>
                 ))}
@@ -264,7 +264,7 @@ export default function AgentDashboard() {
             {/* Recent Commissions */}
             <div className="card">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">Recent Commissions</h2>
+                <h2 className="text-xl font-bold text-white">Recent Commissions</h2>
                 <Link to="/agent/commissions" className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-1">
                   View All
                   <ArrowUpRight className="w-4 h-4" />
@@ -273,18 +273,18 @@ export default function AgentDashboard() {
 
               <div className="space-y-4">
                 {recentCommissions.map((commission) => (
-                  <div key={commission.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={commission.id} className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                         <DollarSign className="w-5 h-5 text-green-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{commission.trader}</p>
-                        <p className="text-sm text-gray-600 capitalize">{commission.type.replace('_', ' ')}</p>
+                        <p className="font-medium text-white">{commission.trader}</p>
+                        <p className="text-sm text-gray-300 capitalize">{commission.type.replace('_', ' ')}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-gray-900">${commission.amount}</p>
+                      <p className="font-bold text-white">${commission.amount}</p>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         commission.status === 'paid' 
                           ? 'bg-green-100 text-green-800' 
@@ -292,7 +292,7 @@ export default function AgentDashboard() {
                       }`}>
                         {commission.status}
                       </span>
-                      <p className="text-xs text-gray-500 mt-1">{commission.date}</p>
+                      <p className="text-xs text-gray-400 mt-1">{commission.date}</p>
                     </div>
                   </div>
                 ))}
@@ -306,8 +306,8 @@ export default function AgentDashboard() {
               <div className="flex items-center gap-3">
                 <Users className="w-8 h-8 text-primary-600" />
                 <div>
-                  <p className="font-medium text-gray-900">Manage Traders</p>
-                  <p className="text-sm text-gray-600">View and track your traders</p>
+                  <p className="font-medium text-white">Manage Traders</p>
+                  <p className="text-sm text-gray-300">View and track your traders</p>
                 </div>
               </div>
             </Link>
@@ -316,8 +316,8 @@ export default function AgentDashboard() {
               <div className="flex items-center gap-3">
                 <DollarSign className="w-8 h-8 text-green-600" />
                 <div>
-                  <p className="font-medium text-gray-900">View Commissions</p>
-                  <p className="text-sm text-gray-600">Track your earnings</p>
+                  <p className="font-medium text-white">View Commissions</p>
+                  <p className="text-sm text-gray-300">Track your earnings</p>
                 </div>
               </div>
             </Link>
@@ -326,8 +326,8 @@ export default function AgentDashboard() {
               <div className="flex items-center gap-3">
                 <TrendingUp className="w-8 h-8 text-purple-600" />
                 <div>
-                  <p className="font-medium text-gray-900">View Reports</p>
-                  <p className="text-sm text-gray-600">Analytics and insights</p>
+                  <p className="font-medium text-white">View Reports</p>
+                  <p className="text-sm text-gray-300">Analytics and insights</p>
                 </div>
               </div>
             </Link>
