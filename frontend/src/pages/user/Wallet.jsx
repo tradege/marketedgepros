@@ -26,6 +26,7 @@ export default function Wallet() {
       const transactionsResponse = await api.get('/api/v1/wallet/transactions');
       setTransactions(transactionsResponse.data.transactions || []);
     } catch (error) {
+      // Error handled silently
     } finally {
       setIsLoading(false);
     }
@@ -33,16 +34,16 @@ export default function Wallet() {
 
   const getTransactionIcon = (type) => {
     if (type === 'credit' || type === 'deposit' || type === 'commission') {
-      return <ArrowDownRight className="w-5 h-5 text-green-600" />;
+      return <ArrowDownRight className="w-5 h-5 text-green-400" />;
     }
-    return <ArrowUpRight className="w-5 h-5 text-red-600" />;
+    return <ArrowUpRight className="w-5 h-5 text-red-400" />;
   };
 
   const getTransactionColor = (type) => {
     if (type === 'credit' || type === 'deposit' || type === 'commission') {
-      return 'text-green-600';
+      return 'text-green-400';
     }
-    return 'text-red-600';
+    return 'text-red-400';
   };
 
   const formatDate = (dateString) => {
@@ -65,31 +66,31 @@ export default function Wallet() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading wallet...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-400">Loading wallet...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-slate-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <WalletIcon className="w-8 h-8 text-blue-600" />
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <WalletIcon className="w-8 h-8 text-blue-400" />
             My Wallet
           </h1>
-          <p className="mt-2 text-gray-600">Manage your balances and view transaction history</p>
+          <p className="mt-2 text-gray-400">Manage your balances and view transaction history</p>
         </div>
 
         {/* Balance Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Main Balance */}
-          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-6 text-white shadow-lg">
+          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-6 text-white shadow-lg shadow-blue-500/10 border border-blue-500/20">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <DollarSign className="w-5 h-5" />
@@ -103,7 +104,7 @@ export default function Wallet() {
           </div>
 
           {/* Commission Balance */}
-          <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-6 text-white shadow-lg">
+          <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-6 text-white shadow-lg shadow-green-500/10 border border-green-500/20">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5" />
@@ -117,7 +118,7 @@ export default function Wallet() {
           </div>
 
           {/* Bonus Balance */}
-          <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-6 text-white shadow-lg">
+          <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-6 text-white shadow-lg shadow-purple-500/10 border border-purple-500/20">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <TrendingDown className="w-5 h-5" />
@@ -132,17 +133,17 @@ export default function Wallet() {
         </div>
 
         {/* Total Balance Card */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl shadow-md border border-white/10 p-6 mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Total Balance</p>
-              <p className="text-4xl font-bold text-gray-900">
+              <p className="text-sm text-gray-400 mb-1">Total Balance</p>
+              <p className="text-4xl font-bold text-white">
                 ${wallet?.total_balance?.toFixed(2) || '0.00'}
               </p>
             </div>
             <button
-              onClick={() => navigate('/withdrawals')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
+              onClick={() => navigate('/trader/withdrawals')}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-lg shadow-blue-500/20"
             >
               <ArrowUpRight className="w-5 h-5" />
               Request Withdrawal
@@ -151,39 +152,39 @@ export default function Wallet() {
         </div>
 
         {/* Transaction History */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl shadow-md border border-white/10 overflow-hidden">
+          <div className="p-6 border-b border-white/10">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Transaction History</h2>
+              <h2 className="text-xl font-bold text-white">Transaction History</h2>
               
               {/* Filter Buttons */}
               <div className="flex gap-2">
                 <button
                   onClick={() => setFilter('all')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     filter === 'all'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/20'
+                      : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'
                   }`}
                 >
                   All
                 </button>
                 <button
                   onClick={() => setFilter('credit')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     filter === 'credit'
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-green-600 text-white shadow-lg shadow-green-500/20'
+                      : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'
                   }`}
                 >
                   Credits
                 </button>
                 <button
                   onClick={() => setFilter('debit')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     filter === 'debit'
-                      ? 'bg-red-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-red-600 text-white shadow-lg shadow-red-500/20'
+                      : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'
                   }`}
                 >
                   Debits
@@ -193,30 +194,30 @@ export default function Wallet() {
           </div>
 
           {/* Transactions List */}
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-white/10">
             {filteredTransactions.length === 0 ? (
               <div className="p-12 text-center">
-                <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No transactions yet</p>
+                <Clock className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-400">No transactions yet</p>
                 <p className="text-sm text-gray-500 mt-2">Your transaction history will appear here</p>
               </div>
             ) : (
               filteredTransactions.map((transaction) => (
-                <div key={transaction.id} className="p-6 hover:bg-gray-50 transition-colors">
+                <div key={transaction.id} className="p-6 hover:bg-white/5 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-slate-700/50 flex items-center justify-center">
                         {getTransactionIcon(transaction.transaction_type)}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-white">
                           {transaction.description || transaction.transaction_type}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-400">
                           {formatDate(transaction.created_at)}
                         </p>
                         {transaction.balance_type && (
-                          <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 rounded">
+                          <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-slate-700/50 text-gray-300 rounded">
                             {transaction.balance_type}
                           </span>
                         )}
