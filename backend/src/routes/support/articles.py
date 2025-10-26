@@ -12,10 +12,10 @@ from slugify import slugify
 
 logger = logging.getLogger(__name__)
 
-support_bp = Blueprint('support', __name__, url_prefix='/support')
+articles_bp = Blueprint('support_articles', __name__)
 
 
-@support_bp.route('/articles', methods=['GET'])
+@articles_bp.route('/', methods=['GET'])
 def get_articles():
     """
     Get all published support articles
@@ -63,7 +63,7 @@ def get_articles():
         return jsonify({'error': 'Failed to fetch articles'}), 500
 
 
-@support_bp.route('/articles/<slug>', methods=['GET'])
+@articles_bp.route('/<slug>', methods=['GET'])
 def get_article(slug):
     """Get single article by slug"""
     try:
@@ -82,7 +82,7 @@ def get_article(slug):
         return jsonify({'error': 'Failed to fetch article'}), 500
 
 
-@support_bp.route('/articles/<int:article_id>/feedback', methods=['POST'])
+@articles_bp.route('/<int:article_id>/feedback', methods=['POST'])
 def article_feedback(article_id):
     """Mark article as helpful or not helpful"""
     try:
@@ -106,7 +106,7 @@ def article_feedback(article_id):
         return jsonify({'error': 'Failed to record feedback'}), 500
 
 
-@support_bp.route('/categories', methods=['GET'])
+@articles_bp.route('/categories', methods=['GET'])
 def get_categories():
     """Get all article categories with counts"""
     try:
@@ -128,7 +128,7 @@ def get_categories():
 
 
 # Admin routes
-@support_bp.route('/admin/articles', methods=['POST'])
+@articles_bp.route('/admin', methods=['POST'])
 @jwt_required()
 def create_article():
     """Create new support article (Admin only)"""
@@ -183,7 +183,7 @@ def create_article():
         return jsonify({'error': 'Failed to create article'}), 500
 
 
-@support_bp.route('/admin/articles/<int:article_id>', methods=['PUT'])
+@articles_bp.route('/admin/<int:article_id>', methods=['PUT'])
 @jwt_required()
 def update_article(article_id):
     """Update support article (Admin only)"""
@@ -254,7 +254,7 @@ def update_article(article_id):
         return jsonify({'error': 'Failed to update article'}), 500
 
 
-@support_bp.route('/admin/articles/<int:article_id>', methods=['DELETE'])
+@articles_bp.route('/admin/<int:article_id>', methods=['DELETE'])
 @jwt_required()
 def delete_article(article_id):
     """Delete support article (Admin only)"""
