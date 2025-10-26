@@ -4,6 +4,7 @@ import useAuthStore from './store/authStore';
 import Notification from './components/Notification';
 import ChatWidget from './components/ChatWidget';
 import { ADMIN_ROLES } from './constants/roles';
+import { ToastProvider } from './contexts/ToastContext';
 
 // Auth Pages (Lazy Loaded)
 const Login = lazy(() => import('./pages/Login'));
@@ -141,9 +142,10 @@ function App() {
   }, [init]);
 
   return (
-    <BrowserRouter>
-      <Notification />
-      <ChatWidget />
+    <ToastProvider>
+      <BrowserRouter>
+        <Notification />
+        <ChatWidget />
       <Suspense fallback={
         <div className="min-h-screen flex items-center justify-center bg-slate-900">
           <div className="text-center">
@@ -515,9 +517,10 @@ function App() {
             </div>
           }
         />
-      </Routes>
+        </Routes>
       </Suspense>
-    </BrowserRouter>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }
 
