@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-slate-900 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Company Info */}
           <div>
             <Link to="/" className="flex items-center space-x-2 mb-4">
@@ -67,6 +67,33 @@ export default function Footer() {
                 <a href="/programs?type=instant" className="text-gray-400 hover:text-white transition-colors text-sm">
                   Instant Funding
                 </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <h3 className="text-white font-semibold mb-4">Resources</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/free-course" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Free Trading Course
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link to="/support" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Support Hub
+                </Link>
+              </li>
+              <li>
+                <Link to="/affiliate" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Affiliate Program
+                </Link>
               </li>
             </ul>
           </div>
