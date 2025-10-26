@@ -31,7 +31,9 @@ const MyTickets = lazy(() => import('./pages/support/MyTickets'));
 const TicketDetail = lazy(() => import('./pages/support/TicketDetail'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
-const Affiliate = lazy(() => import('./pages/Affiliate'));
+const AffiliateLanding = lazy(() => import('./pages/affiliate/AffiliateLanding'));
+const AffiliateDashboard = lazy(() => import('./pages/affiliate/AffiliateDashboard'));
+const AffiliatePayout = lazy(() => import('./pages/affiliate/AffiliatePayout'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const RiskDisclosure = lazy(() => import('./pages/RiskDisclosure'));
@@ -184,7 +186,9 @@ function App() {
         <Route path="/support/ticket/:ticketNumber" element={<TicketDetail />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
-        <Route path="/affiliate" element={<Affiliate />} />
+        <Route path="/affiliate" element={<AffiliateLanding />} />
+        <Route path="/affiliate/dashboard" element={<AffiliateDashboard />} />
+        <Route path="/affiliate/payout" element={<AffiliatePayout />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/risk-disclosure" element={<RiskDisclosure />} />
