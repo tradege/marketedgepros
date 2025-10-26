@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS affiliate_referrals (
     user_agent VARCHAR(500),
     landing_page VARCHAR(500),
     status VARCHAR(20) DEFAULT 'pending',
-    program_id INTEGER REFERENCES programs(id) ON DELETE SET NULL,
+    program_id INTEGER REFERENCES trading_programs(id) ON DELETE SET NULL,
     purchase_amount NUMERIC(10, 2),
     commission_amount NUMERIC(10, 2),
     click_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
