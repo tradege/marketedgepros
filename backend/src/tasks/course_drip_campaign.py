@@ -3,7 +3,7 @@ Course Drip Campaign - Automated Email Scheduler
 Sends course modules to enrolled students over 10 days
 """
 from datetime import datetime, timedelta
-from ..extensions import db
+from ..database import db
 from ..models.course_enrollment import CourseEnrollment
 from ..services.email_service import EmailService
 import logging
