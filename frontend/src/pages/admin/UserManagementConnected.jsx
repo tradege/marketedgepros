@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import AdminLayout from '../../components/admin/AdminLayout';
 import { Users, UserCheck, UserX, UserCog, X } from 'lucide-react';
 import axios from 'axios';
 import UserDetailsModal from '../../components/UserDetailsModal';
@@ -206,7 +207,8 @@ function UserManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <AdminLayout>
+      <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -636,6 +638,7 @@ function UserManagement() {
           }}
         />
       )}
+    </AdminLayout>
     </div>
   );
 }
