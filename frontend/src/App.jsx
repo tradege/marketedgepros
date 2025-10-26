@@ -25,6 +25,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const FreeCourse = lazy(() => import('./pages/FreeCourse'));
 const LightningChallenge = lazy(() => import('./pages/LightningChallenge'));
 const SupportHub = lazy(() => import('./pages/SupportHub'));
+const Blog = lazy(() => import('./pages/Blog'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const RiskDisclosure = lazy(() => import('./pages/RiskDisclosure'));
@@ -171,6 +172,7 @@ function App() {
         <Route path="/free-course" element={<FreeCourse />} />
         <Route path="/lightning-challenge" element={<LightningChallenge />} />
         <Route path="/support" element={<SupportHub />} />
+        <Route path="/blog" element={<Blog />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/risk-disclosure" element={<RiskDisclosure />} />
