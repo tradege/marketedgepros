@@ -4,6 +4,7 @@ Leads routes for CRM and course signups
 from flask import Blueprint, request, jsonify
 from src.database import db
 from src.models.lead import Lead
+from src.models.course_enrollment import CourseEnrollment
 from src.services.email_service import send_course_welcome_email
 from src.services.discord_service import discord_service
 import logging
@@ -45,6 +46,16 @@ def course_signup():
                 lead_type='course_signup'
             )
             db.session.add(lead)
+        
+        # Create course enrollment for drip campaign
+        existing_enrollment = CourseEnrollment.query.filter_by(email=email).first()
+        
+        if not existing_enrollment:
+            enrollment = CourseEnrollment(
+                email=email,
+                name=name
+            )
+            db.session.add(enrollment)
         
         db.session.commit()
         
