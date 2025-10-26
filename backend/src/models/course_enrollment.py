@@ -2,7 +2,7 @@
 Course Enrollment Model
 """
 from datetime import datetime
-from ..extensions import db
+from ..database import db
 
 
 class CourseEnrollment(db.Model):
