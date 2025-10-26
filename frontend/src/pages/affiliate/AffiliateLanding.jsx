@@ -8,7 +8,12 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://marketedgepros.com/api/
 
 export default function AffiliateLanding() {
   const navigate = useNavigate();
-  const [programInfo, setProgramInfo] = useState(null);
+  const [programInfo, setProgramInfo] = useState({
+    commission_rate: 20,
+    min_payout: 50,
+    cookie_duration_days: 30,
+    is_active: true
+  });
   const [loading, setLoading] = useState(true);
   const [registering, setRegistering] = useState(false);
   const [error, setError] = useState('');
@@ -21,9 +26,12 @@ export default function AffiliateLanding() {
   const fetchProgramInfo = async () => {
     try {
       const response = await axios.get(`${API_URL}/affiliate/info`);
-      setProgramInfo(response.data.program);
+      if (response.data.program) {
+        setProgramInfo(response.data.program);
+      }
     } catch (err) {
       console.error('Failed to fetch program info:', err);
+      // Keep default values if API fails
     } finally {
       setLoading(false);
     }
