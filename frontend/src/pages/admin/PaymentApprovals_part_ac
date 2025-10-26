@@ -1,0 +1,121 @@
+                          <Typography variant="caption" color="textSecondary">
+                            {request.trader?.email || ''}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body1" fontWeight="bold">
+                          {formatAmount(request.amount)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          icon={getPaymentTypeIcon(request.payment_type)}
+                          label={request.payment_type.toUpperCase()}
+                          color={request.payment_type === 'cash' ? 'primary' : 'secondary'}
+                          size="small"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="caption">
+                          {formatDate(request.created_at)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            color="success"
+                            startIcon={<ApproveIcon />}
+                            onClick={() => handleOpenDialog(request, 'approve')}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            color="error"
+                            startIcon={<RejectIcon />}
+                            onClick={() => handleOpenDialog(request, 'reject')}
+                          >
+                            Reject
+                          </Button>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Approval/Rejection Dialog */}
+      <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {actionType === 'approve' ? 'Approve Payment' : 'Reject Payment'}
+        </DialogTitle>
+        <DialogContent>
+          {selectedRequest && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" gutterBottom>
+                <strong>Requester:</strong> {selectedRequest.requester?.name}
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                <strong>Trader:</strong> {selectedRequest.trader?.name}
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                <strong>Amount:</strong> {formatAmount(selectedRequest.amount)}
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                <strong>Payment Type:</strong> {selectedRequest.payment_type.toUpperCase()}
+              </Typography>
+
+              {actionType === 'reject' && (
+                <TextField
+                  fullWidth
+                  label="Rejection Reason *"
+                  multiline
+                  rows={3}
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  sx={{ mt: 2 }}
+                  required
+                />
+              )}
+
+              <TextField
+                fullWidth
+                label="Admin Notes (Optional)"
+                multiline
+                rows={3}
+                value={adminNotes}
+                onChange={(e) => setAdminNotes(e.target.value)}
+                sx={{ mt: 2 }}
+              />
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} disabled={processing}>
+            Cancel
+          </Button>
+          <Button
+            onClick={actionType === 'approve' ? handleApprove : handleReject}
+            variant="contained"
+            color={actionType === 'approve' ? 'success' : 'error'}
+            disabled={processing || (actionType === 'reject' && !rejectionReason.trim())}
+          >
+            {processing ? <CircularProgress size={24} /> : actionType === 'approve' ? 'Approve' : 'Reject'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      </Box>
+    
+  );
+};
+
+export default PaymentApprovals;
+

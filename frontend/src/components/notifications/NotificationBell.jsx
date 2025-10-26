@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Badge, IconButton, Popover } from '@mui/material';
-import { Notifications as NotificationsIcon } from '@mui/icons-material';
+import { useState, useEffect, useRef } from 'react';
+import { Bell } from 'lucide-react';
 import useNotificationStore from '../../stores/notificationStore';
 import NotificationDropdown from './NotificationDropdown';
 
 export default function NotificationBell() {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
   const { unreadCount, fetchUnreadCount } = useNotificationStore();
   
   // Poll for unread count every 30 seconds
@@ -18,53 +19,56 @@ export default function NotificationBell() {
     return () => clearInterval(interval);
   }, [fetchUnreadCount]);
   
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  
+  const handleClick = () => {
+    setIsOpen(!isOpen);
   };
   
   const handleClose = () => {
-    setAnchorEl(null);
+    setIsOpen(false);
   };
   
-  const open = Boolean(anchorEl);
-  
   return (
-    <>
-      <IconButton
-        color="inherit"
+    <div className="relative">
+      <button
+        ref={buttonRef}
         onClick={handleClick}
+        className="relative p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
         aria-label="notifications"
-        aria-describedby="notification-popover"
       >
-        <Badge badgeContent={unreadCount} color="error">
-          <NotificationsIcon />
-        </Badge>
-      </IconButton>
+        <Bell className="w-6 h-6" />
+        {unreadCount > 0 && (
+          <span className="absolute top-1 right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-bold text-white bg-red-500 rounded-full">
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
+        )}
+      </button>
       
-      <Popover
-        id="notification-popover"
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        PaperProps={{
-          sx: {
-            width: 400,
-            maxHeight: 600,
-            mt: 1,
-          },
-        }}
-      >
-        <NotificationDropdown onClose={handleClose} />
-      </Popover>
-    </>
+      {isOpen && (
+        <div
+          ref={dropdownRef}
+          className="absolute right-0 mt-2 w-96 max-h-[600px] bg-slate-800 border border-white/10 rounded-lg shadow-xl z-50"
+        >
+          <NotificationDropdown onClose={handleClose} />
+        </div>
+      )}
+    </div>
   );
 }
 

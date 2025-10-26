@@ -1,0 +1,150 @@
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pending':
+        return 'warning';
+      case 'approved':
+        return 'success';
+      case 'rejected':
+        return 'error';
+      default:
+        return 'default';
+    }
+  };
+
+  const getPaymentTypeIcon = (type) => {
+    return type === 'cash' ? <MoneyIcon fontSize="small" /> : <FreeIcon fontSize="small" />;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleString();
+  };
+
+  const formatAmount = (amount) => {
+    return `$${parseFloat(amount).toFixed(2)}`;
+  };
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    
+      <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Payment Approvals
+      </Typography>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      {/* Stats Cards */}
+      {stats && (
+        <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <Typography color="textSecondary" gutterBottom>
+                  Pending
+                </Typography>
+                <Typography variant="h4">
+                  {stats.pending || 0}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <Typography color="textSecondary" gutterBottom>
+                  Approved
+                </Typography>
+                <Typography variant="h4" color="success.main">
+                  {stats.approved || 0}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <Typography color="textSecondary" gutterBottom>
+                  Rejected
+                </Typography>
+                <Typography variant="h4" color="error.main">
+                  {stats.rejected || 0}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <Typography color="textSecondary" gutterBottom>
+                  Total
+                </Typography>
+                <Typography variant="h4">
+                  {stats.total || 0}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      )}
+
+      {/* Pending Requests Table */}
+      <Card>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Pending Approval Requests
+          </Typography>
+
+          {pendingRequests.length === 0 ? (
+            <Alert severity="info">No pending approval requests</Alert>
+          ) : (
+            <TableContainer component={Paper} sx={{ mt: 2 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>Requester</TableCell>
+                    <TableCell>Trader</TableCell>
+                    <TableCell>Amount</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {pendingRequests.map((request) => (
+                    <TableRow key={request.id}>
+                      <TableCell>{request.id}</TableCell>
+                      <TableCell>
+                        <Box>
+                          <Typography variant="body2">
+                            {request.requester?.name || 'N/A'}
+                          </Typography>
+                          <Typography variant="caption" color="textSecondary">
+                            {request.requester?.email || ''}
+                          </Typography>
+                          <br />
+                          <Chip 
+                            label={request.requester?.role || 'N/A'} 
+                            size="small" 
+                            variant="outlined"
+                          />
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box>
+                          <Typography variant="body2">
+                            {request.trader?.name || 'N/A'}
+                          </Typography>

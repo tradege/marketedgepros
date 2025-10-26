@@ -1,22 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Button,
-  Divider,
-  CircularProgress,
-  IconButton,
-} from '@mui/material';
-import {
-  CheckCircle as CheckCircleIcon,
-  Delete as DeleteIcon,
-  Notifications as NotificationsIcon,
-} from '@mui/icons-material';
+import { Bell, Trash2, Loader } from 'lucide-react';
 import useNotificationStore from '../../stores/notificationStore';
 import { formatDistanceToNow } from '../../utils/dateUtils';
 
@@ -34,12 +18,12 @@ const getNotificationIcon = (type) => {
 
 const getPriorityColor = (priority) => {
   const colors = {
-    low: 'text.secondary',
-    normal: 'primary.main',
-    high: 'warning.main',
-    urgent: 'error.main',
+    low: 'bg-gray-400',
+    normal: 'bg-blue-500',
+    high: 'bg-yellow-500',
+    urgent: 'bg-red-500',
   };
-  return colors[priority] || 'primary.main';
+  return colors[priority] || 'bg-blue-500';
 };
 
 export default function NotificationDropdown({ onClose }) {
@@ -90,113 +74,94 @@ export default function NotificationDropdown({ onClose }) {
   
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-        <CircularProgress />
-      </Box>
+      <div className="flex justify-center p-8">
+        <Loader className="w-8 h-8 text-blue-500 animate-spin" />
+      </div>
     );
   }
   
   return (
-    <Box>
+    <div className="flex flex-col">
       {/* Header */}
-      <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <NotificationsIcon /> Notifications
-        </Typography>
+      <div className="flex justify-between items-center p-4 border-b border-white/10">
+        <div className="flex items-center gap-2">
+          <Bell className="w-5 h-5 text-white" />
+          <h3 className="text-lg font-semibold text-white">Notifications</h3>
+        </div>
         {notifications.length > 0 && (
-          <Button size="small" onClick={handleMarkAllAsRead}>
+          <button
+            onClick={handleMarkAllAsRead}
+            className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+          >
             Mark all read
-          </Button>
+          </button>
         )}
-      </Box>
-      
-      <Divider />
+      </div>
       
       {/* Notification List */}
       {notifications.length === 0 ? (
-        <Box sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
-            No notifications
-          </Typography>
-        </Box>
+        <div className="p-8 text-center">
+          <p className="text-gray-400">No notifications</p>
+        </div>
       ) : (
-        <List sx={{ p: 0, maxHeight: 400, overflow: 'auto' }}>
+        <div className="max-h-96 overflow-y-auto">
           {notifications.map((notification) => (
-            <ListItem
+            <div
               key={notification.id}
-              button
               onClick={() => handleNotificationClick(notification)}
-              sx={{
-                backgroundColor: notification.is_read ? 'transparent' : 'action.hover',
-                '&:hover': {
-                  backgroundColor: 'action.selected',
-                },
-              }}
+              className={`flex items-start gap-3 p-4 border-b border-white/5 cursor-pointer transition-colors ${
+                notification.is_read 
+                  ? 'hover:bg-white/5' 
+                  : 'bg-white/10 hover:bg-white/15'
+              }`}
             >
-              <ListItemIcon sx={{ fontSize: 24 }}>
+              {/* Icon */}
+              <div className="text-2xl flex-shrink-0">
                 {getNotificationIcon(notification.type)}
-              </ListItemIcon>
+              </div>
               
-              <ListItemText
-                primary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontWeight: notification.is_read ? 'normal' : 'bold',
-                        flex: 1,
-                      }}
-                    >
-                      {notification.title}
-                    </Typography>
-                    {!notification.is_read && (
-                      <Box
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          backgroundColor: getPriorityColor(notification.priority),
-                        }}
-                      />
-                    )}
-                  </Box>
-                }
-                secondary={
-                  <Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                      {notification.message}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
-                    </Typography>
-                  </Box>
-                }
-              />
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className={`text-sm ${notification.is_read ? 'text-gray-300' : 'text-white font-semibold'}`}>
+                    {notification.title}
+                  </p>
+                  {!notification.is_read && (
+                    <div className={`w-2 h-2 rounded-full ${getPriorityColor(notification.priority)}`} />
+                  )}
+                </div>
+                <p className="text-sm text-gray-400 mb-1 line-clamp-2">
+                  {notification.message}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                </p>
+              </div>
               
-              <IconButton
-                size="small"
+              {/* Delete Button */}
+              <button
                 onClick={(e) => handleDelete(e, notification.id)}
-                sx={{ ml: 1 }}
+                className="flex-shrink-0 p-1 text-gray-400 hover:text-red-400 transition-colors"
               >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </ListItem>
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
           ))}
-        </List>
+        </div>
       )}
       
       {/* Footer */}
       {notifications.length > 0 && (
-        <>
-          <Divider />
-          <Box sx={{ p: 1, textAlign: 'center' }}>
-            <Button fullWidth onClick={handleViewAll}>
-              View All Notifications
-            </Button>
-          </Box>
-        </>
+        <div className="p-2 border-t border-white/10">
+          <button
+            onClick={handleViewAll}
+            className="w-full py-2 text-sm text-blue-400 hover:text-blue-300 hover:bg-white/5 rounded transition-colors"
+          >
+            View All Notifications
+          </button>
+        </div>
       )}
-    </Box>
+    </div>
   );
 }
 

@@ -1,23 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { programsAPI } from '../../services/api';
-import UserLayout from '../../components/mui/UserLayout';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import Chip from '@mui/material/Chip';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import {
-  TrendingUp,
-  AccessTime,
-  CheckCircle,
-  Cancel,
-  ArrowForward,
-} from '@mui/icons-material';
+import { TrendingUp, Clock, CheckCircle, XCircle, ArrowRight, Loader } from 'lucide-react';
 
 export default function MyChallenges() {
   const navigate = useNavigate();
@@ -45,155 +29,110 @@ export default function MyChallenges() {
   const getStatusColor = (status) => {
     switch (status) {
       case 'active':
-        return '#43e97b';
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
       case 'passed':
-        return '#4facfe';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
       case 'failed':
-        return '#fa709a';
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
       case 'pending':
-        return '#f093fb';
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
       default:
-        return '#667eea';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
       case 'active':
-        return <AccessTime />;
+        return <Clock className="w-4 h-4" />;
       case 'passed':
-        return <CheckCircle />;
+        return <CheckCircle className="w-4 h-4" />;
       case 'failed':
-        return <Cancel />;
+        return <XCircle className="w-4 h-4" />;
       default:
-        return <TrendingUp />;
+        return <TrendingUp className="w-4 h-4" />;
     }
   };
 
   if (loading) {
     return (
-      <UserLayout>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-          <CircularProgress />
-        </Box>
-      </UserLayout>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader className="w-8 h-8 text-purple-500 animate-spin" />
+      </div>
     );
   }
 
   return (
-    <UserLayout>
-      <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" sx={{ color: 'white', fontWeight: 700 }}>
-            My Challenges
-          </Typography>
-          <Button
-            variant="contained"
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-white">My Challenges</h1>
+        <button
+          onClick={() => navigate('/programs')}
+          className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:from-purple-700 hover:to-purple-900 transition-colors"
+        >
+          Browse Programs
+        </button>
+      </div>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg">
+          {error}
+        </div>
+      )}
+
+      {challenges.length === 0 ? (
+        <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-lg p-12 text-center">
+          <h3 className="text-xl text-gray-300 mb-4">
+            You don't have any challenges yet
+          </h3>
+          <button
             onClick={() => navigate('/programs')}
-            sx={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-              },
-            }}
+            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:from-purple-700 hover:to-purple-900 transition-colors"
           >
-            Browse Programs
-          </Button>
-        </Box>
+            Start Your First Challenge
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {challenges.map((challenge) => (
+            <div
+              key={challenge.id}
+              className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-lg p-6 transition-transform hover:-translate-y-1"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-lg font-semibold text-white">
+                  {challenge.program_name || 'Challenge'}
+                </h3>
+                <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded ${getStatusColor(challenge.status)}`}>
+                  {getStatusIcon(challenge.status)}
+                  {challenge.status}
+                </span>
+              </div>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
+              <div className="mb-4 space-y-2">
+                <p className="text-sm text-gray-400">
+                  Account Size: <span className="text-white font-semibold">${challenge.account_size?.toLocaleString()}</span>
+                </p>
+                <p className="text-sm text-gray-400">
+                  Profit Target: <span className="text-green-400 font-semibold">{challenge.profit_target}%</span>
+                </p>
+                <p className="text-sm text-gray-400">
+                  Max Drawdown: <span className="text-red-400 font-semibold">{challenge.max_drawdown}%</span>
+                </p>
+              </div>
 
-        {challenges.length === 0 ? (
-          <Card sx={{ bgcolor: '#1a1f2e', borderRadius: 3, textAlign: 'center', py: 8 }}>
-            <CardContent>
-              <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.7)', mb: 2 }}>
-                You don't have any challenges yet
-              </Typography>
-              <Button
-                variant="contained"
-                onClick={() => navigate('/programs')}
-                sx={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white',
-                  mt: 2,
-                }}
+              <button
+                onClick={() => navigate(`/challenges/${challenge.id}`)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-purple-600 text-purple-400 rounded-lg hover:bg-purple-600/10 transition-colors"
               >
-                Start Your First Challenge
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <Grid container spacing={3}>
-            {challenges.map((challenge) => (
-              <Grid item xs={12} md={6} lg={4} key={challenge.id}>
-                <Card
-                  sx={{
-                    bgcolor: '#1a1f2e',
-                    borderRadius: 3,
-                    transition: 'transform 0.2s',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                    },
-                  }}
-                >
-                  <CardContent sx={{ p: 3 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 2 }}>
-                      <Typography variant="h6" sx={{ color: 'white', fontWeight: 600 }}>
-                        {challenge.program_name || 'Challenge'}
-                      </Typography>
-                      <Chip
-                        icon={getStatusIcon(challenge.status)}
-                        label={challenge.status}
-                        sx={{
-                          bgcolor: getStatusColor(challenge.status),
-                          color: 'white',
-                          fontWeight: 600,
-                          textTransform: 'capitalize',
-                        }}
-                      />
-                    </Box>
-
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', mb: 1 }}>
-                        Account Size: <strong style={{ color: 'white' }}>${challenge.account_size?.toLocaleString()}</strong>
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', mb: 1 }}>
-                        Profit Target: <strong style={{ color: '#43e97b' }}>{challenge.profit_target}%</strong>
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
-                        Max Drawdown: <strong style={{ color: '#fa709a' }}>{challenge.max_drawdown}%</strong>
-                      </Typography>
-                    </Box>
-
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      endIcon={<ArrowForward />}
-                      onClick={() => navigate(`/challenges/${challenge.id}`)}
-                      sx={{
-                        borderColor: '#667eea',
-                        color: '#667eea',
-                        '&:hover': {
-                          borderColor: '#764ba2',
-                          bgcolor: 'rgba(102, 126, 234, 0.1)',
-                        },
-                      }}
-                    >
-                      View Details
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Box>
-    </UserLayout>
+                View Details
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
