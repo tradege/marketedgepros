@@ -10,7 +10,7 @@ import {
   ArrowRight,
   RefreshCw,
 } from 'lucide-react';
-import UserLayout from '../components/mui/UserLayout';
+import UserLayout from '../components/layout/UserLayout';
 import useAuthStore from '../store/authStore';
 import { programsAPI } from '../services/api';
 
