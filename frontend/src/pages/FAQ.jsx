@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ChevronUp, Search } from 'lucide-react';
 import Layout from '../components/layout/Layout';
+import StructuredData from '../components/seo/StructuredData';
 
 export default function FAQ() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -146,8 +147,16 @@ export default function FAQ() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const faqData = {
+    questions: allQuestions.map(q => ({
+      question: q.q,
+      answer: q.a
+    }))
+  };
+
   return (
     <Layout>
+      <StructuredData type="faq" data={faqData} />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
       {/* Hero Section */}
       <div className="relative overflow-hidden">

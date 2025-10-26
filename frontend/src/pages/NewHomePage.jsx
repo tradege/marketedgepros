@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '../components/layout/Layout';
 import SEO, { SEOConfigs } from '../components/SEO';
+import StructuredData from '../components/seo/StructuredData';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -40,6 +41,8 @@ export default function NewHomePage() {
   return (
     <Layout>
       <SEO {...SEOConfigs.home} />
+      <StructuredData type="website" />
+      <StructuredData type="organization" />
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden bg-slate-900">
         {/* Background Effects */}
