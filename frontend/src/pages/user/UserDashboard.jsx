@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, AttachMoney, EmojiEvents, Schedule } from '@mui/icons-material';
+import { TrendingUp, DollarSign, Trophy, Clock } from 'lucide-react';
 import StatsCard from '../../components/common/StatsCard';
 import api from '../../services/api';
 
@@ -54,14 +54,14 @@ export default function UserDashboard() {
       title: 'Active Challenges', 
       value: statistics.active_challenges.toString(), 
       subtitle: 'In progress', 
-      icon: Schedule, 
+      icon: Clock, 
       color: 'primary' 
     },
     { 
       title: 'Total Profit', 
       value: `$${statistics.total_profit.toLocaleString()}`, 
       subtitle: `${statistics.funded_challenges} funded account${statistics.funded_challenges !== 1 ? 's' : ''}`, 
-      icon: AttachMoney, 
+      icon: DollarSign, 
       color: 'success',
       trend: statistics.total_profit > 0 ? 'up' : undefined,
       trendValue: statistics.total_profit > 0 ? `+$${statistics.total_profit.toLocaleString()}` : undefined
@@ -77,7 +77,7 @@ export default function UserDashboard() {
       title: 'Funded Accounts', 
       value: statistics.funded_challenges.toString(), 
       subtitle: statistics.funded_challenges > 0 ? 'Congratulations!' : 'Keep trading!', 
-      icon: EmojiEvents, 
+      icon: Trophy, 
       color: 'warning' 
     },
   ];

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  People,
-  AttachMoney,
+  Users,
+  DollarSign,
   TrendingUp,
-  Assignment,
-} from '@mui/icons-material';
+  FileText,
+} from 'lucide-react';
 import StatsCard from '../../components/common/StatsCard';
 import DataTable from '../../components/common/DataTable';
 import axios from 'axios';
@@ -67,7 +67,7 @@ function AdminDashboard() {
       title: 'Total Users',
       value: stats.users.total.toString(),
       subtitle: `${stats.users.active} active`,
-      icon: People,
+      icon: Users,
       color: 'primary',
       trend: 'up',
       trendValue: '+12.5%',
@@ -76,7 +76,7 @@ function AdminDashboard() {
       title: 'Total Revenue',
       value: `$${stats.revenue.total.toLocaleString()}`,
       subtitle: `$${stats.revenue.monthly.toLocaleString()} this month`,
-      icon: AttachMoney,
+      icon: DollarSign,
       color: 'success',
       trend: 'up',
       trendValue: '+12.5%',
@@ -94,7 +94,7 @@ function AdminDashboard() {
       title: 'Pending KYC',
       value: stats.users.pending_kyc.toString(),
       subtitle: 'Requires review',
-      icon: Assignment,
+      icon: FileText,
       color: 'warning',
     },
   ];
