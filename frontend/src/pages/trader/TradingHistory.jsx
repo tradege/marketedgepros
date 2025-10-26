@@ -88,7 +88,7 @@ export default function TradingHistory() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="text-gray-600 mt-4">Loading trading history...</p>
+            <p className="text-gray-300 mt-4">Loading trading history...</p>
           </div>
         </div>
       </TraderLayout>
@@ -97,14 +97,14 @@ export default function TradingHistory() {
 
   return (
     <TraderLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-slate-800/50 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Trading History</h1>
-                <p className="text-gray-600 mt-2">View all your past trades</p>
+                <h1 className="text-3xl font-bold text-white">Trading History</h1>
+                <p className="text-gray-300 mt-2">View all your past trades</p>
               </div>
               <button
                 onClick={exportTrades}
@@ -121,25 +121,25 @@ export default function TradingHistory() {
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
             <div className="card text-center">
-              <p className="text-sm text-gray-600 mb-1">Total Trades</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalTrades}</p>
+              <p className="text-sm text-gray-300 mb-1">Total Trades</p>
+              <p className="text-2xl font-bold text-white">{stats.totalTrades}</p>
             </div>
             <div className="card text-center">
-              <p className="text-sm text-gray-600 mb-1">Winning</p>
+              <p className="text-sm text-gray-300 mb-1">Winning</p>
               <p className="text-2xl font-bold text-green-600">{stats.winningTrades}</p>
             </div>
             <div className="card text-center">
-              <p className="text-sm text-gray-600 mb-1">Losing</p>
+              <p className="text-sm text-gray-300 mb-1">Losing</p>
               <p className="text-2xl font-bold text-red-600">{stats.losingTrades}</p>
             </div>
             <div className="card text-center">
-              <p className="text-sm text-gray-600 mb-1">Total Profit</p>
+              <p className="text-sm text-gray-300 mb-1">Total Profit</p>
               <p className={`text-2xl font-bold ${stats.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {stats.totalProfit >= 0 ? '+' : ''}${stats.totalProfit.toFixed(2)}
               </p>
             </div>
             <div className="card text-center">
-              <p className="text-sm text-gray-600 mb-1">Total Pips</p>
+              <p className="text-sm text-gray-300 mb-1">Total Pips</p>
               <p className={`text-2xl font-bold ${stats.totalPips >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {stats.totalPips >= 0 ? '+' : ''}{stats.totalPips}
               </p>
@@ -147,7 +147,7 @@ export default function TradingHistory() {
           </div>
 
           {/* Filters */}
-          <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <div className="bg-slate-800/50 rounded-lg shadow-sm p-4 mb-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -188,26 +188,26 @@ export default function TradingHistory() {
           </div>
 
           {/* Trades Table */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div className="bg-slate-800/50 rounded-lg shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-slate-900 border-b border-white/10">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Symbol</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lots</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Open Price</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Close Price</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Open Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Close Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pips</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profit</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Symbol</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Type</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Lots</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Open Price</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Close Price</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Open Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Close Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Pips</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Profit</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {filteredTrades.map((trade) => (
-                    <tr key={trade.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{trade.symbol}</td>
+                    <tr key={trade.id} className="hover:bg-slate-900">
+                      <td className="px-4 py-3 text-sm font-medium text-white">{trade.symbol}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           {trade.type === 'buy' ? (
@@ -222,13 +222,13 @@ export default function TradingHistory() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{trade.lots}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{trade.openPrice}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{trade.closePrice}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
+                      <td className="px-4 py-3 text-sm text-white">{trade.lots}</td>
+                      <td className="px-4 py-3 text-sm text-white">{trade.openPrice}</td>
+                      <td className="px-4 py-3 text-sm text-white">{trade.closePrice}</td>
+                      <td className="px-4 py-3 text-sm text-gray-300">
                         {new Date(trade.openTime).toLocaleString()}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
+                      <td className="px-4 py-3 text-sm text-gray-300">
                         {new Date(trade.closeTime).toLocaleString()}
                       </td>
                       <td className={`px-4 py-3 text-sm font-medium ${trade.pips >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -245,7 +245,7 @@ export default function TradingHistory() {
 
             {filteredTrades.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-600">No trades found</p>
+                <p className="text-gray-300">No trades found</p>
               </div>
             )}
           </div>

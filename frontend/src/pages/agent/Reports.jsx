@@ -87,7 +87,7 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="text-gray-600 mt-4">Loading reports...</p>
+            <p className="text-gray-300 mt-4">Loading reports...</p>
           </div>
         </div>
       </AgentLayout>
@@ -96,14 +96,14 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
 
   return (
     <AgentLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-slate-800/50 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
-                <p className="text-gray-600 mt-2">Insights into your performance and traders</p>
+                <h1 className="text-3xl font-bold text-white">Reports & Analytics</h1>
+                <p className="text-gray-300 mt-2">Insights into your performance and traders</p>
               </div>
               <button
                 onClick={exportReport}
@@ -118,7 +118,7 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Period Filter */}
-          <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <div className="bg-slate-800/50 rounded-lg shadow-sm p-4 mb-6">
             <div className="flex items-center gap-4">
               <Calendar className="w-5 h-5 text-gray-400" />
               <select
@@ -137,13 +137,13 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
 
           {/* Overview Stats */}
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Overview</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">New Traders</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                    <p className="text-sm text-gray-300">New Traders</p>
+                    <p className="text-2xl font-bold text-white mt-1">
                       {reportData.overview.newTraders}
                     </p>
                   </div>
@@ -156,8 +156,8 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Active Traders</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                    <p className="text-sm text-gray-300">Active Traders</p>
+                    <p className="text-2xl font-bold text-white mt-1">
                       {reportData.overview.activeTraders}
                     </p>
                   </div>
@@ -170,8 +170,8 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Total Commissions</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                    <p className="text-sm text-gray-300">Total Commissions</p>
+                    <p className="text-2xl font-bold text-white mt-1">
                       ${reportData.overview.totalCommissions.toLocaleString()}
                     </p>
                   </div>
@@ -184,8 +184,8 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Avg Per Trader</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                    <p className="text-sm text-gray-300">Avg Per Trader</p>
+                    <p className="text-2xl font-bold text-white mt-1">
                       ${reportData.overview.avgCommissionPerTrader.toFixed(2)}
                     </p>
                   </div>
@@ -199,12 +199,12 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
 
           {/* Performance Metrics */}
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Performance Metrics</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Performance Metrics</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="card">
-                <p className="text-sm text-gray-600 mb-2">Pass Rate</p>
-                <p className="text-3xl font-bold text-gray-900">{reportData.performance.passRate}%</p>
-                <div className="mt-3 w-full bg-gray-200 rounded-full h-2">
+                <p className="text-sm text-gray-300 mb-2">Pass Rate</p>
+                <p className="text-3xl font-bold text-white">{reportData.performance.passRate}%</p>
+                <div className="mt-3 w-full bg-slate-700 rounded-full h-2">
                   <div 
                     className="bg-green-600 h-2 rounded-full" 
                     style={{ width: `${reportData.performance.passRate}%` }}
@@ -213,9 +213,9 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
               </div>
 
               <div className="card">
-                <p className="text-sm text-gray-600 mb-2">Avg Win Rate</p>
-                <p className="text-3xl font-bold text-gray-900">{reportData.performance.avgWinRate}%</p>
-                <div className="mt-3 w-full bg-gray-200 rounded-full h-2">
+                <p className="text-sm text-gray-300 mb-2">Avg Win Rate</p>
+                <p className="text-3xl font-bold text-white">{reportData.performance.avgWinRate}%</p>
+                <div className="mt-3 w-full bg-slate-700 rounded-full h-2">
                   <div 
                     className="bg-blue-600 h-2 rounded-full" 
                     style={{ width: `${reportData.performance.avgWinRate}%` }}
@@ -224,17 +224,17 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
               </div>
 
               <div className="card">
-                <p className="text-sm text-gray-600 mb-2">Avg Profit/Trader</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-sm text-gray-300 mb-2">Avg Profit/Trader</p>
+                <p className="text-3xl font-bold text-white">
                   ${reportData.performance.avgProfitPerTrader.toLocaleString()}
                 </p>
                 <p className="text-sm text-green-600 mt-2">+12.5% vs last period</p>
               </div>
 
               <div className="card">
-                <p className="text-sm text-gray-600 mb-2">Funded Accounts</p>
-                <p className="text-3xl font-bold text-gray-900">{reportData.performance.fundedAccounts}</p>
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-gray-300 mb-2">Funded Accounts</p>
+                <p className="text-3xl font-bold text-white">{reportData.performance.fundedAccounts}</p>
+                <p className="text-sm text-gray-300 mt-2">
                   {((reportData.performance.fundedAccounts / reportData.overview.activeTraders) * 100).toFixed(1)}% of active
                 </p>
               </div>
@@ -243,7 +243,7 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
 
           {/* Monthly Trend Chart */}
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Monthly Trends</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Monthly Trends</h2>
             <div className="card">
               <div className="overflow-x-auto">
                 <div className="min-w-full">
@@ -252,15 +252,15 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
                     {reportData.monthlyData.map((data) => (
                       <div key={data.month}>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700">{data.month}</span>
-                          <div className="flex gap-4 text-sm text-gray-600">
+                          <span className="text-sm font-medium text-gray-200">{data.month}</span>
+                          <div className="flex gap-4 text-sm text-gray-300">
                             <span>Traders: {data.traders}</span>
                             <span>Commissions: ${data.commissions}</span>
                             <span>Funded: {data.funded}</span>
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
+                          <div className="flex-1 bg-slate-700 rounded-full h-6 overflow-hidden">
                             <div 
                               className="bg-blue-600 h-full flex items-center justify-end pr-2"
                               style={{ width: `${(data.traders / 20) * 100}%` }}
@@ -268,7 +268,7 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
                               <span className="text-xs text-white font-medium">{data.traders}</span>
                             </div>
                           </div>
-                          <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
+                          <div className="flex-1 bg-slate-700 rounded-full h-6 overflow-hidden">
                             <div 
                               className="bg-green-600 h-full flex items-center justify-end pr-2"
                               style={{ width: `${(data.commissions / 5000) * 100}%` }}
@@ -276,7 +276,7 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
                               <span className="text-xs text-white font-medium">${data.commissions}</span>
                             </div>
                           </div>
-                          <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
+                          <div className="flex-1 bg-slate-700 rounded-full h-6 overflow-hidden">
                             <div 
                               className="bg-yellow-600 h-full flex items-center justify-end pr-2"
                               style={{ width: `${(data.funded / 10) * 100}%` }}
@@ -289,18 +289,18 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
                     ))}
                   </div>
 
-                  <div className="flex justify-center gap-6 mt-6 pt-4 border-t border-gray-200">
+                  <div className="flex justify-center gap-6 mt-6 pt-4 border-t border-white/10">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-blue-600 rounded"></div>
-                      <span className="text-sm text-gray-600">Traders</span>
+                      <span className="text-sm text-gray-300">Traders</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-green-600 rounded"></div>
-                      <span className="text-sm text-gray-600">Commissions</span>
+                      <span className="text-sm text-gray-300">Commissions</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-yellow-600 rounded"></div>
-                      <span className="text-sm text-gray-600">Funded</span>
+                      <span className="text-sm text-gray-300">Funded</span>
                     </div>
                   </div>
                 </div>
@@ -310,31 +310,31 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
 
           {/* Top Traders */}
           <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Top Performing Traders</h2>
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <h2 className="text-xl font-bold text-white mb-4">Top Performing Traders</h2>
+            <div className="bg-slate-800/50 rounded-lg shadow-sm overflow-hidden">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-slate-900 border-b border-white/10">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Rank
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Trader
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Profit
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Win Rate
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Total Trades
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-slate-800/50 divide-y divide-gray-200">
                   {reportData.topTraders.map((trader, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
+                    <tr key={index} className="hover:bg-slate-900">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
@@ -345,7 +345,7 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{trader.name}</div>
+                        <div className="text-sm font-medium text-white">{trader.name}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-bold text-green-600">
@@ -353,10 +353,10 @@ ${reportData.topTraders.map((t, i) => `${i + 1}. ${t.name} - Profit: $${t.profit
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{trader.winRate}%</div>
+                        <div className="text-sm text-white">{trader.winRate}%</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{trader.trades}</div>
+                        <div className="text-sm text-white">{trader.trades}</div>
                       </td>
                     </tr>
                   ))}

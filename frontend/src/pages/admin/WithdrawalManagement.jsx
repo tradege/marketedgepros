@@ -88,7 +88,7 @@ export default function WithdrawalManagement() {
     };
 
     return (
-      <span className={`px-3 py-1 rounded-full text-xs font-medium ${styles[status] || 'bg-gray-100 text-gray-800'}`}>
+      <span className={`px-3 py-1 rounded-full text-xs font-medium ${styles[status] || 'bg-slate-700/50 text-gray-100'}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
@@ -106,7 +106,7 @@ export default function WithdrawalManagement() {
       render: (row) => (
         <div>
           <div className="font-medium">{row.user?.name || 'N/A'}</div>
-          <div className="text-sm text-gray-500">{row.user?.email || 'N/A'}</div>
+          <div className="text-sm text-gray-400">{row.user?.email || 'N/A'}</div>
         </div>
       ),
     },
@@ -117,7 +117,7 @@ export default function WithdrawalManagement() {
         <div>
           <div className="font-semibold">${parseFloat(row.amount).toFixed(2)}</div>
           {row.fee > 0 && (
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-400">
               Fee: ${parseFloat(row.fee).toFixed(2)}
             </div>
           )}
@@ -197,8 +197,8 @@ export default function WithdrawalManagement() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Withdrawal Management</h1>
-          <p className="mt-2 text-gray-600">Manage and process withdrawal requests</p>
+          <h1 className="text-3xl font-bold text-white">Withdrawal Management</h1>
+          <p className="mt-2 text-gray-300">Manage and process withdrawal requests</p>
         </div>
 
         {/* Stats */}
@@ -213,10 +213,10 @@ export default function WithdrawalManagement() {
             };
 
             return (
-              <div key={index} className="bg-white rounded-lg shadow p-6">
+              <div key={index} className="bg-slate-800/50 rounded-lg shadow p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">{stat.label}</p>
+                    <p className="text-sm text-gray-300">{stat.label}</p>
                     <p className="text-2xl font-bold mt-1">{stat.value}</p>
                   </div>
                   <div className={`p-3 rounded-lg ${colorClasses[stat.color]}`}>
@@ -229,7 +229,7 @@ export default function WithdrawalManagement() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-slate-800/50 rounded-lg shadow p-4">
           <div className="flex gap-2">
             {['all', 'pending', 'approved', 'processing', 'completed', 'rejected'].map((status) => (
               <button
@@ -238,7 +238,7 @@ export default function WithdrawalManagement() {
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   selectedStatus === status
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-slate-700/50 text-gray-200 hover:bg-slate-700'
                 }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -248,7 +248,7 @@ export default function WithdrawalManagement() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-slate-800/50 rounded-lg shadow">
           <DataTable
             columns={columns}
             rows={withdrawals}
@@ -258,13 +258,13 @@ export default function WithdrawalManagement() {
         {/* Details Modal */}
         {showDetailsModal && selectedWithdrawal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-slate-800/50 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
                   <h2 className="text-2xl font-bold">Withdrawal Details</h2>
                   <button
                     onClick={() => setShowDetailsModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-300"
                   >
                     ✕
                   </button>
@@ -276,11 +276,11 @@ export default function WithdrawalManagement() {
                     <h3 className="font-semibold mb-2">User Information</h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="text-gray-600">Name:</span>
+                        <span className="text-gray-300">Name:</span>
                         <span className="ml-2 font-medium">{selectedWithdrawal.user?.name || 'N/A'}</span>
                       </div>
                       <div>
-                        <span className="text-gray-600">Email:</span>
+                        <span className="text-gray-300">Email:</span>
                         <span className="ml-2 font-medium">{selectedWithdrawal.user?.email || 'N/A'}</span>
                       </div>
                     </div>
@@ -291,15 +291,15 @@ export default function WithdrawalManagement() {
                     <h3 className="font-semibold mb-2">Amount Details</h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="text-gray-600">Gross Amount:</span>
+                        <span className="text-gray-300">Gross Amount:</span>
                         <span className="ml-2 font-medium">${parseFloat(selectedWithdrawal.amount).toFixed(2)}</span>
                       </div>
                       <div>
-                        <span className="text-gray-600">Fee:</span>
+                        <span className="text-gray-300">Fee:</span>
                         <span className="ml-2 font-medium">${parseFloat(selectedWithdrawal.fee || 0).toFixed(2)}</span>
                       </div>
                       <div>
-                        <span className="text-gray-600">Net Amount:</span>
+                        <span className="text-gray-300">Net Amount:</span>
                         <span className="ml-2 font-medium text-green-600">
                           ${parseFloat(selectedWithdrawal.net_amount || selectedWithdrawal.amount).toFixed(2)}
                         </span>
@@ -312,15 +312,15 @@ export default function WithdrawalManagement() {
                     <h3 className="font-semibold mb-2">Payment Information</h3>
                     <div className="text-sm space-y-2">
                       <div>
-                        <span className="text-gray-600">Method:</span>
+                        <span className="text-gray-300">Method:</span>
                         <span className="ml-2 font-medium capitalize">
                           {selectedWithdrawal.payment_method?.replace('_', ' ')}
                         </span>
                       </div>
                       {selectedWithdrawal.payment_details && (
                         <div>
-                          <span className="text-gray-600">Details:</span>
-                          <pre className="ml-2 mt-1 p-2 bg-gray-50 rounded text-xs">
+                          <span className="text-gray-300">Details:</span>
+                          <pre className="ml-2 mt-1 p-2 bg-slate-900 rounded text-xs">
                             {JSON.stringify(selectedWithdrawal.payment_details, null, 2)}
                           </pre>
                         </div>
@@ -333,7 +333,7 @@ export default function WithdrawalManagement() {
                     <h3 className="font-semibold mb-2">Status</h3>
                     <div className="flex items-center gap-2">
                       {getStatusBadge(selectedWithdrawal.status)}
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-300">
                         Requested: {new Date(selectedWithdrawal.created_at).toLocaleString()}
                       </span>
                     </div>

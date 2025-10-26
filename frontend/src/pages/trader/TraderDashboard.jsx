@@ -133,7 +133,7 @@ export default function TraderDashboard() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="text-gray-600 mt-4">Loading dashboard...</p>
+            <p className="text-gray-300 mt-4">Loading dashboard...</p>
           </div>
         </div>
       </TraderLayout>
@@ -142,14 +142,14 @@ export default function TraderDashboard() {
 
   return (
     <TraderLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-slate-800/50 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Trader Dashboard</h1>
-                <p className="text-gray-600 mt-2">Monitor your trading performance</p>
+                <h1 className="text-3xl font-bold text-white">Trader Dashboard</h1>
+                <p className="text-gray-300 mt-2">Monitor your trading performance</p>
               </div>
               <div className="flex items-center gap-2">
                 <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg font-medium">
@@ -166,8 +166,8 @@ export default function TraderDashboard() {
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Balance</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-sm text-gray-300">Balance</p>
+                  <p className="text-2xl font-bold text-white mt-1">
                     ${accountData.balance.toLocaleString()}
                   </p>
                 </div>
@@ -180,8 +180,8 @@ export default function TraderDashboard() {
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Equity</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-sm text-gray-300">Equity</p>
+                  <p className="text-2xl font-bold text-white mt-1">
                     ${accountData.equity.toLocaleString()}
                   </p>
                 </div>
@@ -194,7 +194,7 @@ export default function TraderDashboard() {
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total P&L</p>
+                  <p className="text-sm text-gray-300">Total P&L</p>
                   <p className={`text-2xl font-bold mt-1 ${accountData.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {accountData.profitLoss >= 0 ? '+' : ''}${accountData.profitLoss.toLocaleString()}
                   </p>
@@ -217,11 +217,11 @@ export default function TraderDashboard() {
             <div className="card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Drawdown</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                  <p className="text-sm text-gray-300">Drawdown</p>
+                  <p className="text-2xl font-bold text-white mt-1">
                     {accountData.drawdown}%
                   </p>
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs text-gray-300 mt-1">
                     Max: {accountData.maxDrawdown}%
                   </p>
                 </div>
@@ -235,17 +235,17 @@ export default function TraderDashboard() {
           {/* Challenge Progress */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <div className="card">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Profit Target Progress</h3>
+              <h3 className="text-lg font-bold text-white mb-4">Profit Target Progress</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Target</span>
-                  <span className="text-sm font-medium text-gray-900">${accountData.profitTarget.toLocaleString()}</span>
+                  <span className="text-sm text-gray-300">Target</span>
+                  <span className="text-sm font-medium text-white">${accountData.profitTarget.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Achieved</span>
+                  <span className="text-sm text-gray-300">Achieved</span>
                   <span className="text-sm font-bold text-green-600">${accountData.profitAchieved.toLocaleString()}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-4">
+                <div className="w-full bg-slate-700 rounded-full h-4">
                   <div 
                     className="bg-green-600 h-4 rounded-full flex items-center justify-end pr-2"
                     style={{ width: `${Math.min(profitTargetPercent, 100)}%` }}
@@ -253,24 +253,24 @@ export default function TraderDashboard() {
                     <span className="text-xs text-white font-medium">{profitTargetPercent.toFixed(1)}%</span>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-300">
                   ${(accountData.profitTarget - accountData.profitAchieved).toLocaleString()} remaining
                 </p>
               </div>
             </div>
 
             <div className="card">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Trading Days Progress</h3>
+              <h3 className="text-lg font-bold text-white mb-4">Trading Days Progress</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Required</span>
-                  <span className="text-sm font-medium text-gray-900">{accountData.minDaysRequired} days</span>
+                  <span className="text-sm text-gray-300">Required</span>
+                  <span className="text-sm font-medium text-white">{accountData.minDaysRequired} days</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Completed</span>
+                  <span className="text-sm text-gray-300">Completed</span>
                   <span className="text-sm font-bold text-blue-600">{accountData.daysTraded} days</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-4">
+                <div className="w-full bg-slate-700 rounded-full h-4">
                   <div 
                     className="bg-blue-600 h-4 rounded-full flex items-center justify-end pr-2"
                     style={{ width: `${Math.min(daysProgress, 100)}%` }}
@@ -278,7 +278,7 @@ export default function TraderDashboard() {
                     <span className="text-xs text-white font-medium">{daysProgress.toFixed(1)}%</span>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-300">
                   {accountData.minDaysRequired - accountData.daysTraded} days remaining
                 </p>
               </div>
@@ -287,35 +287,35 @@ export default function TraderDashboard() {
 
           {/* Trading Statistics */}
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Trading Statistics</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Trading Statistics</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
               <div className="card text-center">
-                <p className="text-sm text-gray-600 mb-1">Total Trades</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalTrades}</p>
+                <p className="text-sm text-gray-300 mb-1">Total Trades</p>
+                <p className="text-2xl font-bold text-white">{stats.totalTrades}</p>
               </div>
               <div className="card text-center">
-                <p className="text-sm text-gray-600 mb-1">Winning</p>
+                <p className="text-sm text-gray-300 mb-1">Winning</p>
                 <p className="text-2xl font-bold text-green-600">{stats.winningTrades}</p>
               </div>
               <div className="card text-center">
-                <p className="text-sm text-gray-600 mb-1">Losing</p>
+                <p className="text-sm text-gray-300 mb-1">Losing</p>
                 <p className="text-2xl font-bold text-red-600">{stats.losingTrades}</p>
               </div>
               <div className="card text-center">
-                <p className="text-sm text-gray-600 mb-1">Win Rate</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.winRate}%</p>
+                <p className="text-sm text-gray-300 mb-1">Win Rate</p>
+                <p className="text-2xl font-bold text-white">{stats.winRate}%</p>
               </div>
               <div className="card text-center">
-                <p className="text-sm text-gray-600 mb-1">Avg Win</p>
+                <p className="text-sm text-gray-300 mb-1">Avg Win</p>
                 <p className="text-2xl font-bold text-green-600">${stats.avgWin}</p>
               </div>
               <div className="card text-center">
-                <p className="text-sm text-gray-600 mb-1">Avg Loss</p>
+                <p className="text-sm text-gray-300 mb-1">Avg Loss</p>
                 <p className="text-2xl font-bold text-red-600">${stats.avgLoss}</p>
               </div>
               <div className="card text-center">
-                <p className="text-sm text-gray-600 mb-1">Profit Factor</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.profitFactor}</p>
+                <p className="text-sm text-gray-300 mb-1">Profit Factor</p>
+                <p className="text-2xl font-bold text-white">{stats.profitFactor}</p>
               </div>
             </div>
           </div>
@@ -323,7 +323,7 @@ export default function TraderDashboard() {
           {/* Recent Trades */}
           <div className="card mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Recent Trades</h2>
+              <h2 className="text-xl font-bold text-white">Recent Trades</h2>
               <Link to="/trader/history" className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-1">
                 View All
                 <ArrowUpRight className="w-4 h-4" />
@@ -332,21 +332,21 @@ export default function TraderDashboard() {
 
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-slate-900 border-b border-white/10">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Symbol</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lots</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Open Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Close Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pips</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profit</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Symbol</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Type</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Lots</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Open Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Close Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Pips</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Profit</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {recentTrades.map((trade) => (
-                    <tr key={trade.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{trade.symbol}</td>
+                    <tr key={trade.id} className="hover:bg-slate-900">
+                      <td className="px-4 py-3 text-sm font-medium text-white">{trade.symbol}</td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 rounded text-xs font-medium ${
                           trade.type === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -354,9 +354,9 @@ export default function TraderDashboard() {
                           {trade.type.toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{trade.lots}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{trade.openTime}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{trade.closeTime}</td>
+                      <td className="px-4 py-3 text-sm text-white">{trade.lots}</td>
+                      <td className="px-4 py-3 text-sm text-gray-300">{trade.openTime}</td>
+                      <td className="px-4 py-3 text-sm text-gray-300">{trade.closeTime}</td>
                       <td className={`px-4 py-3 text-sm font-medium ${trade.pips >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {trade.pips >= 0 ? '+' : ''}{trade.pips}
                       </td>
@@ -376,8 +376,8 @@ export default function TraderDashboard() {
               <div className="flex items-center gap-3">
                 <TrendingUp className="w-8 h-8 text-primary-600" />
                 <div>
-                  <p className="font-medium text-gray-900">Trading History</p>
-                  <p className="text-sm text-gray-600">View all your trades</p>
+                  <p className="font-medium text-white">Trading History</p>
+                  <p className="text-sm text-gray-300">View all your trades</p>
                 </div>
               </div>
             </Link>
@@ -386,8 +386,8 @@ export default function TraderDashboard() {
               <div className="flex items-center gap-3">
                 <DollarSign className="w-8 h-8 text-green-600" />
                 <div>
-                  <p className="font-medium text-gray-900">Withdrawals</p>
-                  <p className="text-sm text-gray-600">Request payout</p>
+                  <p className="font-medium text-white">Withdrawals</p>
+                  <p className="text-sm text-gray-300">Request payout</p>
                 </div>
               </div>
             </Link>
@@ -396,8 +396,8 @@ export default function TraderDashboard() {
               <div className="flex items-center gap-3">
                 <Award className="w-8 h-8 text-yellow-600" />
                 <div>
-                  <p className="font-medium text-gray-900">Documents</p>
-                  <p className="text-sm text-gray-600">Upload KYC documents</p>
+                  <p className="font-medium text-white">Documents</p>
+                  <p className="text-sm text-gray-300">Upload KYC documents</p>
                 </div>
               </div>
             </Link>

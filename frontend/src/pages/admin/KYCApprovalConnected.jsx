@@ -120,10 +120,10 @@ function KYCApproval() {
     <AdminLayout>
       <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-white dark:text-white">
           KYC Approval
         </h1>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+        <p className="mt-2 text-sm text-gray-300 dark:text-gray-400">
           Review and approve user identity verification
         </p>
       </div>
@@ -190,15 +190,15 @@ function KYCApproval() {
       </div>
 
       {/* Pending KYC Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+      <div className="bg-slate-800/50 dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/10 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-white dark:text-white">
             Pending KYC Submissions
           </h2>
         </div>
 
         {pendingKYC.length === 0 ? (
-          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+          <div className="p-8 text-center text-gray-400 dark:text-gray-400">
             <FileCheck className="w-16 h-16 mx-auto mb-4 opacity-50" />
             <p className="text-lg font-medium">No pending KYC submissions</p>
             <p className="text-sm mt-2">All KYC requests have been processed</p>
@@ -206,40 +206,40 @@ function KYCApproval() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+              <thead className="bg-slate-900 dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                     Submitted Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                     Documents
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-slate-800/50 dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {pendingKYC.map((kyc) => (
-                  <tr key={kyc.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <tr key={kyc.id} className="hover:bg-slate-900 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                      <div className="text-sm font-medium text-white dark:text-white">
                         {kyc.first_name} {kyc.last_name}
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                      <div className="text-sm text-gray-400 dark:text-gray-400">
                         ID: #{kyc.id}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 dark:text-gray-400">
                       {kyc.email}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 dark:text-gray-400">
                       {kyc.kyc_submitted_at ? new Date(kyc.kyc_submitted_at).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -257,7 +257,7 @@ function KYCApproval() {
                           <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">Bank</span>
                         )}
                         {!kyc.kyc_id_url && !kyc.kyc_address_url && !kyc.kyc_selfie_url && !kyc.kyc_bank_url && (
-                          <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">No documents</span>
+                          <span className="px-2 py-1 text-xs bg-slate-700/50 text-gray-100 rounded">No documents</span>
                         )}
                       </div>
                     </td>

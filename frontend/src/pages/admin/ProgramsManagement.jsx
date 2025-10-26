@@ -118,8 +118,8 @@ export default function ProgramsManagement() {
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Programs Management</h1>
-          <p className="mt-2 text-gray-600">Create and manage trading programs</p>
+          <h1 className="text-3xl font-bold text-white">Programs Management</h1>
+          <p className="mt-2 text-gray-300">Create and manage trading programs</p>
         </div>
         <button
           onClick={() => handleOpenDialog()}
@@ -139,15 +139,15 @@ export default function ProgramsManagement() {
           return (
             <div
               key={program.id}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col"
+              className="bg-slate-800/50 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col"
             >
               {/* Card Header */}
               <div className={`${config.bgColor} p-6 rounded-t-lg flex items-center gap-4`}>
-                <div className="w-14 h-14 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className="w-14 h-14 bg-slate-800/50/20 rounded-lg flex items-center justify-center">
                   <Icon className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex-1">
-                  <span className="inline-block px-3 py-1 bg-white/30 text-white text-xs font-semibold rounded-full mb-2">
+                  <span className="inline-block px-3 py-1 bg-slate-800/50/30 text-white text-xs font-semibold rounded-full mb-2">
                     {config.label}
                   </span>
                   <h3 className="text-xl font-bold text-white">{program.name}</h3>
@@ -158,41 +158,41 @@ export default function ProgramsManagement() {
               <div className="p-6 flex-1">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500">Account Size</p>
-                    <p className="text-xl font-semibold text-gray-900">
+                    <p className="text-sm text-gray-400">Account Size</p>
+                    <p className="text-xl font-semibold text-white">
                       ${(program.accountSize / 1000).toFixed(0)}K
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Profit Split</p>
+                    <p className="text-sm text-gray-400">Profit Split</p>
                     <p className="text-xl font-semibold text-green-600">
                       {program.profitSplit}%
                     </p>
                   </div>
                   {program.phase1Target && (
                     <div>
-                      <p className="text-sm text-gray-500">Phase 1 Target</p>
-                      <p className="text-lg font-semibold text-gray-900">
+                      <p className="text-sm text-gray-400">Phase 1 Target</p>
+                      <p className="text-lg font-semibold text-white">
                         {program.phase1Target}%
                       </p>
                     </div>
                   )}
                   {program.phase2Target && (
                     <div>
-                      <p className="text-sm text-gray-500">Phase 2 Target</p>
-                      <p className="text-lg font-semibold text-gray-900">
+                      <p className="text-sm text-gray-400">Phase 2 Target</p>
+                      <p className="text-lg font-semibold text-white">
                         {program.phase2Target}%
                       </p>
                     </div>
                   )}
                   <div>
-                    <p className="text-sm text-gray-500">Max Daily Loss</p>
+                    <p className="text-sm text-gray-400">Max Daily Loss</p>
                     <p className="text-lg font-semibold text-red-600">
                       {program.maxDailyLoss}%
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Max Total Loss</p>
+                    <p className="text-sm text-gray-400">Max Total Loss</p>
                     <p className="text-lg font-semibold text-red-600">
                       {program.maxTotalLoss}%
                     </p>
@@ -200,16 +200,16 @@ export default function ProgramsManagement() {
                 </div>
 
                 {/* Price and Enrolled Box */}
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg flex justify-between items-center">
+                <div className="mt-6 p-4 bg-slate-900 rounded-lg flex justify-between items-center">
                   <div>
-                    <p className="text-sm text-gray-500">Price</p>
+                    <p className="text-sm text-gray-400">Price</p>
                     <p className={`text-2xl font-bold ${config.color}`}>
                       ${program.price}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-500">Enrolled</p>
-                    <p className="text-xl font-semibold text-gray-900">
+                    <p className="text-sm text-gray-400">Enrolled</p>
+                    <p className="text-xl font-semibold text-white">
                       {program.enrolledTraders}
                     </p>
                   </div>
@@ -218,7 +218,7 @@ export default function ProgramsManagement() {
 
               {/* Card Actions */}
               <div className="px-6 pb-6 flex gap-2">
-                <button className="flex-1 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                <button className="flex-1 px-4 py-2 text-gray-200 hover:bg-slate-700/50 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
                   <Eye className="w-4 h-4" />
                   View
                 </button>
@@ -245,15 +245,15 @@ export default function ProgramsManagement() {
       {/* Add/Edit Program Dialog */}
       {openDialog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-slate-800/50 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Dialog Header */}
             <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-white">
                 {selectedProgram ? 'Edit Program' : 'Add New Program'}
               </h2>
               <button
                 onClick={handleCloseDialog}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-300 transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -262,26 +262,26 @@ export default function ProgramsManagement() {
             {/* Dialog Content */}
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-200 mb-2">
                   Program Name
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="e.g., Two Phase $100K"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-200 mb-2">
                   Type
                 </label>
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="two_phase">Two Phase</option>
                   <option value="one_phase">One Phase</option>
@@ -291,22 +291,22 @@ export default function ProgramsManagement() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
                     Account Size
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-2.5 text-gray-500">$</span>
+                    <span className="absolute left-3 top-2.5 text-gray-400">$</span>
                     <input
                       type="number"
                       value={formData.accountSize}
                       onChange={(e) => setFormData({ ...formData, accountSize: parseInt(e.target.value) })}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pl-8 pr-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
                     Profit Split
                   </label>
                   <div className="relative">
@@ -314,24 +314,24 @@ export default function ProgramsManagement() {
                       type="number"
                       value={formData.profitSplit}
                       onChange={(e) => setFormData({ ...formData, profitSplit: parseInt(e.target.value) })}
-                      className="w-full pr-8 pl-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pr-8 pl-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                    <span className="absolute right-3 top-2.5 text-gray-500">%</span>
+                    <span className="absolute right-3 top-2.5 text-gray-400">%</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-200 mb-2">
                   Price
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-gray-500">$</span>
+                  <span className="absolute left-3 top-2.5 text-gray-400">$</span>
                   <input
                     type="number"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
-                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-8 pr-4 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -341,7 +341,7 @@ export default function ProgramsManagement() {
             <div className="flex justify-end gap-3 p-6 border-t">
               <button
                 onClick={handleCloseDialog}
-                className="px-6 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                className="px-6 py-2 text-gray-200 hover:bg-slate-700/50 rounded-lg transition-colors duration-200"
               >
                 Cancel
               </button>
