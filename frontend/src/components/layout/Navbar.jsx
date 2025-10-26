@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut, User, LayoutDashboard } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
+import { ADMIN_ROLES } from '../../constants/roles';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +12,15 @@ export default function Navbar() {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  // Get dashboard path based on user role
+  const getDashboardPath = () => {
+    if (!user) return '/dashboard';
+    if (ADMIN_ROLES.includes(user.role)) return '/admin';
+    if (user.role === 'agent') return '/agent';
+    if (user.role === 'trader') return '/trader';
+    return '/dashboard';
   };
 
   const navLinks = [
@@ -52,7 +62,7 @@ export default function Navbar() {
             {isAuthenticated ? (
               <>
                 <Link
-                  to="/dashboard"
+                  to={getDashboardPath()}
                   className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white transition-colors"
                 >
                   <LayoutDashboard className="w-4 h-4" />
@@ -120,7 +130,7 @@ export default function Navbar() {
               {isAuthenticated ? (
                 <>
                   <Link
-                    to="/dashboard"
+                    to={getDashboardPath()}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                   >
