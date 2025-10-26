@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import AdminLayout from '../../components/admin/AdminLayout';
 import { Plus, Edit2, Trash2, Eye, TrendingUp, Zap, Trophy, X } from 'lucide-react';
 
 const programs = [
@@ -113,7 +112,7 @@ export default function ProgramsManagement() {
   };
 
   return (
-    <AdminLayout>
+    
       <div>
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
@@ -356,7 +355,7 @@ export default function ProgramsManagement() {
         </div>
       )}
       </div>
-    </AdminLayout>
+    
   );
 }
 

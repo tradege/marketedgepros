@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import AdminLayout from '../../components/admin/AdminLayout';
 import {
   Container,
   Grid,
@@ -107,7 +106,7 @@ const AnalyticsDashboard = () => {
   }));
 
   return (
-    <AdminLayout>
+    
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       {/* Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -306,7 +305,7 @@ const AnalyticsDashboard = () => {
         </Grid>
       </Grid>
       </Container>
-    </AdminLayout>
+    
   );
 };
 

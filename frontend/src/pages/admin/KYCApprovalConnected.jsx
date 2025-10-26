@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import AdminLayout from '../../components/admin/AdminLayout';
 import { FileCheck, CheckCircle, XCircle, Clock } from 'lucide-react';
 import axios from 'axios';
 
@@ -117,7 +116,7 @@ function KYCApproval() {
   }
 
   return (
-    <AdminLayout>
+    
       <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-white dark:text-white">
@@ -288,7 +287,7 @@ function KYCApproval() {
         )}
       </div>
       </div>
-    </AdminLayout>
+    
   );
 }
 
