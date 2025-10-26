@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy import or_, desc
 from src.database import db
 from src.models.blog_post import BlogPost
-from src.auth.decorators import token_required, admin_required
+from src.utils.decorators import token_required, admin_required
 import logging
 
 logger = logging.getLogger(__name__)
