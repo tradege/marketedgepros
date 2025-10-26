@@ -76,7 +76,7 @@ export default function Documents() {
       const formData = new FormData();
       formData.append('file', file);
 
-      await api.post(\`/kyc/documents/\${type}/upload\`, formData, {
+      await api.post(`/kyc/documents/${type}/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
@@ -211,31 +211,31 @@ export default function Documents() {
                         </p>
                       )}
                     </div>
-                    <span className={\`px-2 py-1 text-xs font-semibold rounded \${getStatusColor(docInfo.status)}\`}>
+                    <span className={`px-2 py-1 text-xs font-semibold rounded \${getStatusColor(docInfo.status)}`}>
                       {docInfo.status}
                     </span>
                   </div>
 
                   {docInfo.notes && (
-                    <div className={\`p-3 rounded-lg mb-3 \${
+                    <div className={`p-3 rounded-lg mb-3 \${
                       docInfo.status === 'rejected'
                         ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
                         : 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-                    }\`}>
-                      <p className={\`text-sm \${
+                    }`}>
+                      <p className={`text-sm \${
                         docInfo.status === 'rejected'
                           ? 'text-red-800 dark:text-red-300'
                           : 'text-blue-800 dark:text-blue-300'
-                      }\`}>
+                      }`}>
                         <strong>Note:</strong> {docInfo.notes}
                       </p>
                     </div>
                   )}
 
                   {docInfo.status === 'rejected' && (
-                    <label className={\`flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:from-purple-700 hover:to-purple-900 transition-colors cursor-pointer \${
+                    <label className={`flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:from-purple-700 hover:to-purple-900 transition-colors cursor-pointer \${
                       uploadingType === docType.type ? 'opacity-50 cursor-not-allowed' : ''
-                    }\`}>
+                    }`}>
                       {uploadingType === docType.type ? (
                         <>
                           <Loader className="w-5 h-5 animate-spin" />
@@ -258,9 +258,9 @@ export default function Documents() {
                   )}
                 </div>
               ) : (
-                <label className={\`flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:from-purple-700 hover:to-purple-900 transition-colors cursor-pointer \${
+                <label className={`flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:from-purple-700 hover:to-purple-900 transition-colors cursor-pointer \${
                   uploadingType === docType.type ? 'opacity-50 cursor-not-allowed' : ''
-                }\`}>
+                }`}>
                   {uploadingType === docType.type ? (
                     <>
                       <Loader className="w-5 h-5 animate-spin" />
