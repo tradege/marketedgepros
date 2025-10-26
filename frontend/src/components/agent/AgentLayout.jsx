@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, DollarSign, BarChart3, 
-  Settings, LogOut, Menu, X 
+  User, LogOut, Menu, X 
 } from 'lucide-react';
 import { useState } from 'react';
 import useAuthStore from '../../store/authStore';
@@ -17,7 +17,7 @@ export default function AgentLayout({ children }) {
     { name: 'My Traders', href: '/agent/traders', icon: Users },
     { name: 'Commissions', href: '/agent/commissions', icon: DollarSign },
     { name: 'Reports', href: '/agent/reports', icon: BarChart3 },
-    { name: 'Profile', href: '/profile', icon: Settings },
+    { name: 'Profile', href: '/profile', icon: User },
   ];
 
   const handleLogout = () => {
@@ -26,7 +26,7 @@ export default function AgentLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-900">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
@@ -37,41 +37,44 @@ export default function AgentLayout({ children }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-slate-800/95 backdrop-blur-sm border-r border-white/10 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-            <Link to="/agent" className="text-xl font-bold text-primary-600">
-              MarketEdgePros
+          <div className="flex items-center justify-between h-16 px-6 border-b border-white/10">
+            <Link to="/agent" className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xl">M</span>
+              </div>
+              <span className="text-white font-bold text-lg">MarketEdgePros</span>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-gray-500 hover:text-gray-700"
+              className="lg:hidden text-gray-400 hover:text-white transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
           </div>
 
           {/* User Info */}
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-600 font-semibold">
-                  {user?.name?.charAt(0) || 'A'}
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">
+                  {user?.first_name?.charAt(0) || user?.name?.charAt(0) || 'A'}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  {user?.name || 'Agent'}
+                <p className="text-sm font-medium text-white truncate">
+                  {user?.first_name || user?.name || 'Agent'}
                 </p>
-                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                <p className="text-xs text-gray-400 truncate">{user?.email}</p>
               </div>
             </div>
-            <div className="mt-2">
-              <span className="inline-block px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded">
+            <div className="mt-3">
+              <span className="inline-block px-3 py-1 text-xs font-medium bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-purple-400 rounded-full border border-purple-500/30">
                 Agent
               </span>
             </div>
@@ -86,10 +89,10 @@ export default function AgentLayout({ children }) {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                     isActive
-                      ? 'bg-primary-50 text-primary-700 font-medium'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-white font-medium border border-purple-500/30 shadow-lg shadow-purple-500/10'
+                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -100,10 +103,10 @@ export default function AgentLayout({ children }) {
           </nav>
 
           {/* Logout */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-white/10">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 px-3 py-2 w-full text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+              className="flex items-center gap-3 px-3 py-2.5 w-full text-gray-300 hover:bg-red-500/10 hover:text-red-400 rounded-lg transition-all"
             >
               <LogOut className="w-5 h-5" />
               Logout
@@ -115,21 +118,24 @@ export default function AgentLayout({ children }) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Mobile header */}
-        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200">
+        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between h-16 px-4 bg-slate-800/95 backdrop-blur-sm border-b border-white/10">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-300 hover:text-white transition-colors"
           >
             <Menu className="w-6 h-6" />
           </button>
-          <Link to="/agent" className="text-xl font-bold text-primary-600">
-            MarketEdgePros
+          <Link to="/agent" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xl">M</span>
+            </div>
+            <span className="text-white font-bold text-lg">MarketEdgePros</span>
           </Link>
           <div className="w-6" /> {/* Spacer for centering */}
         </div>
 
         {/* Page content */}
-        <main>{children}</main>
+        <main className="min-h-screen bg-slate-900">{children}</main>
       </div>
     </div>
   );
