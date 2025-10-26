@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DollarSign, Users, TrendingUp, Gift, Copy, Check, ExternalLink, Calculator } from 'lucide-react';
 import SEO from '../components/SEO';
+import Layout from '../components/layout/Layout';
 
 export default function Affiliate() {
   const [copied, setCopied] = useState(false);
@@ -94,7 +95,7 @@ export default function Affiliate() {
   ];
 
   return (
-    <>
+    <Layout>
       <SEO 
         title="Affiliate Program - Earn 30% Commission"
         description="Join our affiliate program and earn 30% commission on every referral. Promote the best prop trading platform and get paid weekly."
@@ -307,7 +308,7 @@ export default function Affiliate() {
           </div>
         </div>
       </div>
-    </>
+    </Layout>
   );
 }
 

@@ -7,6 +7,7 @@ import {
   Check, X, TrendingUp, Shield, Zap, DollarSign, 
   ArrowLeft, CreditCard, Lock, AlertCircle
 } from 'lucide-react';
+import Layout from '../components/layout/Layout';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -188,7 +189,8 @@ export default function ProgramDetails() {
   const totalPrice = program.price + selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Layout>
+      <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -354,6 +356,7 @@ export default function ProgramDetails() {
         </div>
       </div>
     </div>
+    </Layout>
   );
 }
 
