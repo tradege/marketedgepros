@@ -142,7 +142,7 @@ export default function BlogPost() {
   if (!post) return null;
 
   return (
-    <>
+    <Layout>
       <SEO 
         title={post.meta_title || post.title}
         description={post.meta_description || post.excerpt}
@@ -361,7 +361,7 @@ export default function BlogPost() {
           </div>
         </div>
       </div>
-    </>
+    </Layout>
   );
 }
 

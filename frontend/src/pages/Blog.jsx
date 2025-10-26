@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, ArrowRight, Search, Tag } from 'lucide-react';
 import SEO from '../components/SEO';
+import Layout from '../components/layout/Layout';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api/v1';
@@ -140,7 +141,7 @@ export default function Blog() {
   const featuredPost = featuredPosts[0];
 
   return (
-    <>
+    <Layout>
       <SEO 
         title="Trading Blog - Tips, Strategies & Market Analysis"
         description="Expert trading insights, prop firm strategies, risk management tips, and market analysis from professional traders."
@@ -400,7 +401,7 @@ export default function Blog() {
           </div>
         </div>
       </div>
-    </>
+    </Layout>
   );
 }
 
