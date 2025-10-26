@@ -17,10 +17,10 @@ class StorageService:
     """Storage service for uploading files to DigitalOcean Spaces"""
     
     def __init__(self):
-        self.spaces_key = os.getenv('SPACES_ACCESS_KEY')
-        self.spaces_secret = os.getenv('SPACES_SECRET_KEY')
-        self.spaces_name = os.getenv('SPACES_NAME', 'marketedgepros-storage')
-        self.spaces_region = os.getenv('SPACES_REGION', 'ams3')
+        self.spaces_key = os.getenv('DO_SPACES_KEY') or os.getenv('SPACES_ACCESS_KEY')
+        self.spaces_secret = os.getenv('DO_SPACES_SECRET') or os.getenv('SPACES_SECRET_KEY')
+        self.spaces_name = os.getenv('DO_SPACES_BUCKET') or os.getenv('SPACES_NAME', 'marketedgepros-storage')
+        self.spaces_region = os.getenv('DO_SPACES_REGION') or os.getenv('SPACES_REGION', 'ams3')
         self.spaces_endpoint = f'https://{self.spaces_region}.digitaloceanspaces.com'
         self.cdn_endpoint = f'https://{self.spaces_name}.{self.spaces_region}.cdn.digitaloceanspaces.com'
         

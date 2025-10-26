@@ -13,7 +13,7 @@ export default function Footer() {
           <div>
             <Link to="/" className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">P</span>
+                <span className="text-white font-bold text-xl">M</span>
               </div>
               <span className="text-white font-bold text-xl">MarketEdgePros</span>
             </Link>
