@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import AdminLayout from '../../components/admin/AdminLayout';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -185,7 +184,7 @@ const PaymentApprovals = () => {
   }
 
   return (
-    <AdminLayout>
+    
       <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
         Payment Approvals
@@ -414,7 +413,7 @@ const PaymentApprovals = () => {
         </DialogActions>
       </Dialog>
       </Box>
-    </AdminLayout>
+    
   );
 };
 
