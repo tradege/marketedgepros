@@ -64,6 +64,7 @@ export default function Navbar() {
     { name: 'Programs', path: '/programs' },
     { name: 'Free Course', path: '/free-course', highlight: true },
     { name: 'Blog', path: '/blog' },
+    { name: 'Affiliate', path: '/affiliate' },
     { name: 'How It Works', path: '/how-it-works' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' }
