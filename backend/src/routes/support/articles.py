@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.database import db
 from src.models.support_article import SupportArticle
 from src.models.user import User
-from src.constants.roles import ADMIN_ROLES
+from src.constants.roles import Roles
 import logging
 from slugify import slugify
 
@@ -136,7 +136,7 @@ def create_article():
         user_id = get_jwt_identity()
         user = User.query.get(user_id)
         
-        if not user or user.role not in ADMIN_ROLES:
+        if not user or user.role not in Roles.ADMIN_ROLES:
             return jsonify({'error': 'Unauthorized'}), 403
         
         data = request.get_json()
@@ -191,7 +191,7 @@ def update_article(article_id):
         user_id = get_jwt_identity()
         user = User.query.get(user_id)
         
-        if not user or user.role not in ADMIN_ROLES:
+        if not user or user.role not in Roles.ADMIN_ROLES:
             return jsonify({'error': 'Unauthorized'}), 403
         
         article = SupportArticle.query.get(article_id)
@@ -262,7 +262,7 @@ def delete_article(article_id):
         user_id = get_jwt_identity()
         user = User.query.get(user_id)
         
-        if not user or user.role not in ADMIN_ROLES:
+        if not user or user.role not in Roles.ADMIN_ROLES:
             return jsonify({'error': 'Unauthorized'}), 403
         
         article = SupportArticle.query.get(article_id)
