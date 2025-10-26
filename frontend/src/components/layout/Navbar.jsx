@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut, User, LayoutDashboard } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
@@ -8,6 +8,11 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuthStore();
   const navigate = useNavigate();
+  
+  // Support dropdown state and refs
+  const [supportOpen, setSupportOpen] = useState(false);
+  const supportTimeoutRef = useRef(null);
+  const supportRef = useRef(null);
 
   const handleLogout = () => {
     logout();
@@ -23,7 +28,36 @@ export default function Navbar() {
     return '/dashboard';
   };
 
-  const [supportOpen, setSupportOpen] = useState(false);
+  // Handle support dropdown with delay
+  const handleSupportEnter = () => {
+    if (supportTimeoutRef.current) {
+      clearTimeout(supportTimeoutRef.current);
+    }
+    setSupportOpen(true);
+  };
+
+  const handleSupportLeave = () => {
+    supportTimeoutRef.current = setTimeout(() => {
+      setSupportOpen(false);
+    }, 300); // 300ms delay before closing
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (supportRef.current && !supportRef.current.contains(event.target)) {
+        setSupportOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      if (supportTimeoutRef.current) {
+        clearTimeout(supportTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -55,40 +89,52 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-1">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={link.highlight ? "text-green-400 hover:text-green-300 transition-colors font-semibold" : "text-gray-300 hover:text-white transition-colors"}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  link.highlight
+                    ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border border-blue-500/30'
+                    : 'text-gray-300 hover:text-white hover:bg-white/5'
+                }`}
               >
                 {link.name}
               </Link>
             ))}
             
             {/* Support Dropdown */}
-            <div className="relative"
-              onMouseEnter={() => setSupportOpen(true)}
-              onMouseLeave={() => setSupportOpen(false)}
+            <div 
+              ref={supportRef}
+              className="relative"
+              onMouseEnter={handleSupportEnter}
+              onMouseLeave={handleSupportLeave}
             >
-              <button className="text-gray-300 hover:text-white transition-colors flex items-center gap-1">
+              <button className="px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1">
                 Support
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg 
+                  className={`w-4 h-4 transition-transform duration-200 ${supportOpen ? 'rotate-180' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
               
               {supportOpen && (
                 <div 
-                  className="absolute top-full left-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-xl border border-white/10 py-2"
-                  onMouseEnter={() => setSupportOpen(true)}
-                  onMouseLeave={() => setSupportOpen(false)}
+                  className="absolute top-full left-0 mt-1 w-48 bg-slate-800 rounded-lg shadow-xl border border-white/10 py-2 animate-fadeIn"
+                  onMouseEnter={handleSupportEnter}
+                  onMouseLeave={handleSupportLeave}
                 >
                   {supportLinks.map((link) => (
                     <Link
                       key={link.path}
                       to={link.path}
-                      className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-700/50 transition-colors"
+                      className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-slate-700/50 transition-colors"
+                      onClick={() => setSupportOpen(false)}
                     >
                       {link.name}
                     </Link>
@@ -142,46 +188,68 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile menu button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-gray-300 hover:text-white"
+            className="md:hidden p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden bg-slate-800/95 backdrop-blur-sm border-t border-white/10">
-          <div className="px-4 py-4 space-y-3">
+        <div className="md:hidden bg-slate-900 border-t border-white/10">
+          <div className="px-4 py-3 space-y-2">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
+                className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors ${
+                  link.highlight
+                    ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border border-blue-500/30'
+                    : 'text-gray-300 hover:text-white hover:bg-white/5'
+                }`}
                 onClick={() => setIsOpen(false)}
-                className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
               >
                 {link.name}
               </Link>
             ))}
             
-            <div className="border-t border-white/10 pt-3 mt-3">
+            {/* Mobile Support Links */}
+            <div className="pt-2 border-t border-white/10">
+              <div className="text-gray-400 text-xs font-semibold uppercase tracking-wider px-3 py-2">
+                Support
+              </div>
+              {supportLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="block px-3 py-2 rounded-lg text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+
+            {/* Mobile Auth Buttons */}
+            <div className="pt-3 border-t border-white/10 space-y-2">
               {isAuthenticated ? (
                 <>
                   <Link
                     to={getDashboardPath()}
+                    className="flex items-center gap-2 px-3 py-2 text-gray-300 hover:text-white transition-colors"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                   >
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                   </Link>
                   <Link
                     to="/profile"
+                    className="flex items-center gap-2 px-3 py-2 text-gray-300 hover:text-white transition-colors"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                   >
                     <User className="w-4 h-4" />
                     Profile
@@ -191,7 +259,7 @@ export default function Navbar() {
                       handleLogout();
                       setIsOpen(false);
                     }}
-                    className="w-full flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors mt-2"
+                    className="flex items-center gap-2 w-full px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                     Logout
@@ -201,15 +269,15 @@ export default function Navbar() {
                 <>
                   <Link
                     to="/login"
+                    className="block px-3 py-2 text-gray-300 hover:text-white transition-colors"
                     onClick={() => setIsOpen(false)}
-                    className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                   >
                     Login
                   </Link>
                   <Link
                     to="/register"
+                    className="block px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors text-center"
                     onClick={() => setIsOpen(false)}
-                    className="block px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors mt-2 text-center"
                   >
                     Sign Up
                   </Link>
