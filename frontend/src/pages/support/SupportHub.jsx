@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Search, BookOpen, MessageCircle, FileText, Video, HelpCircle, ExternalLink, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import Layout from '../components/layout/Layout';
-import SEO from '../components/SEO';
+import Layout from '../../components/layout/Layout';
+import SEO from '../../components/SEO';
 
 export default function SupportHub() {
   const [searchTerm, setSearchTerm] = useState('');
