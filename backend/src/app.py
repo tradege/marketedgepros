@@ -118,6 +118,7 @@ def create_app(config_name=None):
     from src.routes.notifications import notifications_bp
     from src.routes.leads import leads_bp
     from src.routes.blog import blog_bp
+    from src.routes.support import support_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/v1/auth')
     app.register_blueprint(users_bp, url_prefix='/api/v1/users')
@@ -144,6 +145,7 @@ def create_app(config_name=None):
     app.register_blueprint(notifications_bp, url_prefix='/api/v1/notifications')
     app.register_blueprint(leads_bp, url_prefix='/api/v1/leads')
     app.register_blueprint(blog_bp, url_prefix='/api/v1/blog')
+    app.register_blueprint(support_bp, url_prefix='/api/v1/support')
     
     # Health check endpoint
     @app.route('/health', methods=['GET'])
