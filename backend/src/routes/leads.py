@@ -28,22 +28,28 @@ def course_signup():
         if not email or not name:
             return jsonify({'error': 'Email and name are required'}), 400
         
+        # Split name into first_name and last_name
+        name_parts = name.strip().split(' ', 1)
+        first_name = name_parts[0]
+        last_name = name_parts[1] if len(name_parts) > 1 else ''
+        
         # Check if lead already exists
         existing_lead = Lead.query.filter_by(email=email).first()
         
         if existing_lead:
             # Update existing lead
-            existing_lead.name = name
+            existing_lead.first_name = first_name
+            existing_lead.last_name = last_name
             existing_lead.source = source
             existing_lead.status = 'contacted'
         else:
             # Create new lead
             lead = Lead(
                 email=email,
-                name=name,
+                first_name=first_name,
+                last_name=last_name,
                 source=source,
-                status='new',
-                lead_type='course_signup'
+                status='new'
             )
             db.session.add(lead)
         
