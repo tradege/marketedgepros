@@ -1,27 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Tabs,
-  Tab,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Button,
-  IconButton,
-  Chip,
-  Pagination,
-  CircularProgress,
-} from '@mui/material';
-import {
-  Delete as DeleteIcon,
-  CheckCircle as CheckCircleIcon,
-  Settings as SettingsIcon,
-} from '@mui/icons-material';
+import { Trash2, CheckCircle, Settings, Loader } from 'lucide-react';
 import useNotificationStore from '../stores/notificationStore';
 import { formatDistanceToNow } from '../utils/dateUtils';
 
@@ -39,12 +18,12 @@ const getNotificationIcon = (type) => {
 
 const getPriorityColor = (priority) => {
   const colors = {
-    low: 'default',
-    normal: 'primary',
-    high: 'warning',
-    urgent: 'error',
+    low: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+    normal: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+    high: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+    urgent: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
   };
-  return colors[priority] || 'primary';
+  return colors[priority] || colors.normal;
 };
 
 export default function Notifications() {
@@ -73,11 +52,11 @@ export default function Notifications() {
     fetchNotifications(1, filters);
   }, [activeTab, fetchNotifications]);
   
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
   };
   
-  const handlePageChange = (event, page) => {
+  const handlePageChange = (page) => {
     const filters = {};
     if (activeTab === 'unread') {
       filters.is_read = 'false';
@@ -112,153 +91,158 @@ export default function Notifications() {
     await markAllAsRead();
   };
   
+  const tabs = [
+    { label: 'All', value: 'all' },
+    { label: 'Unread', value: 'unread' },
+    { label: 'Withdrawals', value: 'withdrawal' },
+    { label: 'Commissions', value: 'commission' },
+    { label: 'KYC', value: 'kyc' },
+    { label: 'Payments', value: 'payment' },
+    { label: 'Challenges', value: 'challenge' },
+    { label: 'System', value: 'system' },
+  ];
+  
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <div className="max-w-6xl mx-auto p-6">
       {/* Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" component="h1">
-          Notifications
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            variant="outlined"
-            startIcon={<CheckCircleIcon />}
+      <div className="mb-6 flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-white">Notifications</h1>
+        <div className="flex gap-3">
+          <button
             onClick={handleMarkAllAsRead}
             disabled={notifications.length === 0}
+            className="flex items-center gap-2 px-4 py-2 border border-white/20 text-white rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
+            <CheckCircle className="w-4 h-4" />
             Mark All Read
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<SettingsIcon />}
+          </button>
+          <button
             onClick={() => navigate('/settings/notifications')}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:from-purple-700 hover:to-purple-900 transition-colors"
           >
+            <Settings className="w-4 h-4" />
             Settings
-          </Button>
-        </Box>
-      </Box>
+          </button>
+        </div>
+      </div>
       
       {/* Tabs */}
-      <Paper sx={{ mb: 3 }}>
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab label="All" value="all" />
-          <Tab label="Unread" value="unread" />
-          <Tab label="Withdrawals" value="withdrawal" />
-          <Tab label="Commissions" value="commission" />
-          <Tab label="KYC" value="kyc" />
-          <Tab label="Payments" value="payment" />
-          <Tab label="Challenges" value="challenge" />
-          <Tab label="System" value="system" />
-        </Tabs>
-      </Paper>
+      <div className="mb-6 bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-lg p-1">
+        <div className="flex gap-1 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => handleTabChange(tab.value)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                activeTab === tab.value
+                  ? 'bg-gradient-to-r from-purple-600 to-purple-800 text-white'
+                  : 'text-gray-300 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
       
       {/* Notification List */}
-      <Paper>
+      <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-lg">
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-            <CircularProgress />
-          </Box>
+          <div className="flex justify-center p-12">
+            <Loader className="w-8 h-8 text-purple-500 animate-spin" />
+          </div>
         ) : notifications.length === 0 ? (
-          <Box sx={{ p: 4, textAlign: 'center' }}>
-            <Typography variant="body1" color="text.secondary">
-              No notifications found
-            </Typography>
-          </Box>
+          <div className="p-12 text-center">
+            <p className="text-gray-400">No notifications found</p>
+          </div>
         ) : (
           <>
-            <List>
-              {notifications.map((notification, index) => (
-                <div key={notification.id}>
-                  <ListItem
-                    button
-                    onClick={() => handleNotificationClick(notification)}
-                    sx={{
-                      backgroundColor: notification.is_read ? 'transparent' : 'action.hover',
-                      '&:hover': {
-                        backgroundColor: 'action.selected',
-                      },
-                    }}
-                  >
-                    <ListItemIcon sx={{ fontSize: 32, minWidth: 56 }}>
-                      {getNotificationIcon(notification.type)}
-                    </ListItemIcon>
-                    
-                    <ListItemText
-                      primary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                          <Typography
-                            variant="body1"
-                            sx={{
-                              fontWeight: notification.is_read ? 'normal' : 'bold',
-                              flex: 1,
-                            }}
-                          >
-                            {notification.title}
-                          </Typography>
-                          <Chip
-                            label={notification.priority}
-                            size="small"
-                            color={getPriorityColor(notification.priority)}
-                          />
-                          {!notification.is_read && (
-                            <Box
-                              sx={{
-                                width: 10,
-                                height: 10,
-                                borderRadius: '50%',
-                                backgroundColor: 'primary.main',
-                              }}
-                            />
-                          )}
-                        </Box>
-                      }
-                      secondary={
-                        <Box>
-                          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                            {notification.message}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {formatDistanceToNow(new Date(notification.created_at), {
-                              addSuffix: true,
-                            })}
-                          </Typography>
-                        </Box>
-                      }
-                    />
-                    
-                    <IconButton
-                      onClick={(e) => handleDelete(e, notification.id)}
-                      sx={{ ml: 2 }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItem>
+            <div className="divide-y divide-white/5">
+              {notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  onClick={() => handleNotificationClick(notification)}
+                  className={`flex items-start gap-4 p-4 cursor-pointer transition-colors ${
+                    notification.is_read 
+                      ? 'hover:bg-white/5' 
+                      : 'bg-white/10 hover:bg-white/15'
+                  }`}
+                >
+                  {/* Icon */}
+                  <div className="text-3xl flex-shrink-0 mt-1">
+                    {getNotificationIcon(notification.type)}
+                  </div>
                   
-                  {index < notifications.length - 1 && <Box sx={{ borderBottom: 1, borderColor: 'divider' }} />}
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className={`text-base ${notification.is_read ? 'text-gray-300' : 'text-white font-semibold'}`}>
+                        {notification.title}
+                      </h3>
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded ${getPriorityColor(notification.priority)}`}>
+                        {notification.priority}
+                      </span>
+                      {!notification.is_read && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-400 mb-1">
+                      {notification.message}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                    </p>
+                  </div>
+                  
+                  {/* Delete Button */}
+                  <button
+                    onClick={(e) => handleDelete(e, notification.id)}
+                    className="flex-shrink-0 p-2 text-gray-400 hover:text-red-400 transition-colors"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
                 </div>
               ))}
-            </List>
+            </div>
             
             {/* Pagination */}
             {totalPages > 1 && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                <Pagination
-                  count={totalPages}
-                  page={currentPage}
-                  onChange={handlePageChange}
-                  color="primary"
-                />
-              </Box>
+              <div className="flex justify-center gap-2 p-4 border-t border-white/10">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border border-white/20 text-white rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-10 h-10 rounded-lg transition-colors ${
+                        currentPage === page
+                          ? 'bg-gradient-to-r from-purple-600 to-purple-800 text-white'
+                          : 'border border-white/20 text-gray-300 hover:bg-white/10'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 border border-white/20 text-white rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
             )}
           </>
         )}
-      </Paper>
-    </Container>
+      </div>
+    </div>
   );
 }
 

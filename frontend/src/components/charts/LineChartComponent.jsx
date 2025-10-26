@@ -9,7 +9,6 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-import { Card, CardContent, Typography, Box } from '@mui/material';
 
 const LineChartComponent = ({ 
   data, 
@@ -22,25 +21,30 @@ const LineChartComponent = ({
 }) => {
   if (!data || data.length === 0) {
     return (
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
+      <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div className="p-4 sm:p-6">
+          <div className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
             {title}
-          </Typography>
-          <Box display="flex" justifyContent="center" alignItems="center" height={height}>
-            <Typography color="textSecondary">No data available</Typography>
-          </Box>
-        </CardContent>
-      </Card>
+          </div>
+          <div
+            className="flex items-center justify-center"
+            style={{ height }}
+          >
+            <div className="text-gray-500 dark:text-gray-400">
+              No data available
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
+    <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+      <div className="p-4 sm:p-6">
+        <div className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
           {title}
-        </Typography>
+        </div>
         <ResponsiveContainer width="100%" height={height}>
           <LineChart
             data={data}
@@ -80,10 +84,9 @@ const LineChartComponent = ({
             ))}
           </LineChart>
         </ResponsiveContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
 export default LineChartComponent;
-

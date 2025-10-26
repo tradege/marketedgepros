@@ -9,7 +9,6 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-import { Card, CardContent, Typography, Box } from '@mui/material';
 
 const BarChartComponent = ({ 
   data, 
@@ -23,25 +22,25 @@ const BarChartComponent = ({
 }) => {
   if (!data || data.length === 0) {
     return (
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
+      <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div className="p-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
             {title}
-          </Typography>
-          <Box display="flex" justifyContent="center" alignItems="center" height={height}>
-            <Typography color="textSecondary">No data available</Typography>
-          </Box>
-        </CardContent>
-      </Card>
+          </h2>
+          <div className="flex items-center justify-center" style={{ height }}>
+            <p className="text-gray-500 dark:text-gray-400">No data available</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
+    <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+      <div className="p-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
           {title}
-        </Typography>
+        </h2>
         <ResponsiveContainer width="100%" height={height}>
           <BarChart
             data={data}
@@ -92,10 +91,9 @@ const BarChartComponent = ({
             ))}
           </BarChart>
         </ResponsiveContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
 export default BarChartComponent;
-

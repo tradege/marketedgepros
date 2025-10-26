@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Grid,
-  Paper,
-  Typography,
-  Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  CircularProgress,
-  Alert
-} from '@mui/material';
+import { Loader2, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import LineChartComponent from '../../components/charts/LineChartComponent';
 import BarChartComponent from '../../components/charts/BarChartComponent';
@@ -58,19 +46,22 @@ const AnalyticsDashboard = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-          <CircularProgress />
-        </Box>
-      </Container>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 mb-8">
+        <div className="flex justify-center items-center min-h-[400px]">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-600 dark:text-gray-300" />
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <Alert severity="error">{error}</Alert>
-      </Container>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 mb-8">
+        <div className="flex items-start gap-3 rounded-md border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-200">
+          <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
+          <div className="text-sm">{error}</div>
+        </div>
+      </div>
     );
   }
 
@@ -106,32 +97,34 @@ const AnalyticsDashboard = () => {
   }));
 
   return (
-    
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 mb-8">
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4" component="h1">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-gray-100">
           Analytics Dashboard
-        </Typography>
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Time Range</InputLabel>
-          <Select
+        </h1>
+        <div className="w-full sm:w-auto">
+          <label htmlFor="timeRange" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Time Range
+          </label>
+          <select
+            id="timeRange"
             value={timeRange}
-            label="Time Range"
             onChange={handleTimeRangeChange}
+            className="block w-full sm:min-w-[200px] rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm outline-none transition focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:focus:border-gray-100 dark:focus:ring-gray-100/10"
           >
-            <MenuItem value={7}>Last 7 days</MenuItem>
-            <MenuItem value={30}>Last 30 days</MenuItem>
-            <MenuItem value={90}>Last 90 days</MenuItem>
-            <MenuItem value={180}>Last 6 months</MenuItem>
-            <MenuItem value={365}>Last year</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+            <option value={7}>Last 7 days</option>
+            <option value={30}>Last 30 days</option>
+            <option value={90}>Last 90 days</option>
+            <option value={180}>Last 6 months</option>
+            <option value={365}>Last year</option>
+          </select>
+        </div>
+      </div>
 
-      <Grid container spacing={3}>
+      <div className="grid grid-cols-12 gap-6">
         {/* Revenue Over Time */}
-        <Grid item xs={12} lg={6}>
+        <div className="col-span-12 lg:col-span-6">
           <LineChartComponent
             data={revenueData}
             title="Revenue Over Time"
@@ -143,10 +136,10 @@ const AnalyticsDashboard = () => {
             height={350}
             yAxisLabel="Amount ($)"
           />
-        </Grid>
+        </div>
 
         {/* User Growth */}
-        <Grid item xs={12} lg={6}>
+        <div className="col-span-12 lg:col-span-6">
           <LineChartComponent
             data={userGrowthData}
             title="User Growth"
@@ -158,10 +151,10 @@ const AnalyticsDashboard = () => {
             height={350}
             yAxisLabel="Users"
           />
-        </Grid>
+        </div>
 
         {/* Challenge Status Distribution */}
-        <Grid item xs={12} md={6} lg={4}>
+        <div className="col-span-12 md:col-span-6 lg:col-span-4">
           <PieChartComponent
             data={challengeStatusData}
             title="Challenge Status Distribution"
@@ -169,10 +162,10 @@ const AnalyticsDashboard = () => {
             nameKey="name"
             height={300}
           />
-        </Grid>
+        </div>
 
         {/* KYC Status Distribution */}
-        <Grid item xs={12} md={6} lg={4}>
+        <div className="col-span-12 md:col-span-6 lg:col-span-4">
           <PieChartComponent
             data={kycDistributionData}
             title="KYC Status Distribution"
@@ -180,10 +173,10 @@ const AnalyticsDashboard = () => {
             nameKey="name"
             height={300}
           />
-        </Grid>
+        </div>
 
         {/* Payment Methods */}
-        <Grid item xs={12} md={12} lg={4}>
+        <div className="col-span-12 md:col-span-12 lg:col-span-4">
           <BarChartComponent
             data={paymentMethodData}
             title="Payment Methods"
@@ -195,11 +188,11 @@ const AnalyticsDashboard = () => {
             xAxisKey="name"
             layout="vertical"
           />
-        </Grid>
+        </div>
 
         {/* Challenge Daily Statistics */}
         {challengeStats.daily_data && challengeStats.daily_data.length > 0 && (
-          <Grid item xs={12}>
+          <div className="col-span-12">
             <LineChartComponent
               data={challengeStats.daily_data}
               title="Challenge Activity"
@@ -212,102 +205,100 @@ const AnalyticsDashboard = () => {
               height={350}
               yAxisLabel="Challenges"
             />
-          </Grid>
+          </div>
         )}
 
         {/* Top Performing Agents */}
         {referralStats.top_agents && referralStats.top_agents.length > 0 && (
-          <Grid item xs={12}>
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom>
+          <div className="col-span-12">
+            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-950">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
                 Top Performing Agents
-              </Typography>
-              <Box sx={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
                   <thead>
-                    <tr style={{ borderBottom: '2px solid #ddd' }}>
-                      <th style={{ padding: '12px', textAlign: 'left' }}>Name</th>
-                      <th style={{ padding: '12px', textAlign: 'left' }}>Email</th>
-                      <th style={{ padding: '12px', textAlign: 'right' }}>Referrals</th>
-                      <th style={{ padding: '12px', textAlign: 'right' }}>Total Commission</th>
+                    <tr className="border-b-2 border-gray-200 dark:border-gray-800">
+                      <th className="py-3 px-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Name</th>
+                      <th className="py-3 px-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Email</th>
+                      <th className="py-3 px-3 text-right text-sm font-medium text-gray-600 dark:text-gray-300">Referrals</th>
+                      <th className="py-3 px-3 text-right text-sm font-medium text-gray-600 dark:text-gray-300">Total Commission</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {referralStats.top_agents.map((agent, index) => (
-                      <tr key={agent.agent_id} style={{ borderBottom: '1px solid #eee' }}>
-                        <td style={{ padding: '12px' }}>{agent.name}</td>
-                        <td style={{ padding: '12px' }}>{agent.email}</td>
-                        <td style={{ padding: '12px', textAlign: 'right' }}>{agent.referrals}</td>
-                        <td style={{ padding: '12px', textAlign: 'right' }}>
+                    {referralStats.top_agents.map((agent) => (
+                      <tr key={agent.agent_id} className="border-b border-gray-100 dark:border-gray-800">
+                        <td className="py-3 px-3 text-sm text-gray-900 dark:text-gray-100">{agent.name}</td>
+                        <td className="py-3 px-3 text-sm text-gray-900 dark:text-gray-100">{agent.email}</td>
+                        <td className="py-3 px-3 text-sm text-right text-gray-900 dark:text-gray-100">{agent.referrals}</td>
+                        <td className="py-3 px-3 text-sm text-right text-gray-900 dark:text-gray-100">
                           ${agent.total_commission.toFixed(2)}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              </Box>
-            </Paper>
-          </Grid>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Referral Statistics Summary */}
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
+        <div className="col-span-12 md:col-span-4">
+          <div className="h-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-950">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               Referral Statistics
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body2" color="textSecondary">
+            </h2>
+            <div className="mt-2">
+              <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
                 Total Referrals
-              </Typography>
-              <Typography variant="h4">
+              </div>
+              <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
                 {referralStats.total_referrals || 0}
-              </Typography>
-            </Box>
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body2" color="textSecondary">
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
                 Active Referrals
-              </Typography>
-              <Typography variant="h4">
+              </div>
+              <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
                 {referralStats.active_referrals || 0}
-              </Typography>
-            </Box>
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body2" color="textSecondary">
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
                 Conversion Rate
-              </Typography>
-              <Typography variant="h4">
+              </div>
+              <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
                 {referralStats.conversion_rate || 0}%
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Payment Statistics Summary */}
-        <Grid item xs={12} md={8}>
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
+        <div className="col-span-12 md:col-span-8">
+          <div className="h-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-950">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               Payment Status Distribution
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mt: 2 }}>
+            </h2>
+            <div className="mt-4 flex flex-wrap gap-6">
               {(paymentStats.status_distribution || []).map((item) => (
-                <Box key={item.status} sx={{ minWidth: 150 }}>
-                  <Typography variant="body2" color="textSecondary">
+                <div key={item.status} className="min-w-[150px]">
+                  <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
                     {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                  </Typography>
-                  <Typography variant="h4">
+                  </div>
+                  <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
                     {item.count}
-                  </Typography>
-                </Box>
+                  </div>
+                </div>
               ))}
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-      </Container>
-    
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
 export default AnalyticsDashboard;
-

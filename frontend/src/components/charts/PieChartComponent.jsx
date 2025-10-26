@@ -7,7 +7,6 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-import { Card, CardContent, Typography, Box } from '@mui/material';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
@@ -21,16 +20,16 @@ const PieChartComponent = ({
 }) => {
   if (!data || data.length === 0) {
     return (
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-4 sm:p-6">
+          <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
             {title}
-          </Typography>
-          <Box display="flex" justifyContent="center" alignItems="center" height={height}>
-            <Typography color="textSecondary">No data available</Typography>
-          </Box>
-        </CardContent>
-      </Card>
+          </div>
+          <div className="flex items-center justify-center" style={{ height }}>
+            <div className="text-gray-500 dark:text-gray-400">No data available</div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -62,11 +61,11 @@ const PieChartComponent = ({
   };
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-4 sm:p-6">
+        <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
           {title}
-        </Typography>
+        </div>
         <ResponsiveContainer width="100%" height={height}>
           <PieChart>
             <Pie
@@ -94,10 +93,9 @@ const PieChartComponent = ({
             <Legend />
           </PieChart>
         </ResponsiveContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
 export default PieChartComponent;
-

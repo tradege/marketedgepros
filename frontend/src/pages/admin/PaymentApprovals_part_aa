@@ -1,0 +1,150 @@
+import React, { useState, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import {
+  CheckCircle as ApproveIcon,
+  Cancel as RejectIcon,
+  Visibility as ViewIcon,
+  AttachMoney as MoneyIcon,
+  CardGiftcard as FreeIcon
+} from '@mui/icons-material';
+import axios from 'axios';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+
+const PaymentApprovals = () => {
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const [allRequests, setAllRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [actionType, setActionType] = useState(null); // 'approve' or 'reject'
+  const [adminNotes, setAdminNotes] = useState('');
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [processing, setProcessing] = useState(false);
+  const [stats, setStats] = useState(null);
+  const [tabValue, setTabValue] = useState(0);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+
+      // Fetch pending requests
+      const pendingRes = await axios.get(`${API_BASE_URL}/payment-approvals/pending`, { headers });
+      setPendingRequests(pendingRes.data.data || []);
+
+      // Fetch stats
+      const statsRes = await axios.get(`${API_BASE_URL}/payment-approvals/stats`, { headers });
+      setStats(statsRes.data.data || {});
+
+      setError(null);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to load approval requests');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOpenDialog = (request, action) => {
+    setSelectedRequest(request);
+    setActionType(action);
+    setDialogOpen(true);
+    setAdminNotes('');
+    setRejectionReason('');
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedRequest(null);
+    setActionType(null);
+    setAdminNotes('');
+    setRejectionReason('');
+  };
+
+  const handleApprove = async () => {
+    if (!selectedRequest) return;
+
+    try {
+      setProcessing(true);
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+
+      await axios.post(
+        `${API_BASE_URL}/payment-approvals/${selectedRequest.id}/approve`,
+        { admin_notes: adminNotes },
+        { headers }
+      );
+
+      // Refresh data
+      await fetchData();
+      handleCloseDialog();
+      
+      // Show success message
+      alert('Payment approved successfully!');
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to approve request');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!selectedRequest || !rejectionReason.trim()) {
+      alert('Please provide a rejection reason');
+      return;
+    }
+
+    try {
+      setProcessing(true);
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+
+      await axios.post(
+        `${API_BASE_URL}/payment-approvals/${selectedRequest.id}/reject`,
+        {
+          rejection_reason: rejectionReason,
+          admin_notes: adminNotes
+        },
+        { headers }
+      );
+
+      // Refresh data
+      await fetchData();
+      handleCloseDialog();
+      
+      // Show success message
+      alert('Payment rejected');
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to reject request');
+    } finally {
+      setProcessing(false);
+    }
+  };
