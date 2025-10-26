@@ -79,7 +79,11 @@ export default function Navbar() {
               </button>
               
               {supportOpen && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-xl border border-white/10 py-2">
+                <div 
+                  className="absolute top-full left-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-xl border border-white/10 py-2"
+                  onMouseEnter={() => setSupportOpen(true)}
+                  onMouseLeave={() => setSupportOpen(false)}
+                >
                   {supportLinks.map((link) => (
                     <Link
                       key={link.path}
