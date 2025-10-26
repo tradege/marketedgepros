@@ -24,7 +24,11 @@ const FAQ = lazy(() => import('./pages/FAQ'));
 const Contact = lazy(() => import('./pages/Contact'));
 const FreeCourse = lazy(() => import('./pages/FreeCourse'));
 const LightningChallenge = lazy(() => import('./pages/LightningChallenge'));
-const SupportHub = lazy(() => import('./pages/SupportHub'));
+const SupportHub = lazy(() => import('./pages/support/SupportHub'));
+const SupportFAQ = lazy(() => import('./pages/support/FAQ'));
+const CreateTicket = lazy(() => import('./pages/support/CreateTicket'));
+const MyTickets = lazy(() => import('./pages/support/MyTickets'));
+const TicketDetail = lazy(() => import('./pages/support/TicketDetail'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const Affiliate = lazy(() => import('./pages/Affiliate'));
@@ -174,6 +178,10 @@ function App() {
         <Route path="/free-course" element={<FreeCourse />} />
         <Route path="/lightning-challenge" element={<LightningChallenge />} />
         <Route path="/support" element={<SupportHub />} />
+        <Route path="/support/faq" element={<SupportFAQ />} />
+        <Route path="/support/create-ticket" element={<CreateTicket />} />
+        <Route path="/support/my-tickets" element={<MyTickets />} />
+        <Route path="/support/ticket/:ticketNumber" element={<TicketDetail />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/affiliate" element={<Affiliate />} />
