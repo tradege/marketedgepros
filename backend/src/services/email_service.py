@@ -874,3 +874,83 @@ class EmailService:
         
         return stats
 
+
+
+
+def send_course_welcome_email(to_email, name):
+    """Send welcome email with course access"""
+    subject = "🎓 Welcome to Your Free Trading Course!"
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+            .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+            .button {{ display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }}
+            .module {{ background: white; padding: 15px; margin: 10px 0; border-left: 4px solid #3b82f6; border-radius: 5px; }}
+            .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🎓 Welcome to Your Free Trading Course!</h1>
+            </div>
+            <div class="content">
+                <h2>Hi {name},</h2>
+                <p>Congratulations! You now have instant access to our comprehensive trading course.</p>
+                
+                <p><strong>What's included:</strong></p>
+                <div class="module">
+                    <strong>Module 1:</strong> Trading Fundamentals (45 min)
+                </div>
+                <div class="module">
+                    <strong>Module 2:</strong> Technical Analysis (60 min)
+                </div>
+                <div class="module">
+                    <strong>Module 3:</strong> Risk Management (50 min)
+                </div>
+                <div class="module">
+                    <strong>Module 4:</strong> Trading Strategies (70 min)
+                </div>
+                <div class="module">
+                    <strong>Module 5:</strong> Prop Trading Success (40 min)
+                </div>
+                
+                <p style="text-align: center;">
+                    <a href="https://marketedgepros.com/free-course" class="button">
+                        Start Learning Now →
+                    </a>
+                </p>
+                
+                <p><strong>Next Steps:</strong></p>
+                <ul>
+                    <li>Complete all 5 modules at your own pace</li>
+                    <li>Download the course materials and resources</li>
+                    <li>Join our Discord community for support</li>
+                    <li>Get your certificate of completion</li>
+                </ul>
+                
+                <p>Ready to take it to the next level? Check out our <a href="https://marketedgepros.com/programs">funded trading programs</a> and start trading with real capital!</p>
+                
+                <p>Best regards,<br>The MarketEdgePros Team</p>
+            </div>
+            <div class="footer">
+                <p>© 2025 MarketEdgePros. All rights reserved.</p>
+                <p>
+                    <a href="https://marketedgepros.com/free-course">Course Access</a> | 
+                    <a href="https://discord.gg/jKbmeSe7">Join Discord</a> | 
+                    <a href="https://marketedgepros.com/contact">Contact Us</a>
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return EmailService._send_email(to_email, subject, html_content)
+
