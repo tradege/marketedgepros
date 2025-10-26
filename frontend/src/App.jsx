@@ -34,7 +34,7 @@ const MyChallenges = lazy(() => import('./pages/user/MyChallenges'));
 const ChallengeDetails = lazy(() => import('./pages/ChallengeDetails'));
 
 // Admin Pages (Lazy Loaded)
-const AdminLayout = lazy(() => import('./components/mui/AdminLayout'));
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboardConnected'));
 const AnalyticsDashboard = lazy(() => import('./pages/admin/AnalyticsDashboard'));
 const UserManagement = lazy(() => import('./pages/admin/UserManagementConnected'));
