@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AdminLayout from '../../components/admin/AdminLayout';
 import {
   People,
   AttachMoney,
@@ -128,7 +129,8 @@ function AdminDashboard() {
   }));
 
   return (
-    <div className="space-y-6">
+    <AdminLayout>
+      <div className="space-y-6 p-8">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -222,6 +224,7 @@ function AdminDashboard() {
         />
       </div>
     </div>
+    </AdminLayout>
   );
 }
 

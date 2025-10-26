@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AdminLayout from '../../components/admin/AdminLayout';
 import { Save } from 'lucide-react';
 
 export default function Settings() {
@@ -29,7 +30,8 @@ export default function Settings() {
   };
 
   return (
-    <div>
+    <AdminLayout>
+      <div>
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
@@ -192,6 +194,7 @@ export default function Settings() {
           </div>
         </div>
       </div>
+    </AdminLayout>
     </div>
   );
 }
