@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { DollarSign, Clock, CheckCircle, XCircle, Plus, AlertCircle } from 'lucide-react';
 import TraderLayout from '../../components/trader/TraderLayout';
 import api from '../../services/api';
+import { useToast } from '../../contexts/ToastContext';
+import { SkeletonDashboard } from '../../components/common/Skeleton';
 
 export default function Withdrawals() {
+  const toast = useToast();
   const [withdrawals, setWithdrawals] = useState([]);
   const [statistics, setStatistics] = useState({
     available_balance: 0,
@@ -43,6 +46,7 @@ export default function Withdrawals() {
       }
     } catch (error) {
       setError('Failed to load withdrawal data. Please try again.');
+      toast.error('Failed to load withdrawal data');
     } finally {
       setIsLoading(false);
     }
@@ -55,22 +59,22 @@ export default function Withdrawals() {
     
     // Validation
     if (!amount || amount <= 0) {
-      alert('Please enter a valid amount');
+      toast.error('Please enter a valid amount');
       return;
     }
     
     if (amount < 100) {
-      alert('Minimum withdrawal amount is $100');
+      toast.error('Minimum withdrawal amount is $100');
       return;
     }
     
     if (amount > statistics.available_balance) {
-      alert(`Insufficient balance. Available: $${statistics.available_balance.toFixed(2)}`);
+      toast.error(`Insufficient balance. Available: $${statistics.available_balance.toFixed(2)}`);
       return;
     }
 
     if (!formData.accountDetails || formData.accountDetails.trim() === '') {
-      alert('Please provide account details');
+      toast.error('Please provide account details');
       return;
     }
 
@@ -91,10 +95,10 @@ export default function Withdrawals() {
       setShowModal(false);
       setFormData({ amount: '', method: 'bank_transfer', accountDetails: '' });
       
-      alert('Withdrawal request submitted successfully!');
+      toast.success('Withdrawal request submitted successfully!');
     } catch (error) {
       const errorMessage = error.response?.data?.error || 'Failed to submit withdrawal request. Please try again.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

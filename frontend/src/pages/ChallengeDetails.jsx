@@ -6,10 +6,13 @@ import {
   BarChart3, Activity, ArrowLeft
 } from 'lucide-react';
 import api from '../services/api';
+import { useToast } from '../contexts/ToastContext';
+import { SkeletonDashboard } from '../components/common/Skeleton';
 
 export default function ChallengeDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const [challenge, setChallenge] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,7 +27,7 @@ export default function ChallengeDetails() {
       setChallenge(response.data.challenge);
     } catch (error) {
       // Show error message
-      alert('Failed to load challenge details');
+      toast.error('Failed to load challenge details');
       navigate('/dashboard');
     } finally {
       setIsLoading(false);
