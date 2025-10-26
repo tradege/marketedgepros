@@ -27,7 +27,7 @@ export default function AdminLayout({ children }) {
     { title: 'Programs', path: '/admin/programs', icon: TrendingUp },
     { title: 'Payments', path: '/admin/payments', icon: CreditCard },
     { title: 'Withdrawals', path: '/admin/withdrawals', icon: DollarSign },
-    { title: 'KYC Approval', path: '/admin/kyc', icon: Shield },
+    { title: 'KYC Approval', path: '/admin/kyc-approval', icon: Shield },
     { title: 'Payment Approvals', path: '/admin/payment-approvals', icon: CheckSquare },
     { title: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
     { title: 'Settings', path: '/admin/settings', icon: Settings },
