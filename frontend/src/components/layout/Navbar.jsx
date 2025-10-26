@@ -23,6 +23,8 @@ export default function Navbar() {
     return '/dashboard';
   };
 
+  const [supportOpen, setSupportOpen] = useState(false);
+
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Programs', path: '/programs' },
@@ -30,8 +32,14 @@ export default function Navbar() {
     { name: 'Blog', path: '/blog' },
     { name: 'How It Works', path: '/how-it-works' },
     { name: 'About', path: '/about' },
-    { name: 'FAQ', path: '/faq' },
     { name: 'Contact', path: '/contact' }
+  ];
+
+  const supportLinks = [
+    { name: 'Support Hub', path: '/support' },
+    { name: 'FAQ', path: '/support/faq' },
+    { name: 'Create Ticket', path: '/support/create-ticket' },
+    { name: 'My Tickets', path: '/support/my-tickets' }
   ];
 
   return (
@@ -57,6 +65,33 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            
+            {/* Support Dropdown */}
+            <div className="relative"
+              onMouseEnter={() => setSupportOpen(true)}
+              onMouseLeave={() => setSupportOpen(false)}
+            >
+              <button className="text-gray-300 hover:text-white transition-colors flex items-center gap-1">
+                Support
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {supportOpen && (
+                <div className="absolute top-full left-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-xl border border-white/10 py-2">
+                  {supportLinks.map((link) => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-700/50 transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Auth Buttons */}

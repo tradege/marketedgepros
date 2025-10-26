@@ -91,6 +91,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/support/faq" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  FAQ
+                </Link>
+              </li>
+              <li>
                 <Link to="/affiliate" className="text-gray-400 hover:text-white transition-colors text-sm">
                   Affiliate Program
                 </Link>
