@@ -1,0 +1,87 @@
+import { lazy, Suspense } from 'react';
+import useAuthStore from '../../store/authStore';
+import { ADMIN_ROLES } from '../../constants/roles';
+
+// Import all layouts
+const TraderLayout = lazy(() => import('../trader/TraderLayout'));
+const AgentLayout = lazy(() => import('../agent/AgentLayout'));
+const AdminLayout = lazy(() => import('../admin/AdminLayout'));
+
+/**
+ * UserLayout - Smart layout that detects user role and renders appropriate sidebar
+ * 
+ * This component automatically selects the correct layout based on the user's role:
+ * - Trader → TraderLayout
+ * - Agent → AgentLayout
+ * - Admin/Master/Supermaster → AdminLayout
+ * 
+ * Usage:
+ * <UserLayout>
+ *   <YourPage />
+ * </UserLayout>
+ */
+export default function UserLayout({ children }) {
+  const { user } = useAuthStore();
+
+  // Loading state
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <p className="text-gray-300 mt-4">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Detect role and render appropriate layout
+  const role = user.role;
+
+  // Admin roles
+  if (ADMIN_ROLES.includes(role)) {
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center bg-slate-900">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+            <p className="text-gray-300 mt-4">Loading...</p>
+          </div>
+        </div>
+      }>
+        <AdminLayout>{children}</AdminLayout>
+      </Suspense>
+    );
+  }
+
+  // Agent role
+  if (role === 'agent') {
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center bg-slate-900">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+            <p className="text-gray-300 mt-4">Loading...</p>
+          </div>
+        </div>
+      }>
+        <AgentLayout>{children}</AgentLayout>
+      </Suspense>
+    );
+  }
+
+  // Trader role (default)
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <p className="text-gray-300 mt-4">Loading...</p>
+        </div>
+      </div>
+    }>
+      <TraderLayout>{children}</TraderLayout>
+    </Suspense>
+  );
+}
+
