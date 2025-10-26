@@ -355,8 +355,8 @@ export default function ProgramsManagement() {
           </div>
         </div>
       )}
+      </div>
     </AdminLayout>
-    </div>
   );
 }
 

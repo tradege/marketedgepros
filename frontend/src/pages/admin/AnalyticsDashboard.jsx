@@ -305,8 +305,8 @@ const AnalyticsDashboard = () => {
           </Paper>
         </Grid>
       </Grid>
+      </Container>
     </AdminLayout>
-    </Container>
   );
 };
 

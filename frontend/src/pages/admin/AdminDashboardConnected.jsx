@@ -223,7 +223,7 @@ function AdminDashboard() {
           pageSize={5}
         />
       </div>
-    </div>
+      </div>
     </AdminLayout>
   );
 }

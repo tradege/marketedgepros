@@ -287,8 +287,8 @@ function KYCApproval() {
           </div>
         )}
       </div>
+      </div>
     </AdminLayout>
-    </div>
   );
 }
 
