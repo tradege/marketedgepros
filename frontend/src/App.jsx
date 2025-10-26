@@ -63,6 +63,7 @@ const TradingHistory = lazy(() => import('./pages/trader/TradingHistory'));
 const Withdrawals = lazy(() => import('./pages/trader/Withdrawals'));
 const Documents = lazy(() => import('./pages/user/Documents'));
 const Wallet = lazy(() => import('./pages/user/Wallet'));
+const UserLayout = lazy(() => import('./components/layout/UserLayout'));
 
 // Guards
 import RoleGuard from './components/guards/RoleGuard';
@@ -192,7 +193,9 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <RoleBasedDashboard />
+              <UserLayout>
+                <RoleBasedDashboard />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
@@ -200,7 +203,9 @@ function App() {
           path="/kyc"
           element={
             <ProtectedRoute>
-              <KYC />
+              <UserLayout>
+                <KYC />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
@@ -208,7 +213,9 @@ function App() {
           path="/profile"
           element={
             <ProtectedRoute userOnly={true}>
-              <Profile />
+              <UserLayout>
+                <Profile />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
@@ -216,7 +223,9 @@ function App() {
           path="/challenges"
           element={
             <ProtectedRoute userOnly={true}>
-              <MyChallenges />
+              <UserLayout>
+                <MyChallenges />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
@@ -224,7 +233,9 @@ function App() {
           path="/challenges/:id"
           element={
             <ProtectedRoute userOnly={true}>
-              <ChallengeDetails />
+              <UserLayout>
+                <ChallengeDetails />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
@@ -232,7 +243,9 @@ function App() {
           path="/documents"
           element={
             <ProtectedRoute userOnly={true}>
-              <Documents />
+              <UserLayout>
+                <Documents />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
@@ -240,7 +253,9 @@ function App() {
           path="/wallet"
           element={
             <ProtectedRoute userOnly={true}>
-              <Wallet />
+              <UserLayout>
+                <Wallet />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
@@ -248,7 +263,9 @@ function App() {
           path="/settings"
           element={
             <ProtectedRoute userOnly={true}>
-              <Profile />
+              <UserLayout>
+                <Profile />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
@@ -256,7 +273,9 @@ function App() {
           path="/notifications"
           element={
             <ProtectedRoute>
-              <Notifications />
+              <UserLayout>
+                <Notifications />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
@@ -264,7 +283,9 @@ function App() {
           path="/settings/notifications"
           element={
             <ProtectedRoute>
-              <NotificationSettings />
+              <UserLayout>
+                <NotificationSettings />
+              </UserLayout>
             </ProtectedRoute>
           }
         />
