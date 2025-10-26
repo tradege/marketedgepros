@@ -413,8 +413,8 @@ const PaymentApprovals = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      </Box>
     </AdminLayout>
-    </Box>
   );
 };
 

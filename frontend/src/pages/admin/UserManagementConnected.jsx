@@ -638,8 +638,8 @@ function UserManagement() {
           }}
         />
       )}
+      </div>
     </AdminLayout>
-    </div>
   );
 }
 

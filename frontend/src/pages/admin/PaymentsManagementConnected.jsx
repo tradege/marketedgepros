@@ -293,8 +293,8 @@ function PaymentsManagement() {
           </div>
         </div>
       </div>
+      </div>
     </AdminLayout>
-    </div>
   );
 }
 
