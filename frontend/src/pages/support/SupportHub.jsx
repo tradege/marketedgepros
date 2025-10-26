@@ -91,10 +91,10 @@ export default function SupportHub() {
   ];
 
   const quickLinks = [
-    { title: 'Contact Support', icon: MessageCircle, link: '/contact', color: 'blue' },
-    { title: 'Join Discord Community', icon: ExternalLink, link: 'https://discord.gg/jKbmeSe7', color: 'indigo', external: true },
-    { title: 'Free Trading Course', icon: BookOpen, link: '/free-course', color: 'green' },
-    { title: 'FAQ', icon: HelpCircle, link: '/faq', color: 'purple' }
+    { title: 'Create Support Ticket', icon: MessageCircle, link: '/support/create-ticket', color: 'blue' },
+    { title: 'Browse FAQ', icon: HelpCircle, link: '/support/faq', color: 'purple' },
+    { title: 'My Tickets', icon: FileText, link: '/support/my-tickets', color: 'green' },
+    { title: 'Join Discord Community', icon: ExternalLink, link: 'https://discord.gg/jKbmeSe7', color: 'indigo', external: true }
   ];
 
   const colorClasses = {
