@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Users, TrendingUp, UserPlus, Search, Filter, ChevronDown, ChevronRight } from 'lucide-react';
 import { getRoleConfig } from '../constants/roles';
+import UserLayout from '../components/layout/UserLayout';
 
 export default function MyTeam() {
   const [stats, setStats] = useState({
@@ -211,6 +212,7 @@ export default function MyTeam() {
   }
 
   return (
+    <UserLayout>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
@@ -382,6 +384,7 @@ export default function MyTeam() {
         </div>
       )}
     </div>
+    </UserLayout>
   );
 }
 
