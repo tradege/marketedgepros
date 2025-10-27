@@ -4,6 +4,7 @@ import axios from 'axios';
 import LineChartComponent from '../../components/charts/LineChartComponent';
 import BarChartComponent from '../../components/charts/BarChartComponent';
 import PieChartComponent from '../../components/charts/PieChartComponent';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -97,6 +98,7 @@ const AnalyticsDashboard = () => {
   }));
 
   return (
+    <AdminLayout>
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 mb-8">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
@@ -298,6 +300,7 @@ const AnalyticsDashboard = () => {
         </div>
       </div>
     </div>
+    </AdminLayout>
   );
 };
 
