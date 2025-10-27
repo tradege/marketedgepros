@@ -6,6 +6,7 @@ import {
   Upload, FileText, CheckCircle, AlertCircle,
   User, CreditCard, Home, ArrowRight
 } from 'lucide-react';
+import UserLayout from '../../components/layout/UserLayout';
 
 export default function KYC() {
   const navigate = useNavigate();
@@ -41,7 +42,6 @@ export default function KYC() {
     if (file) {
       setFiles({ ...files, [field]: file });
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviews({ ...previews, [field]: reader.result });
@@ -56,7 +56,6 @@ export default function KYC() {
     setError(null);
 
     try {
-      // Upload files
       const uploadedFiles = {};
       
       for (const [key, file] of Object.entries(files)) {
@@ -70,13 +69,11 @@ export default function KYC() {
         }
       }
 
-      // Submit KYC data
       const kycData = {
         ...formData,
         ...uploadedFiles,
       };
 
-      // TODO: Replace with actual KYC submission API
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       setSuccess(true);
@@ -127,340 +124,331 @@ export default function KYC() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">KYC Verification</h1>
-          <p className="text-gray-600 mt-2">
-            Complete your identity verification to unlock all features
-          </p>
+    <UserLayout>
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <h1 className="text-3xl font-bold text-gray-900">KYC Verification</h1>
+            <p className="text-gray-600 mt-2">
+              Complete your identity verification to unlock all features
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Status Alert */}
-        {user?.kyc_status === 'pending' && (
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <h3 className="font-medium text-yellow-900">Verification Pending</h3>
-              <p className="text-sm text-yellow-800 mt-1">
-                Your documents are being reviewed. This usually takes 24-48 hours.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {user?.kyc_status === 'rejected' && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <h3 className="font-medium text-red-900">Verification Rejected</h3>
-              <p className="text-sm text-red-800 mt-1">
-                Your documents were rejected. Please submit new documents with clear, readable images.
-              </p>
-            </div>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Personal Information */}
-          <div className="card">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                <User className="w-5 h-5 text-primary-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900">Personal Information</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {user?.kyc_status === 'pending' && (
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Document Type
-                </label>
-                <select
-                  name="document_type"
-                  value={formData.document_type}
-                  onChange={handleChange}
-                  className="input"
-                  required
-                >
-                  <option value="passport">Passport</option>
-                  <option value="drivers_license">Driver's License</option>
-                  <option value="national_id">National ID</option>
-                </select>
+                <h3 className="font-medium text-yellow-900">Verification Pending</h3>
+                <p className="text-sm text-yellow-800 mt-1">
+                  Your documents are being reviewed. This usually takes 24-48 hours.
+                </p>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Document Number
-                </label>
-                <input
-                  type="text"
-                  name="document_number"
-                  value={formData.document_number}
-                  onChange={handleChange}
-                  className="input"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Address */}
-          <div className="card">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <Home className="w-5 h-5 text-green-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900">Address</h2>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Street Address
-                </label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  className="input"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    City
-                  </label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    className="input"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Postal Code
-                  </label>
-                  <input
-                    type="text"
-                    name="postal_code"
-                    value={formData.postal_code}
-                    onChange={handleChange}
-                    className="input"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Country
-                  </label>
-                  <input
-                    type="text"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    className="input"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Document Uploads */}
-          <div className="card">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <FileText className="w-5 h-5 text-purple-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900">Document Uploads</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Document Front */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  ID Document (Front) *
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
-                  {previews.document_front ? (
-                    <div className="relative">
-                      <img src={previews.document_front} alt="Document front" className="max-h-40 mx-auto rounded" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFiles({ ...files, document_front: null });
-                          setPreviews({ ...previews, document_front: null });
-                        }}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                      >
-                        <AlertCircle className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="cursor-pointer">
-                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Click to upload</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, 'document_front')}
-                        className="hidden"
-                        required
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
-
-              {/* Document Back */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  ID Document (Back)
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
-                  {previews.document_back ? (
-                    <div className="relative">
-                      <img src={previews.document_back} alt="Document back" className="max-h-40 mx-auto rounded" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFiles({ ...files, document_back: null });
-                          setPreviews({ ...previews, document_back: null });
-                        }}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                      >
-                        <AlertCircle className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="cursor-pointer">
-                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Click to upload</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, 'document_back')}
-                        className="hidden"
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
-
-              {/* Proof of Address */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Proof of Address *
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
-                  {previews.proof_of_address ? (
-                    <div className="relative">
-                      <img src={previews.proof_of_address} alt="Proof of address" className="max-h-40 mx-auto rounded" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFiles({ ...files, proof_of_address: null });
-                          setPreviews({ ...previews, proof_of_address: null });
-                        }}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                      >
-                        <AlertCircle className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="cursor-pointer">
-                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Utility bill or bank statement</p>
-                      <input
-                        type="file"
-                        accept="image/*,application/pdf"
-                        onChange={(e) => handleFileChange(e, 'proof_of_address')}
-                        className="hidden"
-                        required
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
-
-              {/* Selfie */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Selfie with ID *
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
-                  {previews.selfie ? (
-                    <div className="relative">
-                      <img src={previews.selfie} alt="Selfie" className="max-h-40 mx-auto rounded" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFiles({ ...files, selfie: null });
-                          setPreviews({ ...previews, selfie: null });
-                        }}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                      >
-                        <AlertCircle className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="cursor-pointer">
-                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Hold your ID next to your face</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, 'selfie')}
-                        className="hidden"
-                        required
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-800">{error}</p>
             </div>
           )}
 
-          {/* Submit */}
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => navigate('/dashboard')}
-              className="btn btn-secondary flex-1"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </form>
+          {user?.kyc_status === 'rejected' && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-medium text-red-900">Verification Rejected</h3>
+                <p className="text-sm text-red-800 mt-1">
+                  Your documents were rejected. Please submit new documents with clear, readable images.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="card">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <User className="w-5 h-5 text-primary-600" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-900">Personal Information</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Document Type
+                  </label>
+                  <select
+                    name="document_type"
+                    value={formData.document_type}
+                    onChange={handleChange}
+                    className="input"
+                    required
+                  >
+                    <option value="passport">Passport</option>
+                    <option value="drivers_license">Driver's License</option>
+                    <option value="national_id">National ID</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Document Number
+                  </label>
+                  <input
+                    type="text"
+                    name="document_number"
+                    value={formData.document_number}
+                    onChange={handleChange}
+                    className="input"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <Home className="w-5 h-5 text-green-600" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-900">Address</h2>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Street Address
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className="input"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      className="input"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Postal Code
+                    </label>
+                    <input
+                      type="text"
+                      name="postal_code"
+                      value={formData.postal_code}
+                      onChange={handleChange}
+                      className="input"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Country
+                    </label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleChange}
+                      className="input"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-purple-600" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-900">Document Uploads</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    ID Document (Front) *
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
+                    {previews.document_front ? (
+                      <div className="relative">
+                        <img src={previews.document_front} alt="Document front" className="max-h-40 mx-auto rounded" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFiles({ ...files, document_front: null });
+                            setPreviews({ ...previews, document_front: null });
+                          }}
+                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                        >
+                          <AlertCircle className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer">
+                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Click to upload</p>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileChange(e, 'document_front')}
+                          className="hidden"
+                          required
+                        />
+                      </label>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    ID Document (Back)
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
+                    {previews.document_back ? (
+                      <div className="relative">
+                        <img src={previews.document_back} alt="Document back" className="max-h-40 mx-auto rounded" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFiles({ ...files, document_back: null });
+                            setPreviews({ ...previews, document_back: null });
+                          }}
+                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                        >
+                          <AlertCircle className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer">
+                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Click to upload</p>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileChange(e, 'document_back')}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Proof of Address *
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
+                    {previews.proof_of_address ? (
+                      <div className="relative">
+                        <img src={previews.proof_of_address} alt="Proof of address" className="max-h-40 mx-auto rounded" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFiles({ ...files, proof_of_address: null });
+                            setPreviews({ ...previews, proof_of_address: null });
+                          }}
+                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                        >
+                          <AlertCircle className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer">
+                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Utility bill or bank statement</p>
+                        <input
+                          type="file"
+                          accept="image/*,application/pdf"
+                          onChange={(e) => handleFileChange(e, 'proof_of_address')}
+                          className="hidden"
+                          required
+                        />
+                      </label>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Selfie with ID *
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
+                    {previews.selfie ? (
+                      <div className="relative">
+                        <img src={previews.selfie} alt="Selfie" className="max-h-40 mx-auto rounded" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFiles({ ...files, selfie: null });
+                            setPreviews({ ...previews, selfie: null });
+                          }}
+                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                        >
+                          <AlertCircle className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer">
+                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">Hold your ID next to your face</p>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileChange(e, 'selfie')}
+                          className="hidden"
+                          required
+                        />
+                      </label>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
+
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => navigate('/dashboard')}
+                className="btn btn-secondary flex-1"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </UserLayout>
   );
 }
-
