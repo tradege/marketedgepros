@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus, Edit2, Trash2, Eye, TrendingUp, Zap, Trophy, X } from 'lucide-react';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 const programs = [
   {
@@ -112,6 +113,7 @@ export default function ProgramsManagement() {
   };
 
   return (
+    <AdminLayout>
     
       <div>
       {/* Header */}
@@ -356,6 +358,7 @@ export default function ProgramsManagement() {
       )}
       </div>
     
+    </AdminLayout>
   );
 }
 

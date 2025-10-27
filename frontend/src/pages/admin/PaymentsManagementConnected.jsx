@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DollarSign, TrendingUp, CheckCircle, Clock } from 'lucide-react';
 import axios from 'axios';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -98,6 +99,7 @@ function PaymentsManagement() {
   }
 
   return (
+    <AdminLayout>
     
       <div className="space-y-6">
       <div>
@@ -294,6 +296,7 @@ function PaymentsManagement() {
       </div>
       </div>
     
+    </AdminLayout>
   );
 }
 

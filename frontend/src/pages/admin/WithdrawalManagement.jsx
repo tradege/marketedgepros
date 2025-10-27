@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { DollarSign, CheckCircle, XCircle, Clock, Eye, Download } from 'lucide-react';
 import DataTable from '../../components/common/DataTable';
 import api from '../../services/api';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 export default function WithdrawalManagement() {
   const [withdrawals, setWithdrawals] = useState([]);
@@ -192,6 +193,7 @@ export default function WithdrawalManagement() {
   ];
 
   return (
+    <AdminLayout>
     
       <div className="space-y-6">
         {/* Header */}
@@ -384,6 +386,7 @@ export default function WithdrawalManagement() {
         )}
       </div>
     
+    </AdminLayout>
   );
 }
 
