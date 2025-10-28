@@ -103,8 +103,8 @@ function TradingRules() {
             </p>
             <p className="text-gray-300">
               If you have any questions about these rules, please contact our support team at{' '}
-              <a href="mailto:support@marketedgepros.com" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-                support@marketedgepros.com
+              <a href="mailto:info@marketedgepros.com" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                info@marketedgepros.com
               </a>
             </p>
           </div>

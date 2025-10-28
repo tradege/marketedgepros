@@ -39,7 +39,7 @@ export default function StructuredData({ type = 'website', data = {} }) {
           contactPoint: {
             '@type': 'ContactPoint',
             contactType: 'Customer Service',
-            email: 'support@marketedgepros.com',
+            email: 'info@marketedgepros.com',
             availableLanguage: ['English']
           },
           sameAs: [

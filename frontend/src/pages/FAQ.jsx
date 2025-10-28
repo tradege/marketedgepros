@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronDown, ChevronUp, Search } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronDown, ChevronUp, Search, HelpCircle } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import StructuredData from '../components/seo/StructuredData';
 
@@ -17,7 +17,7 @@ export default function FAQ() {
         },
         {
           q: 'How do I get started?',
-          a: 'Simply sign up for an account, choose a challenge program that fits your trading style, complete the payment, and start trading immediately. You\'ll receive login credentials to your demo trading account within minutes.'
+          a: "Simply sign up for an account, choose a challenge program that fits your trading style, complete the payment, and start trading immediately. You'll receive login credentials to your demo trading account within minutes."
         },
         {
           q: 'Do I need trading experience?',
@@ -42,7 +42,7 @@ export default function FAQ() {
         },
         {
           q: 'Is there a time limit?',
-          a: 'No! We don\'t impose time limits on our challenges. Take as long as you need to reach your profit target while maintaining proper risk management.'
+          a: "No! We don't impose time limits on our challenges. Take as long as you need to reach your profit target while maintaining proper risk management."
         },
         {
           q: 'What are the trading rules?',
@@ -50,7 +50,7 @@ export default function FAQ() {
         },
         {
           q: 'Can I use Expert Advisors (EAs)?',
-          a: 'Yes! You can use EAs and automated trading strategies as long as they comply with our trading rules and don\'t exploit platform latency or use prohibited strategies.'
+          a: "Yes! You can use EAs and automated trading strategies as long as they comply with our trading rules and don't exploit platform latency or use prohibited strategies."
         }
       ]
     },
@@ -59,7 +59,7 @@ export default function FAQ() {
       questions: [
         {
           q: 'How long does it take to get funded?',
-          a: 'Once you pass your challenge, you\'ll receive your funded account within 24 hours. We verify your trades and send you live account credentials via email.'
+          a: "Once you pass your challenge, you'll receive your funded account within 24 hours. We verify your trades and send you live account credentials via email."
         },
         {
           q: 'What is the profit split?',
@@ -117,7 +117,7 @@ export default function FAQ() {
         },
         {
           q: 'Do you offer refunds?',
-          a: 'Challenge fees are non-refundable once you start trading. However, if you pass and get funded, your challenge fee is refunded with your first profit withdrawal.'
+          a: "Challenge fees are non-refundable once you start trading. However, if you pass and get funded, your challenge fee is refunded with your first profit withdrawal."
         },
         {
           q: 'Is my data secure?',
@@ -157,127 +157,148 @@ export default function FAQ() {
   return (
     <Layout>
       <StructuredData type="faq" data={faqData} />
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-              Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Questions</span>
+      <div className="min-h-screen bg-black text-white">
+        {/* Hero Section */}
+        <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.1)_0%,transparent_65%)]"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.15)_0%,transparent_50%)]"></div>
+          </div>
+
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center">
+                <HelpCircle className="w-10 h-10 text-white" />
+              </div>
+            </div>
+            <h1 className="text-5xl md:text-7xl font-bold mb-8">
+              Frequently Asked{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">
+                Questions
+              </span>
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-              Find answers to common questions about MarketEdgePros, our challenges, and funded accounts.
+            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12">
+              Find answers to common questions about MarketEdgePros, our challenges, and funded accounts
             </p>
 
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
                 <input
                   type="text"
                   placeholder="Search for answers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-16 pr-6 py-5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl text-white text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                 />
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* FAQ Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {searchTerm ? (
-          // Search Results
-          <div className="space-y-4">
-            <p className="text-gray-300 mb-6">
-              Found {filteredQuestions.length} result{filteredQuestions.length !== 1 ? 's' : ''}
-            </p>
-            {filteredQuestions.map((item) => (
-              <div
-                key={item.index}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden"
-              >
-                <button
-                  onClick={() => toggleQuestion(item.index)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
-                >
-                  <div>
-                    <span className="text-xs text-blue-400 font-semibold">{item.category}</span>
-                    <h3 className="text-lg font-semibold text-white mt-1">{item.q}</h3>
-                  </div>
-                  {openIndex === item.index ? (
-                    <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                  )}
-                </button>
-                {openIndex === item.index && (
-                  <div className="px-6 pb-4">
-                    <p className="text-gray-300">{item.a}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          // Categories
-          <div className="space-y-12">
-            {categories.map((category, catIndex) => (
-              <div key={catIndex}>
-                <h2 className="text-2xl font-bold text-white mb-6">{category.name}</h2>
-                <div className="space-y-4">
-                  {category.questions.map((item, qIndex) => {
-                    const index = `${catIndex}-${qIndex}`;
-                    return (
-                      <div
-                        key={index}
-                        className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden"
-                      >
-                        <button
-                          onClick={() => toggleQuestion(index)}
-                          className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
-                        >
-                          <h3 className="text-lg font-semibold text-white pr-4">{item.q}</h3>
-                          {openIndex === index ? (
-                            <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                          ) : (
-                            <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                          )}
-                        </button>
-                        {openIndex === index && (
-                          <div className="px-6 pb-4">
-                            <p className="text-gray-300">{item.a}</p>
-                          </div>
-                        )}
+        {/* FAQ Content */}
+        <section className="relative py-32">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            {searchTerm ? (
+              // Search Results
+              <div className="space-y-4">
+                <p className="text-gray-300 text-lg mb-8">
+                  Found {filteredQuestions.length} result{filteredQuestions.length !== 1 ? 's' : ''}
+                </p>
+                {filteredQuestions.map((item) => (
+                  <div
+                    key={item.index}
+                    className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300"
+                  >
+                    <button
+                      onClick={() => toggleQuestion(item.index)}
+                      className="w-full px-8 py-6 flex items-center justify-between text-left"
+                    >
+                      <div className="flex-1">
+                        <span className="text-sm text-cyan-400 font-semibold">{item.category}</span>
+                        <h3 className="text-xl font-semibold text-white mt-2">{item.q}</h3>
                       </div>
-                    );
-                  })}
-                </div>
+                      {openIndex === item.index ? (
+                        <ChevronUp className="w-6 h-6 text-cyan-400 flex-shrink-0 ml-4" />
+                      ) : (
+                        <ChevronDown className="w-6 h-6 text-gray-400 flex-shrink-0 ml-4" />
+                      )}
+                    </button>
+                    {openIndex === item.index && (
+                      <div className="px-8 pb-6 border-t border-white/10">
+                        <p className="text-gray-300 text-lg leading-relaxed pt-6">{item.a}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              // Categories
+              <div className="space-y-16">
+                {categories.map((category, catIndex) => (
+                  <div key={catIndex}>
+                    <h2 className="text-3xl font-bold mb-8">
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">
+                        {category.name}
+                      </span>
+                    </h2>
+                    <div className="space-y-4">
+                      {category.questions.map((item, qIndex) => {
+                        const index = `${catIndex}-${qIndex}`;
+                        return (
+                          <div
+                            key={index}
+                            className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300"
+                          >
+                            <button
+                              onClick={() => toggleQuestion(index)}
+                              className="w-full px-8 py-6 flex items-center justify-between text-left"
+                            >
+                              <h3 className="text-xl font-semibold text-white pr-4">{item.q}</h3>
+                              {openIndex === index ? (
+                                <ChevronUp className="w-6 h-6 text-cyan-400 flex-shrink-0" />
+                              ) : (
+                                <ChevronDown className="w-6 h-6 text-gray-400 flex-shrink-0" />
+                              )}
+                            </button>
+                            {openIndex === index && (
+                              <div className="px-8 pb-6 border-t border-white/10">
+                                <p className="text-gray-300 text-lg leading-relaxed pt-6">{item.a}</p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </section>
 
-      {/* Still Have Questions */}
-      <div className="bg-white/5 backdrop-blur-sm border-y border-white/10 py-16">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <h2 className="text-3xl font-bold text-white mb-4">Still Have Questions?</h2>
-          <p className="text-gray-300 mb-8">
-            Our support team is available 24/7 to help you with any questions or concerns.
-          </p>
-          <a
-            href="/contact"
-            className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-colors"
-          >
-            Contact Support
-          </a>
-        </div>
+        {/* CTA Section */}
+        <section className="relative py-32">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Still Have{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Questions?
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 mb-12">
+              Our support team is available 24/7 to help you
+            </p>
+            <a
+              href="/contact"
+              className="inline-block px-12 py-5 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full text-lg font-bold transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-cyan-500/50"
+            >
+              Contact Support
+            </a>
+          </div>
+        </section>
       </div>
-    </div>
     </Layout>
   );
 }
