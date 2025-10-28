@@ -146,37 +146,32 @@ class AffiliateService:
     
     @staticmethod
     def get_affiliate_stats(user_id):
-        """Get comprehensive affiliate statistics - OPTIMIZED"""
+        """Get comprehensive affiliate statistics"""
         try:
-            # Single query with aggregation - much faster!
-            stats_query = db.session.query(
-                func.coalesce(func.sum(AffiliateLink.clicks), 0).label('total_clicks'),
-                func.coalesce(func.sum(AffiliateLink.conversions), 0).label('total_conversions'),
-                func.coalesce(func.sum(AffiliateLink.total_revenue), 0).label('total_revenue'),
-                func.coalesce(func.sum(AffiliateLink.total_commission), 0).label('total_commission')
-            ).filter(
-                AffiliateLink.user_id == user_id
-            ).first()
+            # Get all links
+            links = AffiliateLink.query.filter_by(user_id=user_id).all()
             
-            if not stats_query or stats_query.total_clicks == 0:
+            if not links:
                 return None
             
-            # Get commission breakdown with single query
-            commission_stats = db.session.query(
-                AffiliateCommission.status,
-                func.coalesce(func.sum(AffiliateCommission.amount), 0).label('total')
-            ).filter(
-                AffiliateCommission.affiliate_user_id == user_id
-            ).group_by(AffiliateCommission.status).all()
+            # Calculate totals
+            total_clicks = sum(link.clicks for link in links)
+            total_conversions = sum(link.conversions for link in links)
+            total_revenue = sum(link.total_revenue for link in links)
+            total_commission = sum(link.total_commission for link in links)
             
-            # Convert to dict
-            commission_breakdown = {status: float(total) for status, total in commission_stats}
+            # Get commission breakdown
+            commissions = AffiliateCommission.query.filter_by(affiliate_user_id=user_id).all()
+            
+            pending = sum(c.amount for c in commissions if c.status == 'pending')
+            approved = sum(c.amount for c in commissions if c.status == 'approved')
+            paid = sum(c.amount for c in commissions if c.status == 'paid')
             
             # Get monthly stats (last 12 months)
             monthly_stats = db.session.query(
                 func.date_trunc('month', AffiliateReferral.conversion_date).label('month'),
                 func.count(AffiliateReferral.id).label('conversions'),
-                func.coalesce(func.sum(AffiliateReferral.commission_amount), 0).label('commission')
+                func.sum(AffiliateReferral.commission_amount).label('commission')
             ).filter(
                 AffiliateReferral.affiliate_user_id == user_id,
                 AffiliateReferral.status == 'converted',
@@ -184,26 +179,22 @@ class AffiliateService:
             ).group_by('month').order_by('month').all()
             
             return {
-                'total_clicks': int(stats_query.total_clicks),
-                'total_conversions': int(stats_query.total_conversions),
-                'total_revenue': float(stats_query.total_revenue),
-                'total_commission': float(stats_query.total_commission),
-                'conversion_rate': round(
-                    (stats_query.total_conversions / stats_query.total_clicks * 100) 
-                    if stats_query.total_clicks > 0 else 0, 
-                    2
-                ),
+                'total_clicks': total_clicks,
+                'total_conversions': total_conversions,
+                'total_revenue': float(total_revenue),
+                'total_commission': float(total_commission),
+                'conversion_rate': round((total_conversions / total_clicks * 100) if total_clicks and total_clicks > 0 else 0, 2),
                 'commissions': {
-                    'pending': commission_breakdown.get('pending', 0.0),
-                    'approved': commission_breakdown.get('approved', 0.0),
-                    'paid': commission_breakdown.get('paid', 0.0),
-                    'available_for_payout': commission_breakdown.get('approved', 0.0)
+                    'pending': float(pending),
+                    'approved': float(approved),
+                    'paid': float(paid),
+                    'available_for_payout': float(approved)
                 },
                 'monthly_stats': [
                     {
                         'month': stat.month.strftime('%Y-%m') if stat.month else None,
-                        'conversions': int(stat.conversions),
-                        'commission': float(stat.commission)
+                        'conversions': stat.conversions,
+                        'commission': float(stat.commission) if stat.commission else 0
                     }
                     for stat in monthly_stats
                 ]
@@ -212,6 +203,7 @@ class AffiliateService:
         except Exception as e:
             print(f'Get affiliate stats error: {str(e)}')
             return None
+    
     @staticmethod
     def calculate_commission(purchase_amount, commission_rate):
         """

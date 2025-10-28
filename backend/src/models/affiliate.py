@@ -3,7 +3,7 @@ Affiliate Program Models
 Handles affiliate links, referrals, commissions, and payouts
 """
 from datetime import datetime
-from src.extensions import db
+from src.database import db
 
 class AffiliateLink(db.Model):
     """Affiliate referral links"""
