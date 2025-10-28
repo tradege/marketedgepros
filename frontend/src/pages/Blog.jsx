@@ -30,12 +30,18 @@ export default function Blog() {
   const fetchPosts = async (page = 1, category = 'all') => {
     try {
       setLoading(true);
-      const params = { page, per_page: pagination.per_page, category };
+      setError('');
+      const params = { page, per_page: pagination.per_page };
+      if (category !== 'all') {
+        params.category = category;
+      }
       const response = await axios.get(`${API_URL}/blog/posts`, { params });
-      setPosts(response.data.posts);
-      setPagination(response.data.pagination);
+      setPosts(response.data.posts || []);
+      setPagination(response.data.pagination || pagination);
     } catch (err) {
-      setError('Failed to fetch posts');
+      console.error('Failed to fetch posts:', err);
+      setError('Failed to load blog posts. Please try again later.');
+      setPosts([]);
     } finally {
       setLoading(false);
     }
@@ -44,8 +50,11 @@ export default function Blog() {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${API_URL}/blog/categories`);
-      setCategories(response.data);
-    } catch (err) { /* Do nothing */ }
+      setCategories(response.data || []);
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+      setCategories([]);
+    }
   };
 
   const fetchFeaturedPosts = async () => {
@@ -106,7 +115,19 @@ export default function Blog() {
                     <Loader className="w-12 h-12 animate-spin text-cyan-400" />
                   </div>
                 ) : error ? (
-                  <p className="text-red-500">{error}</p>
+                  <div className="text-center py-12">
+                    <p className="text-red-400 text-lg mb-4">{error}</p>
+                    <button 
+                      onClick={() => fetchPosts()} 
+                      className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-all"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                ) : filteredPosts.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-400 text-lg">No blog posts found.</p>
+                  </div>
                 ) : (
                   <div className="grid gap-12">
                     {filteredPosts.map(post => (
@@ -116,8 +137,14 @@ export default function Blog() {
                             {post.title}
                           </h2>
                           <div className="flex items-center gap-4 text-gray-400 mb-4">
-                            <div className="flex items-center gap-2"><Calendar size={16} /> {new Date(post.published_at).toLocaleDateString()}</div>
-                            <div className="flex items-center gap-2"><Clock size={16} /> {post.reading_time || post.read_time || 5} min read</div>
+                            <div className="flex items-center gap-2">
+                              <Calendar size={16} /> 
+                              {new Date(post.published_at).toLocaleDateString()}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Clock size={16} /> 
+                              {post.reading_time || post.read_time || 5} min read
+                            </div>
                           </div>
                           <p className="text-lg text-gray-300 mb-6">{post.excerpt}</p>
                           <div className="flex items-center gap-2 text-cyan-400 font-semibold group-hover:text-purple-400">
@@ -128,6 +155,25 @@ export default function Blog() {
                     ))}
                   </div>
                 )}
+
+                {/* Pagination */}
+                {!loading && !error && pagination.total_pages > 1 && (
+                  <div className="flex justify-center gap-2 mt-12">
+                    {Array.from({ length: pagination.total_pages }, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                          pagination.page === page
+                            ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white'
+                            : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Sidebar */}
@@ -135,7 +181,9 @@ export default function Blog() {
                 <div className="sticky top-24 space-y-12">
                   {/* Search */}
                   <div>
-                    <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Search</h3>
+                    <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                      Search
+                    </h3>
                     <div className="relative">
                       <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                       <input
@@ -149,28 +197,59 @@ export default function Blog() {
                   </div>
 
                   {/* Categories */}
-                  <div>
-                    <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Categories</h3>
-                    <div className="flex flex-wrap gap-2">
-                      <button onClick={() => handleCategoryChange('all')} className={`px-4 py-2 rounded-full text-sm font-semibold ${selectedCategory === 'all' ? 'bg-cyan-500 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}>All</button>
-                      {categories.map(cat => (
-                        <button key={cat.id} onClick={() => handleCategoryChange(cat.slug)} className={`px-4 py-2 rounded-full text-sm font-semibold ${selectedCategory === cat.slug ? 'bg-cyan-500 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}>{cat.name}</button>
-                      ))}
+                  {categories.length > 0 && (
+                    <div>
+                      <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                        Categories
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        <button 
+                          onClick={() => handleCategoryChange('all')} 
+                          className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                            selectedCategory === 'all' 
+                              ? 'bg-cyan-500 text-white' 
+                              : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                          }`}
+                        >
+                          All
+                        </button>
+                        {categories.map(cat => (
+                          <button 
+                            key={cat.id} 
+                            onClick={() => handleCategoryChange(cat.slug)} 
+                            className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                              selectedCategory === cat.slug 
+                                ? 'bg-cyan-500 text-white' 
+                                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                            }`}
+                          >
+                            {cat.name}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Featured Posts */}
-                  <div>
-                    <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Featured Posts</h3>
-                    <div className="space-y-4">
-                      {featuredPosts.map(post => (
-                        <Link to={`/blog/${post.slug}`} key={post.id} className="block group">
-                          <p className="text-lg font-semibold text-gray-300 group-hover:text-cyan-400">{post.title}</p>
-                          <p className="text-sm text-gray-500">{new Date(post.published_at).toLocaleDateString()}</p>
-                        </Link>
-                      ))}
+                  {featuredPosts.length > 0 && (
+                    <div>
+                      <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                        Featured Posts
+                      </h3>
+                      <div className="space-y-4">
+                        {featuredPosts.map(post => (
+                          <Link to={`/blog/${post.slug}`} key={post.id} className="block group">
+                            <p className="text-lg font-semibold text-gray-300 group-hover:text-cyan-400 transition-colors">
+                              {post.title}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {new Date(post.published_at).toLocaleDateString()}
+                            </p>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
