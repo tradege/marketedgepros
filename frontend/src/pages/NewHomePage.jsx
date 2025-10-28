@@ -11,18 +11,59 @@ const NewHomePage = () => {
     traders: 0,
     profitSplit: 0
   });
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   const heroRef = useRef(null);
   const statsRef = useRef(null);
+
+  // Preload images
+  useEffect(() => {
+    const images = [
+      '/images/abstract-trading-flow.png',
+      '/images/hero-trading-3d.png',
+      '/images/stats-globe-hologram.png'
+    ];
+    
+    let loadedCount = 0;
+    images.forEach(src => {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === images.length) {
+          setImagesLoaded(true);
+        }
+      };
+      img.src = src;
+    });
+  }, []);
 
   // Fetch programs
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/programs`);
-        setPrograms(Array.isArray(response.data) ? response.data : []);
+        const apiPrograms = Array.isArray(response.data) ? response.data : [];
+        
+        // If API returns empty, use static fallback
+        if (apiPrograms.length === 0) {
+          setPrograms([
+            { id: 1, account_size: 10000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
+            { id: 2, account_size: 25000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
+            { id: 3, account_size: 50000, profit_target: 10, max_daily_loss: 5, profit_split: 85, phases: 2 },
+            { id: 4, account_size: 100000, profit_target: 10, max_daily_loss: 5, profit_split: 90, phases: 2 },
+          ]);
+        } else {
+          setPrograms(apiPrograms);
+        }
       } catch (error) {
         console.error('Error fetching programs:', error);
+        // Fallback to static programs on error
+        setPrograms([
+          { id: 1, account_size: 10000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
+          { id: 2, account_size: 25000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
+          { id: 3, account_size: 50000, profit_target: 10, max_daily_loss: 5, profit_split: 85, phases: 2 },
+          { id: 4, account_size: 100000, profit_target: 10, max_daily_loss: 5, profit_split: 90, phases: 2 },
+        ]);
       }
     };
     fetchPrograms();
@@ -151,7 +192,7 @@ const NewHomePage = () => {
           {/* Stats Cards */}
           <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {/* Countries */}
-            <div className="group relative bg-gradient-to-br from-cyan-500/10 to-teal-500/10 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30 animate-float">
+            <div className="group relative bg-gradient-to-br from-cyan-500/10 to-teal-500/10 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30 animate-orbit" style={{animationDelay: '0s'}}>
               <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 mb-2">
                 {stats.countries}+
               </div>
@@ -159,7 +200,7 @@ const NewHomePage = () => {
             </div>
 
             {/* Capital */}
-            <div className="group relative bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/30 animate-float" style={{animationDelay: '0.2s'}}>
+            <div className="group relative bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/30 animate-orbit" style={{animationDelay: '1.5s'}}>
               <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">
                 ${stats.capital}M+
               </div>
@@ -167,7 +208,7 @@ const NewHomePage = () => {
             </div>
 
             {/* Traders */}
-            <div className="group relative bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/30 animate-float" style={{animationDelay: '0.4s'}}>
+            <div className="group relative bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/30 animate-orbit" style={{animationDelay: '3s'}}>
               <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400 mb-2">
                 {stats.traders}+
               </div>
@@ -175,7 +216,7 @@ const NewHomePage = () => {
             </div>
 
             {/* Profit Split */}
-            <div className="group relative bg-gradient-to-br from-blue-500/10 to-indigo-500/10 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30 animate-float" style={{animationDelay: '0.6s'}}>
+            <div className="group relative bg-gradient-to-br from-blue-500/10 to-indigo-500/10 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30 animate-orbit" style={{animationDelay: '4.5s'}}>
               <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-2">
                 {stats.profitSplit}%
               </div>
