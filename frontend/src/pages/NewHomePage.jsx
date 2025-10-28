@@ -162,7 +162,40 @@ const NewHomePage = () => {
   }) : [];
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-black text-white overflow-hidden scroll-smooth">
+      
+      {/* Navigation Bar - Apple Style */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg"></div>
+              <span className="text-xl font-bold">MarketEdgePros</span>
+            </Link>
+            
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#how-it-works" className="text-gray-300 hover:text-white transition-colors">How It Works</a>
+              <a href="#programs" className="text-gray-300 hover:text-white transition-colors">Programs</a>
+              <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
+              <Link to="/about" className="text-gray-300 hover:text-white transition-colors">About</Link>
+              <Link to="/blog" className="text-gray-300 hover:text-white transition-colors">Blog</Link>
+            </div>
+            
+            {/* CTA Buttons */}
+            <div className="flex items-center space-x-4">
+              <Link to="/login" className="text-gray-300 hover:text-white transition-colors">Login</Link>
+              <Link 
+                to="/register" 
+                className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition-all"
+              >
+                Get Funded
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
       
       {/* Hero Section */}
       <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -171,6 +204,7 @@ const NewHomePage = () => {
           <img 
             src="/images/abstract-trading-flow.png" 
             alt="" 
+            loading="eager"
             className="w-full h-full object-cover opacity-30"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black"></div>
@@ -181,6 +215,7 @@ const NewHomePage = () => {
           <img 
             src="/images/hero-trading-3d.png" 
             alt="" 
+            loading="eager"
             className="absolute top-1/4 left-1/4 w-96 h-auto opacity-60 animate-float"
           />
         </div>
@@ -285,7 +320,8 @@ const NewHomePage = () => {
       </section>
 
       {/* How It Works */}
-      <section className="relative py-32 bg-gradient-to-b from-black via-purple-950/10 to-black">
+      <section id="how-it-works" className="relative py-32 bg-black scroll-mt-16">
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/10 to-black"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center mb-20">
@@ -327,7 +363,8 @@ const NewHomePage = () => {
       </section>
 
       {/* Programs Section */}
-      <section className="relative py-32 bg-gradient-to-b from-black via-teal-950/10 to-black">
+      <section id="programs" className="relative py-32 bg-black scroll-mt-16">
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-teal-950/10 to-black"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center mb-16">
@@ -417,8 +454,9 @@ const NewHomePage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="relative py-32 bg-gradient-to-b from-black via-purple-950/10 to-black">
+      {/* Features Grid */}
+      <section id="features" className="relative py-32 bg-black scroll-mt-16">
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/10 to-black"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center mb-20">
@@ -474,6 +512,81 @@ const NewHomePage = () => {
           </Link>
         </div>
       </section>
+
+      {/* Footer - Apple Style */}
+      <footer className="relative bg-black border-t border-white/10 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            {/* Company */}
+            <div>
+              <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-cyan-500 to-teal-500 bg-clip-text text-transparent">Company</h3>
+              <ul className="space-y-3">
+                <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
+                <li><Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Contact</Link></li>
+                <li><Link to="/careers" className="text-gray-400 hover:text-white transition-colors">Careers</Link></li>
+                <li><Link to="/press" className="text-gray-400 hover:text-white transition-colors">Press</Link></li>
+              </ul>
+            </div>
+            
+            {/* Programs */}
+            <div>
+              <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Programs</h3>
+              <ul className="space-y-3">
+                <li><Link to="/programs?phase=one" className="text-gray-400 hover:text-white transition-colors">One Phase</Link></li>
+                <li><Link to="/programs?phase=two" className="text-gray-400 hover:text-white transition-colors">Two Phase</Link></li>
+                <li><Link to="/programs?phase=three" className="text-gray-400 hover:text-white transition-colors">Three Phase</Link></li>
+                <li><Link to="/programs?phase=instant" className="text-gray-400 hover:text-white transition-colors">Instant Funding</Link></li>
+              </ul>
+            </div>
+            
+            {/* Resources */}
+            <div>
+              <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">Resources</h3>
+              <ul className="space-y-3">
+                <li><Link to="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link></li>
+                <li><Link to="/free-course" className="text-gray-400 hover:text-white transition-colors">Free Course</Link></li>
+                <li><Link to="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</Link></li>
+                <li><Link to="/support" className="text-gray-400 hover:text-white transition-colors">Support</Link></li>
+              </ul>
+            </div>
+            
+            {/* Legal */}
+            <div>
+              <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">Legal</h3>
+              <ul className="space-y-3">
+                <li><Link to="/terms" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/disclaimer" className="text-gray-400 hover:text-white transition-colors">Risk Disclaimer</Link></li>
+                <li><Link to="/cookies" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</Link></li>
+              </ul>
+            </div>
+          </div>
+          
+          {/* Bottom Bar */}
+          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between">
+            <div className="flex items-center space-x-2 mb-4 md:mb-0">
+              <div className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-teal-500 rounded"></div>
+              <span className="text-sm text-gray-400">© 2025 MarketEdgePros. All rights reserved.</span>
+            </div>
+            
+            {/* Social Media */}
+            <div className="flex items-center space-x-6">
+              <a href="https://discord.gg/marketedgepros" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                <span className="text-2xl">💬</span>
+              </a>
+              <a href="https://twitter.com/marketedgepros" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                <span className="text-2xl">𝕏</span>
+              </a>
+              <a href="https://instagram.com/marketedgepros" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                <span className="text-2xl">📷</span>
+              </a>
+              <a href="https://tiktok.com/@marketedgepros" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                <span className="text-2xl">🎵</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       {/* Custom Animations */}
       <style jsx>{`
