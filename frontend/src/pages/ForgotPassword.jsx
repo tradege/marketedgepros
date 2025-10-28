@@ -4,7 +4,7 @@ import Layout from '../components/layout/Layout';
 import { Mail, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://146.190.21.113:5000/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'https://marketedgepros.com/api/v1';
 
 export default function ForgotPassword() {
   const navigate = useNavigate();

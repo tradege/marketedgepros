@@ -5,7 +5,7 @@ import Layout from '../components/layout/Layout';
 import useAuthStore from '../store/authStore';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://146.190.21.113:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://marketedgepros.com';
 
 export default function ProgramsNew() {
   const navigate = useNavigate();
