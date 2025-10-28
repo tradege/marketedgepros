@@ -224,9 +224,9 @@ export default function CRM() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">CRM - Lead Management</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">CRM - Lead Management</h1>
           <p className="text-gray-600 mt-1">Manage and convert your leads</p>
         </div>
         <button
@@ -303,7 +303,7 @@ export default function CRM() {
       </div>
 
       {/* View Toggle */}
-      <div className="flex gap-2 bg-white rounded-lg shadow p-2 w-fit">
+      <div className="flex flex-wrap gap-2 bg-white rounded-lg shadow p-2 w-fit">
         <button
           onClick={() => setView('list')}
           className={`px-4 py-2 rounded-lg ${

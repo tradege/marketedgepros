@@ -215,9 +215,9 @@ export default function MyTeam() {
     <UserLayout>
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Team</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">My Team</h1>
           <p className="text-gray-600 mt-1">Manage your downline and team members</p>
         </div>
         <button
@@ -235,7 +235,7 @@ export default function MyTeam() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Downline</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total_downline}</p>
+              <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">{stats.total_downline}</p>
             </div>
             <div className="p-3 bg-blue-100 rounded-lg">
               <Users className="text-blue-600" size={24} />
@@ -247,7 +247,7 @@ export default function MyTeam() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Direct Team</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.direct_children}</p>
+              <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">{stats.direct_children}</p>
             </div>
             <div className="p-3 bg-green-100 rounded-lg">
               <UserPlus className="text-green-600" size={24} />
@@ -259,7 +259,7 @@ export default function MyTeam() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Active Members</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.active}</p>
+              <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">{stats.active}</p>
             </div>
             <div className="p-3 bg-purple-100 rounded-lg">
               <TrendingUp className="text-purple-600" size={24} />
