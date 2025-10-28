@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, TrendingUp, UserPlus, Phone, Mail, Calendar, DollarSign, Filter, Search, X, Check, AlertCircle } from 'lucide-react';
+import Layout from '../components/layout/Layout';
 
 export default function CRM() {
   const [view, setView] = useState('list'); // 'list' or 'pipeline'
@@ -222,7 +223,8 @@ export default function CRM() {
   }
 
   return (
-    <div className="space-y-6">
+    <Layout>
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -461,7 +463,8 @@ export default function CRM() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </Layout>
   );
 }
 
