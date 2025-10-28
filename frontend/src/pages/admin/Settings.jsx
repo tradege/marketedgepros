@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Save } from 'lucide-react';
-import AdminLayout from '../../components/admin/AdminLayout';
+// AdminLayout removed - wrapped in App.jsx
+// // AdminLayout removed - wrapped in App.jsx
+// import AdminLayout from '../../components/admin/AdminLayout';
 
 export default function Settings() {
   const [generalSettings, setGeneralSettings] = useState({
@@ -30,7 +32,7 @@ export default function Settings() {
   };
 
   return (
-    <AdminLayout>
+    
     
       <div>
       {/* Header */}
@@ -197,7 +199,7 @@ export default function Settings() {
       </div>
       </div>
     
-    </AdminLayout>
+    
   );
 }
 

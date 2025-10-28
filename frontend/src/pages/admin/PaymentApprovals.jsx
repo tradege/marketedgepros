@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Eye, DollarSign, Gift } from 'lucide-react';
 import axios from 'axios';
-import AdminLayout from '../../components/admin/AdminLayout';
+// AdminLayout removed - wrapped in App.jsx
+// // AdminLayout removed - wrapped in App.jsx
+// import AdminLayout from '../../components/admin/AdminLayout';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
@@ -148,7 +150,7 @@ const PaymentApprovals = () => {
   }
 
   return (
-    <AdminLayout>
+    
     <div className="p-4 md:p-6">
       <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
         Payment Approvals
@@ -371,7 +373,7 @@ const PaymentApprovals = () => {
         </div>
       )}
     </div>
-    </AdminLayout>
+    
   );
 };
 
