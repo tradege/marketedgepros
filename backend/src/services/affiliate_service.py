@@ -3,6 +3,7 @@ Affiliate Service
 Handles affiliate tracking, commission calculation, and conversions
 """
 from datetime import datetime, timedelta
+from decimal import Decimal
 from flask import request
 from sqlalchemy import func
 
@@ -102,7 +103,12 @@ class AffiliateService:
             
             # Calculate commission
             affiliate_link = AffiliateLink.query.get(referral.affiliate_link_id)
-            commission_amount = purchase_amount * (affiliate_link.commission_rate / 100)
+            
+            # Safe commission calculation with zero check
+            if affiliate_link.commission_rate and affiliate_link.commission_rate > 0:
+                commission_amount = Decimal(str(purchase_amount)) * (Decimal(str(affiliate_link.commission_rate)) / Decimal('100'))
+            else:
+                commission_amount = Decimal('0')
             
             referral.commission_amount = commission_amount
             
@@ -177,7 +183,7 @@ class AffiliateService:
                 'total_conversions': total_conversions,
                 'total_revenue': float(total_revenue),
                 'total_commission': float(total_commission),
-                'conversion_rate': round((total_conversions / total_clicks * 100) if total_clicks > 0 else 0, 2),
+                'conversion_rate': round((total_conversions / total_clicks * 100) if total_clicks and total_clicks > 0 else 0, 2),
                 'commissions': {
                     'pending': float(pending),
                     'approved': float(approved),
@@ -200,8 +206,30 @@ class AffiliateService:
     
     @staticmethod
     def calculate_commission(purchase_amount, commission_rate):
-        """Calculate commission amount"""
-        return purchase_amount * (commission_rate / 100)
+        """
+        Calculate commission amount with safe division
+        
+        Args:
+            purchase_amount: Purchase amount (Decimal, float, or int)
+            commission_rate: Commission rate percentage (Decimal, float, or int)
+        
+        Returns:
+            Decimal: Calculated commission amount
+        """
+        if not purchase_amount or not commission_rate:
+            return Decimal('0')
+        
+        if commission_rate <= 0:
+            return Decimal('0')
+        
+        # Convert to Decimal for precise calculations
+        amount_decimal = Decimal(str(purchase_amount))
+        rate_decimal = Decimal(str(commission_rate))
+        
+        # Calculate with safe division
+        commission = (amount_decimal * rate_decimal) / Decimal('100')
+        
+        return commission.quantize(Decimal('0.01'))
     
     @staticmethod
     def get_top_affiliates(limit=10):
