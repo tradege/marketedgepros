@@ -9,7 +9,9 @@ import {
 import StatsCard from '../../components/common/StatsCard';
 import DataTable from '../../components/common/DataTable';
 import axios from 'axios';
-import AdminLayout from '../../components/admin/AdminLayout';
+// AdminLayout removed - wrapped in App.jsx
+// // AdminLayout removed - wrapped in App.jsx
+// import AdminLayout from '../../components/admin/AdminLayout';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -129,7 +131,7 @@ function AdminDashboard() {
   }));
 
   return (
-    <AdminLayout>
+    
       <div className="space-y-6 p-8">
       <div className="flex justify-between items-center">
         <div>
@@ -224,7 +226,7 @@ function AdminDashboard() {
         />
       </div>
       </div>
-    </AdminLayout>
+    
   );
 }
 

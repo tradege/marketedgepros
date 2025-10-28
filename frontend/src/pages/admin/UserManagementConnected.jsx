@@ -5,7 +5,7 @@ import UserDetailsModal from '../../components/UserDetailsModal';
 import UserEditModal from '../../components/UserEditModal';
 import { getCreatableRoles, getRoleConfig } from '../../constants/roles';
 import ReferralCodeDisplay from '../../components/ReferralCodeDisplay';
-import AdminLayout from '../../components/admin/AdminLayout';
+// AdminLayout removed - now wrapped in App.jsx
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -207,9 +207,7 @@ function UserManagement() {
   }
 
   return (
-    <AdminLayout>
-    
-      <div className="space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-white dark:text-white">
@@ -639,9 +637,7 @@ function UserManagement() {
           }}
         />
       )}
-      </div>
-    
-    </AdminLayout>
+    </div>
   );
 }
 
