@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Layout from '../components/layout/Layout';
 
 const NewHomePage = () => {
   const [programs, setPrograms] = useState([]);
@@ -162,464 +163,393 @@ const NewHomePage = () => {
   }) : [];
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden scroll-smooth">
-      
-      {/* Navigation Bar - Apple Style */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg"></div>
-              <span className="text-xl font-bold">MarketEdgePros</span>
-            </Link>
-            
-            {/* Navigation Links */}
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#how-it-works" className="text-gray-300 hover:text-white transition-colors">How It Works</a>
-              <a href="#programs" className="text-gray-300 hover:text-white transition-colors">Programs</a>
-              <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-              <Link to="/about" className="text-gray-300 hover:text-white transition-colors">About</Link>
-              <Link to="/blog" className="text-gray-300 hover:text-white transition-colors">Blog</Link>
-            </div>
-            
-            {/* CTA Buttons */}
-            <div className="flex items-center space-x-4">
-              <Link to="/login" className="text-gray-300 hover:text-white transition-colors">Login</Link>
-              <Link 
-                to="/register" 
-                className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition-all"
-              >
-                Get Funded
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-      
-      {/* Hero Section */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="/images/abstract-trading-flow.png" 
-            alt="" 
-            loading="eager"
-            className="w-full h-full object-cover opacity-30"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black"></div>
-        </div>
-
-        {/* 3D Trading Screens - Floating */}
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          <img 
-            src="/images/hero-trading-3d.png" 
-            alt="" 
-            loading="eager"
-            className="absolute top-1/4 left-1/4 w-96 h-auto opacity-60 animate-float"
-          />
-        </div>
-
-        {/* Content */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          
-          {/* Main Heading */}
-          <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
-            Where <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-cyan-400 animate-gradient-shift">Talent</span>
-            <br />
-            Meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 animate-gradient-shift">Capital</span>
-          </h1>
-
-          {/* Subheading */}
-          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
-            Trade with up to <span className="text-cyan-400 font-bold">$400,000</span> in capital.
-            <br />
-            Keep up to <span className="text-purple-400 font-bold">90%</span> of your profits.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-            <Link 
-              to="/programs" 
-              className="group relative px-12 py-5 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full text-lg font-semibold overflow-hidden transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-cyan-500/50"
-            >
-              <span className="relative z-10">Get Funded Now</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Link>
-            
-            <Link 
-              to="/programs" 
-              className="group relative px-12 py-5 bg-transparent border-2 border-purple-500 rounded-full text-lg font-semibold overflow-hidden transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-purple-500/50"
-            >
-              <span className="relative z-10">Explore Programs</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            </Link>
-          </div>
-
-          {/* Stats Cards */}
-          <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {/* Countries */}
-            <div className="group relative bg-gradient-to-br from-cyan-500/10 to-teal-500/10 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30 animate-orbit" style={{animationDelay: '0s'}}>
-              <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 mb-2">
-                {stats.countries}+
-              </div>
-              <div className="text-sm text-gray-400 uppercase tracking-wider">Countries</div>
-            </div>
-
-            {/* Capital */}
-            <div className="group relative bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/30 animate-orbit" style={{animationDelay: '1.5s'}}>
-              <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">
-                ${stats.capital}M+
-              </div>
-              <div className="text-sm text-gray-400 uppercase tracking-wider">Capital Deployed</div>
-            </div>
-
-            {/* Traders */}
-            <div className="group relative bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/30 animate-orbit" style={{animationDelay: '3s'}}>
-              <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400 mb-2">
-                {stats.traders}+
-              </div>
-              <div className="text-sm text-gray-400 uppercase tracking-wider">Active Traders</div>
-            </div>
-
-            {/* Profit Split */}
-            <div className="group relative bg-gradient-to-br from-blue-500/10 to-indigo-500/10 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30 animate-orbit" style={{animationDelay: '4.5s'}}>
-              <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-2">
-                {stats.profitSplit}%
-              </div>
-              <div className="text-sm text-gray-400 uppercase tracking-wider">Profit Split</div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Globe Section */}
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-cyan-950/20 to-black"></div>
+    <Layout>
+      <div className="min-h-screen overflow-hidden scroll-smooth">
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6">
-              Trade <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Globally</span>
-            </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Join traders from over 200 countries trading the world's markets
-            </p>
+        {/* Hero Section */}
+        <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          {/* Animated Background */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/images/abstract-trading-flow.png" 
+              alt="" 
+              loading="eager"
+              className="w-full h-full object-cover opacity-30"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black"></div>
           </div>
 
-          {/* Globe Image */}
-          <div className="relative flex justify-center items-center">
+          {/* 3D Trading Screens - Floating */}
+          <div className="absolute inset-0 z-10 pointer-events-none">
             <img 
-              src="/images/stats-globe-hologram.png" 
-              alt="Global Trading Network" 
-              className="w-full max-w-2xl h-auto animate-pulse-slow"
+              src="/images/hero-trading-3d.png" 
+              alt="" 
+              loading="eager"
+              className="absolute top-1/4 left-1/4 w-96 h-auto opacity-60 animate-float"
             />
           </div>
-        </div>
-      </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="relative py-32 bg-black scroll-mt-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/10 to-black"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center mb-20">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6">
-              How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Works</span>
-            </h2>
-          </div>
+          {/* Content */}
+          <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            
+            {/* Main Heading */}
+            <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
+              Where <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-cyan-400 animate-gradient-shift">Talent</span>
+              <br />
+              Meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 animate-gradient-shift">Capital</span>
+            </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {/* Step 1 */}
-            <div className="group relative bg-gradient-to-br from-cyan-500/10 to-teal-500/10 backdrop-blur-xl border border-cyan-500/30 rounded-3xl p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
-              <div className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 mb-6">01</div>
-              <h3 className="text-2xl font-bold mb-4">Choose Your Program</h3>
-              <p className="text-gray-400">
-                Select from our range of funding programs - from $5K to $400K in trading capital
-              </p>
-            </div>
+            {/* Subheading */}
+            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
+              Trade with up to <span className="text-cyan-400 font-bold">$400,000</span> in capital.
+              Keep up to <span className="text-purple-400 font-bold">90%</span> of your profits.
+            </p>
 
-            {/* Step 2 */}
-            <div className="group relative bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/30">
-              <div className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">02</div>
-              <h3 className="text-2xl font-bold mb-4">Pass the Challenge</h3>
-              <p className="text-gray-400">
-                Trade with discipline and hit your profit targets while managing risk
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="group relative bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-xl border border-orange-500/30 rounded-3xl p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/30">
-              <div className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400 mb-6">03</div>
-              <h3 className="text-2xl font-bold mb-4">Get Funded & Paid</h3>
-              <p className="text-gray-400">
-                Start trading with our capital and keep up to 90% of your profits
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Programs Section */}
-      <section id="programs" className="relative py-32 bg-black scroll-mt-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-teal-950/10 to-black"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6">
-              Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Challenge</span>
-            </h2>
-          </div>
-
-          {/* Phase Tabs */}
-          <div className="flex flex-wrap justify-center gap-4 mb-16">
-            <button
-              onClick={() => setSelectedPhase('one')}
-              className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ${
-                selectedPhase === 'one'
-                  ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-2xl shadow-cyan-500/50'
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10'
-              }`}
-            >
-              1️⃣ One Phase
-            </button>
-            <button
-              onClick={() => setSelectedPhase('two')}
-              className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ${
-                selectedPhase === 'two'
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-2xl shadow-purple-500/50'
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10'
-              }`}
-            >
-              2️⃣ Two Phase
-            </button>
-            <button
-              onClick={() => setSelectedPhase('three')}
-              className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ${
-                selectedPhase === 'three'
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-2xl shadow-orange-500/50'
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10'
-              }`}
-            >
-              3️⃣ Three Phase
-            </button>
-            <button
-              onClick={() => setSelectedPhase('instant')}
-              className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ${
-                selectedPhase === 'instant'
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-2xl shadow-blue-500/50'
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10'
-              }`}
-            >
-              4️⃣ Instant Funding
-            </button>
-          </div>
-
-          {/* Programs Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredPrograms.map((program) => (
-              <div
-                key={program.id}
-                className="group relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30"
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <Link
+                to="/programs"
+                className="group relative px-12 py-5 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full text-lg font-bold transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-cyan-500/50"
               >
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 mb-4">
-                  ${(program.account_size / 1000).toFixed(0)}K
+                <span className="relative z-10">Get Funded Now</span>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-600 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </Link>
+              
+              <Link
+                to="/free-course"
+                className="px-12 py-5 border-2 border-white/20 rounded-full text-lg font-semibold backdrop-blur-sm hover:bg-white/10 transition-all duration-300"
+              >
+                Start Free Course
+              </Link>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">✓</span>
+                <span>Instant Payouts</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">✓</span>
+                <span>No Time Limits</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">✓</span>
+                <span>Trade Your Way</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Stats Section */}
+        <section ref={statsRef} className="relative py-32 overflow-hidden">
+          {/* Background */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/images/stats-globe-hologram.png" 
+              alt="" 
+              className="w-full h-full object-cover opacity-20"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {/* Stat 1 */}
+              <div className="text-center">
+                <div className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 mb-2">
+                  {stats.countries}+
                 </div>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Profit Target:</span>
-                    <span className="text-white font-semibold">{program.profit_target}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Max Daily Loss:</span>
-                    <span className="text-white font-semibold">{program.max_daily_loss}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Profit Split:</span>
-                    <span className="text-cyan-400 font-bold">{program.profit_split}%</span>
-                  </div>
+                <div className="text-gray-400 text-lg">Countries</div>
+              </div>
+
+              {/* Stat 2 */}
+              <div className="text-center">
+                <div className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">
+                  ${stats.capital}M+
                 </div>
-                <Link
-                  to={`/programs/${program.id}`}
-                  className="mt-6 block w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full text-center font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/50"
+                <div className="text-gray-400 text-lg">Capital Funded</div>
+              </div>
+
+              {/* Stat 3 */}
+              <div className="text-center">
+                <div className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400 mb-2">
+                  {stats.traders}+
+                </div>
+                <div className="text-gray-400 text-lg">Active Traders</div>
+              </div>
+
+              {/* Stat 4 */}
+              <div className="text-center">
+                <div className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-2">
+                  {stats.profitSplit}%
+                </div>
+                <div className="text-gray-400 text-lg">Profit Split</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section id="how-it-works" className="relative py-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">
+                How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Works</span>
+              </h2>
+              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                Get funded in 3 simple steps and start trading with our capital
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {/* Step 1 */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-teal-500/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 transition-all duration-300 hover:scale-105">
+                  <div className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 mb-6">01</div>
+                  <h3 className="text-2xl font-bold mb-4">Choose Your Challenge</h3>
+                  <p className="text-gray-400">
+                    Select from our range of funding programs. From $10K to $400K accounts.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 transition-all duration-300 hover:scale-105">
+                  <div className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">02</div>
+                  <h3 className="text-2xl font-bold mb-4">Pass The Evaluation</h3>
+                  <p className="text-gray-400">
+                    Trade and hit the profit targets while following our simple rules.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 transition-all duration-300 hover:scale-105">
+                  <div className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400 mb-6">03</div>
+                  <h3 className="text-2xl font-bold mb-4">Get Funded & Trade</h3>
+                  <p className="text-gray-400">
+                    Receive your funded account and keep up to 90% of your profits.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Programs Section */}
+        <section id="programs" className="relative py-32 bg-gradient-to-b from-transparent via-white/5 to-transparent">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">
+                Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Challenge</span>
+              </h2>
+            </div>
+
+            {/* Phase Tabs */}
+            <div className="flex flex-wrap justify-center gap-4 mb-16">
+              <button
+                onClick={() => setSelectedPhase('one')}
+                className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ${
+                  selectedPhase === 'one'
+                    ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-2xl shadow-cyan-500/50'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                }`}
+              >
+                1️⃣ One Phase
+              </button>
+              <button
+                onClick={() => setSelectedPhase('two')}
+                className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ${
+                  selectedPhase === 'two'
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-2xl shadow-purple-500/50'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                }`}
+              >
+                2️⃣ Two Phase
+              </button>
+              <button
+                onClick={() => setSelectedPhase('three')}
+                className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ${
+                  selectedPhase === 'three'
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-2xl shadow-orange-500/50'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                }`}
+              >
+                3️⃣ Three Phase
+              </button>
+              <button
+                onClick={() => setSelectedPhase('instant')}
+                className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ${
+                  selectedPhase === 'instant'
+                    ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-2xl shadow-blue-500/50'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                }`}
+              >
+                4️⃣ Instant Funding
+              </button>
+            </div>
+
+            {/* Programs Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filteredPrograms.map((program) => (
+                <div
+                  key={program.id}
+                  className="group relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30"
                 >
-                  Get Started
-                </Link>
-              </div>
-            ))}
+                  <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 mb-4">
+                    ${(program.account_size / 1000).toFixed(0)}K
+                  </div>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Profit Target:</span>
+                      <span className="text-white font-semibold">{program.profit_target}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Max Daily Loss:</span>
+                      <span className="text-white font-semibold">{program.max_daily_loss}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Profit Split:</span>
+                      <span className="text-cyan-400 font-bold">{program.profit_split}%</span>
+                    </div>
+                  </div>
+                  <Link
+                    to={`/programs/${program.id}`}
+                    className="mt-6 block w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full text-center font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/50"
+                  >
+                    Get Started
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
+        </section>
 
-        </div>
-      </section>
+        {/* Features Section */}
+        <section id="features" className="relative py-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">
+                Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Us</span>
+              </h2>
+            </div>
 
-      {/* Features Grid */}
-      <section id="features" className="relative py-32 bg-black scroll-mt-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/10 to-black"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center mb-20">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6">
-              Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">MarketEdgePros</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Feature 1 */}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+                <div className="text-4xl mb-4">⚡</div>
+                <h3 className="text-2xl font-bold mb-4">Instant Payouts</h3>
+                <p className="text-gray-400">
+                  Request payouts anytime. Get paid within 24 hours.
+                </p>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+                <div className="text-4xl mb-4">🎯</div>
+                <h3 className="text-2xl font-bold mb-4">No Time Limits</h3>
+                <p className="text-gray-400">
+                  Trade at your own pace. No pressure, no deadlines.
+                </p>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+                <div className="text-4xl mb-4">📈</div>
+                <h3 className="text-2xl font-bold mb-4">Scale Your Account</h3>
+                <p className="text-gray-400">
+                  Grow your account up to $400K based on performance.
+                </p>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+                <div className="text-4xl mb-4">🛡️</div>
+                <h3 className="text-2xl font-bold mb-4">Simple Rules</h3>
+                <p className="text-gray-400">
+                  Clear, straightforward rules. No hidden conditions.
+                </p>
+              </div>
+
+              {/* Feature 5 */}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+                <div className="text-4xl mb-4">💰</div>
+                <h3 className="text-2xl font-bold mb-4">Up to 90% Profit Split</h3>
+                <p className="text-gray-400">
+                  Keep the majority of your profits. You deserve it.
+                </p>
+              </div>
+
+              {/* Feature 6 */}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+                <div className="text-4xl mb-4">🌍</div>
+                <h3 className="text-2xl font-bold mb-4">Global Community</h3>
+                <p className="text-gray-400">
+                  Join traders from 200+ countries worldwide.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="relative py-32">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-5xl md:text-6xl font-bold mb-8">
+              Ready to Start <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Trading</span>?
             </h2>
+            <p className="text-xl text-gray-300 mb-12">
+              Join thousands of traders worldwide and get funded today
+            </p>
+            <Link
+              to="/programs"
+              className="inline-block px-16 py-6 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-full text-xl font-bold transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-purple-500/50"
+            >
+              Get Funded Now
+            </Link>
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { icon: '💰', title: 'Up to $400K Capital', desc: 'Scale your trading with substantial capital', gradient: 'from-cyan-400 to-teal-400' },
-              { icon: '⚡', title: 'Fast Payouts', desc: 'Request withdrawals anytime', gradient: 'from-purple-400 to-pink-400' },
-              { icon: '📈', title: 'Up to 90% Split', desc: 'Keep most of your profits', gradient: 'from-orange-400 to-red-400' },
-              { icon: '🤖', title: 'EAs Allowed', desc: 'Use your favorite trading bots', gradient: 'from-blue-400 to-indigo-400' },
-              { icon: '🌍', title: 'Trade Anywhere', desc: 'Global access, no restrictions', gradient: 'from-green-400 to-emerald-400' },
-              { icon: '📊', title: 'Advanced Dashboard', desc: 'Real-time analytics and insights', gradient: 'from-yellow-400 to-amber-400' },
-              { icon: '🔒', title: 'Secure & Reliable', desc: 'Your data and funds are safe', gradient: 'from-pink-400 to-rose-400' },
-              { icon: '🎯', title: 'No Consistency Rules', desc: 'Trade your own way', gradient: 'from-violet-400 to-purple-400' },
-              { icon: '📱', title: 'MT4/MT5 Support', desc: 'Use the platforms you love', gradient: 'from-teal-400 to-cyan-400' }
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className="group relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/20"
-              >
-                <div className="text-5xl mb-4">{feature.icon}</div>
-                <h3 className={`text-2xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r ${feature.gradient}`}>
-                  {feature.title}
-                </h3>
-                <p className="text-gray-400">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
+        {/* Custom Animations */}
+        <style jsx>{`
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+          }
 
-        </div>
-      </section>
+          @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+          }
 
-      {/* Final CTA */}
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-950/30 via-purple-950/30 to-cyan-950/30"></div>
-        
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-5xl md:text-6xl font-bold mb-8">
-            Ready to Start <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Trading</span>?
-          </h2>
-          <p className="text-xl text-gray-300 mb-12">
-            Join thousands of traders worldwide and get funded today
-          </p>
-          <Link
-            to="/programs"
-            className="inline-block px-16 py-6 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-full text-xl font-bold transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-purple-500/50"
-          >
-            Get Funded Now
-          </Link>
-        </div>
-      </section>
+          @keyframes pulse-slow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+          }
 
-      {/* Footer - Apple Style */}
-      <footer className="relative bg-black border-t border-white/10 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            {/* Company */}
-            <div>
-              <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-cyan-500 to-teal-500 bg-clip-text text-transparent">Company</h3>
-              <ul className="space-y-3">
-                <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
-                <li><Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Contact</Link></li>
-                <li><Link to="/careers" className="text-gray-400 hover:text-white transition-colors">Careers</Link></li>
-                <li><Link to="/press" className="text-gray-400 hover:text-white transition-colors">Press</Link></li>
-              </ul>
-            </div>
-            
-            {/* Programs */}
-            <div>
-              <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Programs</h3>
-              <ul className="space-y-3">
-                <li><Link to="/programs?phase=one" className="text-gray-400 hover:text-white transition-colors">One Phase</Link></li>
-                <li><Link to="/programs?phase=two" className="text-gray-400 hover:text-white transition-colors">Two Phase</Link></li>
-                <li><Link to="/programs?phase=three" className="text-gray-400 hover:text-white transition-colors">Three Phase</Link></li>
-                <li><Link to="/programs?phase=instant" className="text-gray-400 hover:text-white transition-colors">Instant Funding</Link></li>
-              </ul>
-            </div>
-            
-            {/* Resources */}
-            <div>
-              <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">Resources</h3>
-              <ul className="space-y-3">
-                <li><Link to="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link></li>
-                <li><Link to="/free-course" className="text-gray-400 hover:text-white transition-colors">Free Course</Link></li>
-                <li><Link to="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</Link></li>
-                <li><Link to="/support" className="text-gray-400 hover:text-white transition-colors">Support</Link></li>
-              </ul>
-            </div>
-            
-            {/* Legal */}
-            <div>
-              <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">Legal</h3>
-              <ul className="space-y-3">
-                <li><Link to="/terms" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
-                <li><Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/disclaimer" className="text-gray-400 hover:text-white transition-colors">Risk Disclaimer</Link></li>
-                <li><Link to="/cookies" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</Link></li>
-              </ul>
-            </div>
-          </div>
-          
-          {/* Bottom Bar */}
-          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-teal-500 rounded"></div>
-              <span className="text-sm text-gray-400">© 2025 MarketEdgePros. All rights reserved.</span>
-            </div>
-            
-            {/* Social Media */}
-            <div className="flex items-center space-x-6">
-              <a href="https://discord.gg/marketedgepros" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                <span className="text-2xl">💬</span>
-              </a>
-              <a href="https://twitter.com/marketedgepros" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                <span className="text-2xl">𝕏</span>
-              </a>
-              <a href="https://instagram.com/marketedgepros" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                <span className="text-2xl">📷</span>
-              </a>
-              <a href="https://tiktok.com/@marketedgepros" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-                <span className="text-2xl">🎵</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+          .animate-float {
+            animation: float 6s ease-in-out infinite;
+          }
 
-      {/* Custom Animations */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
+          .animate-gradient-shift {
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+          }
 
-        @keyframes gradient-shift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
+          .animate-pulse-slow {
+            animation: pulse-slow 4s ease-in-out infinite;
+          }
+        `}</style>
 
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.6; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.05); }
-        }
-
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .animate-gradient-shift {
-          background-size: 200% 200%;
-          animation: gradient-shift 3s ease infinite;
-        }
-
-        .animate-pulse-slow {
-          animation: pulse-slow 4s ease-in-out infinite;
-        }
-      `}</style>
-
-    </div>
+      </div>
+    </Layout>
   );
 };
 
