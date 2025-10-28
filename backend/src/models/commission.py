@@ -1,6 +1,7 @@
 """
 Commission model for tracking agent earnings
 """
+from decimal import Decimal
 from src.database import db, TimestampMixin
 
 
@@ -36,23 +37,59 @@ class Commission(db.Model, TimestampMixin):
     __table_args__ = (
         db.Index('ix_commission_agent_id', 'agent_id'),
         db.Index('ix_commission_status', 'status'),
+        db.Index('ix_commission_agent_status', 'agent_id', 'status'),  # Composite index
+        db.Index('ix_commission_created_at', 'created_at'),  # For date queries
     )
     
     @staticmethod
     def calculate_commission(sale_amount, commission_rate):
-        """Calculate commission amount from sale amount and rate"""
+        """
+        Calculate commission amount from sale amount and rate
+        
+        Args:
+            sale_amount: Sale amount (Decimal, float, or int)
+            commission_rate: Commission rate percentage (Decimal, float, or int)
+        
+        Returns:
+            Decimal: Calculated commission amount
+        
+        Raises:
+            ValueError: If commission_rate is invalid
+        """
         if not sale_amount or not commission_rate:
-            return 0
-        if commission_rate < 0 or commission_rate > 100:
+            return Decimal('0')
+        
+        # Convert to Decimal for precise calculations
+        sale_decimal = Decimal(str(sale_amount))
+        rate_decimal = Decimal(str(commission_rate))
+        
+        # Validate rate
+        if rate_decimal < 0 or rate_decimal > 100:
             raise ValueError('Commission rate must be between 0 and 100')
-        return (sale_amount * commission_rate / 100)
+        
+        # Check for zero to avoid division issues
+        if rate_decimal == 0:
+            return Decimal('0')
+        
+        # Calculate: (sale_amount * commission_rate) / 100
+        commission = (sale_decimal * rate_decimal) / Decimal('100')
+        
+        # Round to 2 decimal places for currency
+        return commission.quantize(Decimal('0.01'))
     
     def validate_commission(self):
-        """Validate that commission amount matches calculation"""
-        expected = self.calculate_commission(float(self.sale_amount), float(self.commission_rate))
-        actual = float(self.commission_amount)
-        # Allow small floating point differences (0.01)
-        return abs(expected - actual) < 0.01
+        """
+        Validate that commission amount matches calculation
+        
+        Returns:
+            bool: True if commission is valid, False otherwise
+        """
+        expected = self.calculate_commission(self.sale_amount, self.commission_rate)
+        actual = Decimal(str(self.commission_amount))
+        
+        # Allow small differences (0.01) for rounding
+        difference = abs(expected - actual)
+        return difference <= Decimal('0.01')
     
     def to_dict(self):
         """Convert to dictionary"""
