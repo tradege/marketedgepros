@@ -371,8 +371,6 @@ const PaymentApprovals = () => {
         </div>
       )}
     </div>
-      </div>
-      </div>
     </AdminLayout>
   );
 };

@@ -6,7 +6,7 @@ import {
   Upload, FileText, CheckCircle, AlertCircle,
   User, CreditCard, Home, ArrowRight
 } from 'lucide-react';
-import UserLayout from '../../components/layout/UserLayout';
+import UserLayout from '../components/layout/UserLayout';
 
 export default function KYC() {
   const navigate = useNavigate();
