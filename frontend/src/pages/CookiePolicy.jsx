@@ -97,8 +97,8 @@ function CookiePolicy() {
               </p>
               <p className="text-gray-300 text-lg">
                 If you have any questions about our use of cookies, please contact us at{' '}
-                <a href="mailto:support@marketedgepros.com" className="text-cyan-400 hover:text-cyan-300 transition-colors font-semibold">
-                  support@marketedgepros.com
+                <a href="mailto:info@marketedgepros.com" className="text-cyan-400 hover:text-cyan-300 transition-colors font-semibold">
+                  info@marketedgepros.com
                 </a>
               </p>
             </div>

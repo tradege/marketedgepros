@@ -7,7 +7,7 @@ import { Save } from 'lucide-react';
 export default function Settings() {
   const [generalSettings, setGeneralSettings] = useState({
     platformName: 'MarketEdgePros',
-    supportEmail: 'support@marketedgepros.com',
+    supportEmail: 'info@marketedgepros.com',
     contactPhone: '+1 (555) 123-4567',
     enableRegistration: true,
     enableEmailNotifications: true,

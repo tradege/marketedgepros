@@ -84,8 +84,8 @@ function RefundPolicy() {
               </div>
               <p className="text-gray-300">
                 To request a refund, please contact our support team at{' '}
-                <a href="mailto:support@marketedgepros.com" className="text-cyan-400 hover:text-cyan-300 transition-colors font-semibold">
-                  support@marketedgepros.com
+                <a href="mailto:info@marketedgepros.com" className="text-cyan-400 hover:text-cyan-300 transition-colors font-semibold">
+                  info@marketedgepros.com
                 </a>
                 {' '}with your account details and reason for the request. All refund requests are subject to review.
               </p>

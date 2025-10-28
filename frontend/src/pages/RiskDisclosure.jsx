@@ -154,8 +154,8 @@ export default function RiskDisclosure() {
               </p>
               <p className="text-gray-400">
                 If you have any questions about these risks, please contact us at{' '}
-                <a href="mailto:support@marketedgepros.com" className="text-red-400 hover:text-red-300 transition-colors font-semibold">
-                  support@marketedgepros.com
+                <a href="mailto:info@marketedgepros.com" className="text-red-400 hover:text-red-300 transition-colors font-semibold">
+                  info@marketedgepros.com
                 </a>
               </p>
             </div>
