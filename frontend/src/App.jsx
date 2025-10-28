@@ -36,7 +36,11 @@ const AffiliateDashboard = lazy(() => import('./pages/affiliate/AffiliateDashboa
 const AffiliatePayout = lazy(() => import('./pages/affiliate/AffiliatePayout'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
-const RiskDisclosure = lazy(() => import('./pages/RiskDisclosure'));
+const RiskDisclosure = lazy(() => import("./pages/RiskDisclosure"));
+const TradingRules = lazy(() => import("./pages/TradingRules"));
+const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
+const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
+const Careers = lazy(() => import("./pages/Careers"));
 
 // Shared Pages (Lazy Loaded)
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -194,6 +198,10 @@ function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
         <Route path="/risk-disclosure" element={<RiskDisclosure />} />
+        <Route path="/trading-rules" element={<TradingRules />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
+        <Route path="/careers" element={<Careers />} />
 
         {/* Auth Routes */}
         <Route
