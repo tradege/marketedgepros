@@ -1,15 +1,15 @@
 import React from 'react';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import LandingNavbar from './LandingNavbar';
+import LandingFooter from './LandingFooter';
 
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow">
+    <div className="min-h-screen flex flex-col bg-black text-white">
+      <LandingNavbar />
+      <main className="flex-grow pt-16">
         {children}
       </main>
-      <Footer />
+      <LandingFooter />
     </div>
   );
 }
