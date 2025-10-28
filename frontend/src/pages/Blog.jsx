@@ -50,9 +50,12 @@ export default function Blog() {
 
   const fetchFeaturedPosts = async () => {
     try {
-      const response = await axios.get(`${API_URL}/blog/posts/featured`);
-      setFeaturedPosts(response.data);
-    } catch (err) { /* Do nothing */ }
+      const response = await axios.get(`${API_URL}/blog/featured`);
+      setFeaturedPosts(response.data.posts || []);
+    } catch (err) { 
+      console.error('Failed to fetch featured posts:', err);
+      setFeaturedPosts([]);
+    }
   };
 
   const handleCategoryChange = (category) => {
@@ -114,7 +117,7 @@ export default function Blog() {
                           </h2>
                           <div className="flex items-center gap-4 text-gray-400 mb-4">
                             <div className="flex items-center gap-2"><Calendar size={16} /> {new Date(post.published_at).toLocaleDateString()}</div>
-                            <div className="flex items-center gap-2"><Clock size={16} /> {post.read_time} min read</div>
+                            <div className="flex items-center gap-2"><Clock size={16} /> {post.reading_time || post.read_time || 5} min read</div>
                           </div>
                           <p className="text-lg text-gray-300 mb-6">{post.excerpt}</p>
                           <div className="flex items-center gap-2 text-cyan-400 font-semibold group-hover:text-purple-400">
