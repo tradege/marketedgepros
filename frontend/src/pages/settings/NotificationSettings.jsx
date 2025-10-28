@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Save, Bell, Mail, Loader, CheckCircle, AlertCircle } from 'lucide-react';
 import useNotificationStore from '../../stores/notificationStore';
-import UserLayout from '../../../components/layout/UserLayout';
+import UserLayout from '../../components/layout/UserLayout';
 
 const notificationTypes = [
   { key: 'withdrawal', label: 'Withdrawals', description: 'Updates about your withdrawal requests' },

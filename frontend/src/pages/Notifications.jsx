@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Trash2, CheckCircle, Settings, Loader } from 'lucide-react';
 import useNotificationStore from '../stores/notificationStore';
 import { formatDistanceToNow } from '../utils/dateUtils';
-import UserLayout from '../../components/layout/UserLayout';
+import UserLayout from '../components/layout/UserLayout';
 
 const getNotificationIcon = (type) => {
   const icons = {
