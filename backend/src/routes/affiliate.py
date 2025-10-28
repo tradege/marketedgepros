@@ -8,7 +8,7 @@ from sqlalchemy import func
 import secrets
 import string
 
-from src.extensions import db
+from src.database import db
 from src.models.affiliate import (
     AffiliateLink, AffiliateReferral, AffiliateCommission,
     AffiliatePayout, AffiliateSettings

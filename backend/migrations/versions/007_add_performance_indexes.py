@@ -9,7 +9,7 @@ import sqlalchemy as sa
 
 # revision identifiers
 revision = '007_add_performance_indexes'
-down_revision = '006_add_hierarchy_and_referral'
+down_revision = '006'
 branch_labels = None
 depends_on = None
 

@@ -11,8 +11,8 @@ from werkzeug.security import generate_password_hash
 from datetime import datetime
 
 # revision identifiers, used by Alembic.
-revision = '003'
-down_revision = '002'
+revision = '003a'
+down_revision = '003'
 branch_labels = None
 depends_on = None
 
