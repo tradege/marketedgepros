@@ -108,6 +108,27 @@ export default {
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
       },
+      keyframes: {
+        orbit: {
+          '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
+          '25%': { transform: 'translateY(-10px) translateX(10px)' },
+          '50%': { transform: 'translateY(0px) translateX(20px)' },
+          '75%': { transform: 'translateY(10px) translateX(10px)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        'gradient-shift': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+      },
+      animation: {
+        orbit: 'orbit 6s ease-in-out infinite',
+        float: 'float 3s ease-in-out infinite',
+        'gradient-shift': 'gradient-shift 3s ease infinite',
+      },
     },
   },
   plugins: [],
