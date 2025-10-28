@@ -20,7 +20,7 @@ const NewHomePage = () => {
     const fetchPrograms = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/programs`);
-        setPrograms(response.data);
+        setPrograms(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Error fetching programs:', error);
       }
@@ -80,13 +80,13 @@ const NewHomePage = () => {
     }, stepDuration);
   };
 
-  const filteredPrograms = programs.filter(p => {
+  const filteredPrograms = Array.isArray(programs) ? programs.filter(p => {
     if (selectedPhase === 'one') return p.phases === 1;
     if (selectedPhase === 'two') return p.phases === 2;
     if (selectedPhase === 'three') return p.phases === 3;
     if (selectedPhase === 'instant') return p.instant_funding;
     return false;
-  });
+  }) : [];
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
