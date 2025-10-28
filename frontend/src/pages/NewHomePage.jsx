@@ -47,10 +47,26 @@ const NewHomePage = () => {
         // If API returns empty, use static fallback
         if (apiPrograms.length === 0) {
           setPrograms([
-            { id: 1, account_size: 10000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
-            { id: 2, account_size: 25000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
-            { id: 3, account_size: 50000, profit_target: 10, max_daily_loss: 5, profit_split: 85, phases: 2 },
-            { id: 4, account_size: 100000, profit_target: 10, max_daily_loss: 5, profit_split: 90, phases: 2 },
+            // One Phase
+            { id: 1, account_size: 10000, profit_target: 8, max_daily_loss: 5, profit_split: 80, phases: 1 },
+            { id: 2, account_size: 25000, profit_target: 8, max_daily_loss: 5, profit_split: 80, phases: 1 },
+            { id: 3, account_size: 50000, profit_target: 8, max_daily_loss: 5, profit_split: 85, phases: 1 },
+            { id: 4, account_size: 100000, profit_target: 8, max_daily_loss: 5, profit_split: 90, phases: 1 },
+            // Two Phase
+            { id: 5, account_size: 10000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
+            { id: 6, account_size: 25000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
+            { id: 7, account_size: 50000, profit_target: 10, max_daily_loss: 5, profit_split: 85, phases: 2 },
+            { id: 8, account_size: 100000, profit_target: 10, max_daily_loss: 5, profit_split: 90, phases: 2 },
+            // Three Phase
+            { id: 9, account_size: 10000, profit_target: 12, max_daily_loss: 4, profit_split: 75, phases: 3 },
+            { id: 10, account_size: 25000, profit_target: 12, max_daily_loss: 4, profit_split: 75, phases: 3 },
+            { id: 11, account_size: 50000, profit_target: 12, max_daily_loss: 4, profit_split: 80, phases: 3 },
+            { id: 12, account_size: 100000, profit_target: 12, max_daily_loss: 4, profit_split: 85, phases: 3 },
+            // Instant Funding
+            { id: 13, account_size: 5000, profit_target: 0, max_daily_loss: 3, profit_split: 50, instant_funding: true },
+            { id: 14, account_size: 10000, profit_target: 0, max_daily_loss: 3, profit_split: 50, instant_funding: true },
+            { id: 15, account_size: 25000, profit_target: 0, max_daily_loss: 3, profit_split: 60, instant_funding: true },
+            { id: 16, account_size: 50000, profit_target: 0, max_daily_loss: 3, profit_split: 70, instant_funding: true },
           ]);
         } else {
           setPrograms(apiPrograms);
@@ -59,10 +75,26 @@ const NewHomePage = () => {
         console.error('Error fetching programs:', error);
         // Fallback to static programs on error
         setPrograms([
-          { id: 1, account_size: 10000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
-          { id: 2, account_size: 25000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
-          { id: 3, account_size: 50000, profit_target: 10, max_daily_loss: 5, profit_split: 85, phases: 2 },
-          { id: 4, account_size: 100000, profit_target: 10, max_daily_loss: 5, profit_split: 90, phases: 2 },
+          // One Phase
+          { id: 1, account_size: 10000, profit_target: 8, max_daily_loss: 5, profit_split: 80, phases: 1 },
+          { id: 2, account_size: 25000, profit_target: 8, max_daily_loss: 5, profit_split: 80, phases: 1 },
+          { id: 3, account_size: 50000, profit_target: 8, max_daily_loss: 5, profit_split: 85, phases: 1 },
+          { id: 4, account_size: 100000, profit_target: 8, max_daily_loss: 5, profit_split: 90, phases: 1 },
+          // Two Phase
+          { id: 5, account_size: 10000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
+          { id: 6, account_size: 25000, profit_target: 10, max_daily_loss: 5, profit_split: 80, phases: 2 },
+          { id: 7, account_size: 50000, profit_target: 10, max_daily_loss: 5, profit_split: 85, phases: 2 },
+          { id: 8, account_size: 100000, profit_target: 10, max_daily_loss: 5, profit_split: 90, phases: 2 },
+          // Three Phase
+          { id: 9, account_size: 10000, profit_target: 12, max_daily_loss: 4, profit_split: 75, phases: 3 },
+          { id: 10, account_size: 25000, profit_target: 12, max_daily_loss: 4, profit_split: 75, phases: 3 },
+          { id: 11, account_size: 50000, profit_target: 12, max_daily_loss: 4, profit_split: 80, phases: 3 },
+          { id: 12, account_size: 100000, profit_target: 12, max_daily_loss: 4, profit_split: 85, phases: 3 },
+          // Instant Funding
+          { id: 13, account_size: 5000, profit_target: 0, max_daily_loss: 3, profit_split: 50, instant_funding: true },
+          { id: 14, account_size: 10000, profit_target: 0, max_daily_loss: 3, profit_split: 50, instant_funding: true },
+          { id: 15, account_size: 25000, profit_target: 0, max_daily_loss: 3, profit_split: 60, instant_funding: true },
+          { id: 16, account_size: 50000, profit_target: 0, max_daily_loss: 3, profit_split: 70, instant_funding: true },
         ]);
       }
     };
