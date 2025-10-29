@@ -1,197 +1,193 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from 'lucide-react';
 
-export default function DataTable({
+/**
+ * Professional Dashboard Table Component
+ * Following Material Design 3 guidelines
+ */
+export default function DashboardTable({
   columns,
-  rows = [],
+  data,
   pageSize = 10,
-  isLoading = false,
-  emptyMessage = 'No data available',
+  searchable = false,
+  onRowClick,
+  loading = false,
 }) {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(pageSize);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const safeRows = rows || [];
-  const totalPages = Math.ceil(safeRows.length / rowsPerPage);
-  const startIndex = currentPage * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const paginatedRows = safeRows.slice(startIndex, endIndex);
+  // Filter data based on search
+  const filteredData = searchable && searchQuery
+    ? data.filter(row =>
+        Object.values(row).some(value =>
+          String(value).toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      )
+    : data;
 
-  const handlePreviousPage = () => {
-    setCurrentPage((prev) => Math.max(0, prev - 1));
+  // Pagination
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
   };
 
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
-  };
-
-  const getStatusColor = (status) => {
-    const statusLower = status?.toLowerCase();
-    if (statusLower === 'active' || statusLower === 'approved' || statusLower === 'completed') {
-      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-    }
-    if (statusLower === 'pending') {
-      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-    }
-    if (statusLower === 'inactive' || statusLower === 'rejected' || statusLower === 'failed') {
-      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-    }
-    return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-  };
-
-  const getRoleColor = (role) => {
-    const roleLower = role?.toLowerCase();
-    if (roleLower === 'admin' || roleLower === 'super_admin' || roleLower === 'supermaster') {
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
-    }
-    if (roleLower === 'master') {
-      return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200';
-    }
-    if (roleLower === 'agent') {
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-    }
-    if (roleLower === 'trader') {
-      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-    }
-    return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-  };
-
-  // Support both column formats: {field, headerName} and {key, label, render}
-  const getColumnKey = (column) => column.key || column.field;
-  const getColumnLabel = (column) => column.label || column.headerName;
-
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="w-full p-8 text-center">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p className="mt-2 text-gray-600">Loading...</p>
-      </div>
-    );
-  }
-
-  if (safeRows.length === 0) {
-    return (
-      <div className="w-full p-8 text-center text-gray-500">
-        {emptyMessage}
+      <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+        <div className="p-6 space-y-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-12 bg-slate-700/50 rounded animate-pulse"></div>
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
+    <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+      {/* Search Bar */}
+      {searchable && (
+        <div className="p-4 border-b border-white/10">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 dark:bg-gray-700">
-            <tr>
+          <thead>
+            <tr className="border-b border-white/10 bg-slate-900/30">
               {columns.map((column, index) => (
                 <th
-                  key={getColumnKey(column) || index}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider"
-                  style={{ width: column.width || 'auto', flex: column.flex || 'none' }}
+                  key={index}
+                  className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider"
                 >
-                  {getColumnLabel(column)}
+                  {column.headerName || column.field}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {paginatedRows.map((row, rowIndex) => (
-              <tr
-                key={row.id || rowIndex}
-                className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              >
-                {columns.map((column, colIndex) => {
-                  const columnKey = getColumnKey(column);
-                  let displayValue;
-
-                  // If column has custom render function, use it
-                  if (column.render) {
-                    displayValue = column.render(row);
-                  } else {
-                    // Otherwise get value from row
-                    const value = row[columnKey];
-                    displayValue = value;
-
-                    // Apply special styling for status and role fields
-                    if (columnKey === 'status') {
-                      displayValue = (
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
-                          {value}
-                        </span>
-                      );
-                    } else if (columnKey === 'role') {
-                      displayValue = (
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getRoleColor(value)}`}>
-                          {value}
-                        </span>
-                      );
-                    }
-                  }
-
-                  return (
-                    <td
-                      key={columnKey || colIndex}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"
-                    >
-                      {displayValue}
-                    </td>
-                  );
-                })}
+          <tbody className="divide-y divide-white/5">
+            {paginatedData.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length} className="px-6 py-12 text-center text-gray-400">
+                  No data available
+                </td>
               </tr>
-            ))}
+            ) : (
+              paginatedData.map((row, rowIndex) => (
+                <tr
+                  key={rowIndex}
+                  onClick={() => onRowClick && onRowClick(row)}
+                  className={`
+                    transition-colors duration-200
+                    ${onRowClick ? 'cursor-pointer hover:bg-slate-700/30' : ''}
+                  `}
+                >
+                  {columns.map((column, colIndex) => (
+                    <td key={colIndex} className="px-6 py-4 text-sm text-gray-300">
+                      {column.render
+                        ? column.render(row[column.field], row)
+                        : row[column.field]}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Pagination */}
-      {safeRows.length > pageSize && (
-        <div className="bg-white dark:bg-gray-800 px-6 py-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 0}
-              className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage >= totalPages - 1}
-              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
+      {totalPages > 1 && (
+        <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between">
+          <div className="text-sm text-gray-400">
+            Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of{' '}
+            {filteredData.length} results
           </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
-                <span className="font-medium">{Math.min(endIndex, safeRows.length)}</span> of{' '}
-                <span className="font-medium">{safeRows.length}</span> results
-              </p>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => goToPage(1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded-lg border border-white/10 text-gray-400 hover:bg-slate-700/30 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronsLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded-lg border border-white/10 text-gray-400 hover:bg-slate-700/30 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-1">
+              {[...Array(totalPages)].map((_, i) => {
+                const page = i + 1;
+                // Show first, last, current, and adjacent pages
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => goToPage(page)}
+                      className={`
+                        min-w-[40px] px-3 py-2 rounded-lg text-sm font-medium transition-all
+                        ${
+                          currentPage === page
+                            ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white'
+                            : 'border border-white/10 text-gray-400 hover:bg-slate-700/30 hover:text-white'
+                        }
+                      `}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (page === currentPage - 2 || page === currentPage + 2) {
+                  return (
+                    <span key={page} className="px-2 text-gray-400">
+                      ...
+                    </span>
+                  );
+                }
+                return null;
+              })}
             </div>
-            <div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                <button
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 0}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="sr-only">Previous</span>
-                  ←
-                </button>
-                <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Page {currentPage + 1} of {totalPages || 1}
-                </span>
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage >= totalPages - 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="sr-only">Next</span>
-                  →
-                </button>
-              </nav>
-            </div>
+
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-lg border border-white/10 text-gray-400 hover:bg-slate-700/30 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => goToPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-lg border border-white/10 text-gray-400 hover:bg-slate-700/30 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronsRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
