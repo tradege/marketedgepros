@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X, LogOut } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 
 export default function LandingNavbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated, user } = useAuthStore();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   const navLinks = [
     { name: 'How It Works', href: '/#how-it-works' },
@@ -61,6 +67,13 @@ export default function LandingNavbar() {
                 <span className="text-gray-400">
                   {user?.first_name || 'User'}
                 </span>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-all border border-red-500/30"
+                >
+                  <LogOut size={16} />
+                  Logout
+                </button>
               </>
             ) : (
               <>
@@ -115,13 +128,22 @@ export default function LandingNavbar() {
             ))}
             <div className="pt-4 border-t border-white/10 space-y-2">
               {isAuthenticated ? (
-                <Link
-                  to="/dashboard"
-                  className="block px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg text-center text-white font-semibold"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Dashboard
-                </Link>
+                <>
+                  <Link
+                    to="/dashboard"
+                    className="block px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg text-center text-white font-semibold"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => { handleLogout(); setIsOpen(false); }}
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-all border border-red-500/30"
+                  >
+                    <LogOut size={16} />
+                    Logout
+                  </button>
+                </>
               ) : (
                 <>
                   <Link
