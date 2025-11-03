@@ -18,7 +18,7 @@ SECRET_KEY=<GENERATE_64_CHAR_RANDOM_STRING>
 JWT_SECRET_KEY=<GENERATE_64_CHAR_RANDOM_STRING>
 
 # Database
-DATABASE_URL=postgresql://proptrade_user:PASSWORD@localhost:5432/proptradepro_prod
+DATABASE_URL=postgresql://proptrade_user:PASSWORD@localhost:5432/marketedgepros_prod
 
 # Redis
 REDIS_URL=redis://localhost:6379/0
@@ -141,15 +141,15 @@ curl --request POST \
 ```bash
 sudo -u postgres psql
 
-CREATE DATABASE proptradepro_prod;
+CREATE DATABASE marketedgepros_prod;
 CREATE USER proptrade_user WITH PASSWORD 'STRONG_PASSWORD_HERE';
-GRANT ALL PRIVILEGES ON DATABASE proptradepro_prod TO proptrade_user;
+GRANT ALL PRIVILEGES ON DATABASE marketedgepros_prod TO proptrade_user;
 \q
 ```
 
 **Connection String:**
 ```
-postgresql://proptrade_user:PASSWORD@localhost:5432/proptradepro_prod
+postgresql://proptrade_user:PASSWORD@localhost:5432/marketedgepros_prod
 ```
 
 ---
@@ -263,7 +263,7 @@ EOF
 ### "Database connection failed"
 - Check DATABASE_URL format
 - Verify PostgreSQL is running: `sudo systemctl status postgresql`
-- Test connection: `psql -U proptrade_user -d proptradepro_prod -h localhost`
+- Test connection: `psql -U proptrade_user -d marketedgepros_prod -h localhost`
 
 ### "SendGrid API error"
 - Verify API key is correct

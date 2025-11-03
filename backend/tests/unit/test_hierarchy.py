@@ -75,12 +75,6 @@ class TestUserHierarchy:
     
     def test_parent_child_relationship(self, session, super_admin_user, trader_user):
         """Test parent-child relationship"""
-        # Set up parent-child relationship
-        trader_user.parent_id = super_admin_user.id
-        session.commit()
-        trader_user.update_tree_path()
-        session.commit()
-        
         assert trader_user.parent_id == super_admin_user.id
         assert trader_user.parent == super_admin_user
     

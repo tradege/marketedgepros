@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, ArrowRight, Search, Tag, Loader } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, Search, Tag, Loader, Mail, TrendingUp, BookOpen, Users } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import axios from 'axios';
 
@@ -14,6 +14,8 @@ export default function Blog() {
   const [featuredPosts, setFeaturedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState('');
   const [pagination, setPagination] = useState({
     page: 1,
     per_page: 9,
@@ -76,10 +78,37 @@ export default function Blog() {
     fetchPosts(page, selectedCategory);
   };
 
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setNewsletterStatus('loading');
+    
+    try {
+      await axios.post(`${API_URL}/newsletter/subscribe`, { email: newsletterEmail });
+      setNewsletterStatus('success');
+      setNewsletterEmail('');
+      setTimeout(() => setNewsletterStatus(''), 3000);
+    } catch (err) {
+      setNewsletterStatus('error');
+      setTimeout(() => setNewsletterStatus(''), 3000);
+    }
+  };
+
   const filteredPosts = posts.filter(post => 
     post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     post.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const popularTags = [
+    'Trading Strategies', 'Risk Management', 'Market Analysis', 
+    'Forex', 'Day Trading', 'Technical Analysis', 
+    'Prop Trading', 'Psychology'
+  ];
+
+  const blogStats = [
+    { icon: BookOpen, label: 'Articles', value: '150+' },
+    { icon: Users, label: 'Readers', value: '10K+' },
+    { icon: TrendingUp, label: 'Weekly Posts', value: '3-5' }
+  ];
 
   return (
     <Layout>
@@ -98,9 +127,25 @@ export default function Blog() {
                 Blog
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">
               Insights, tips, and news from the world of trading
             </p>
+            
+            {/* Blog Stats */}
+            <div className="flex flex-wrap justify-center gap-8 mt-12">
+              {blogStats.map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={index} className="flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-6 py-3">
+                    <Icon className="w-6 h-6 text-cyan-400" />
+                    <div className="text-left">
+                      <div className="text-2xl font-bold text-white">{stat.value}</div>
+                      <div className="text-sm text-gray-400">{stat.label}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </section>
 
@@ -179,6 +224,44 @@ export default function Blog() {
               {/* Sidebar */}
               <div className="md:col-span-4">
                 <div className="sticky top-24 space-y-12">
+                  {/* Newsletter Signup */}
+                  <div className="bg-gradient-to-br from-cyan-500/10 to-teal-500/10 border border-cyan-500/30 rounded-2xl p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg flex items-center justify-center">
+                        <Mail className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-white">
+                        Newsletter
+                      </h3>
+                    </div>
+                    <p className="text-gray-300 mb-4">
+                      Get weekly trading insights and exclusive tips delivered to your inbox.
+                    </p>
+                    <form onSubmit={handleNewsletterSubmit} className="space-y-3">
+                      <input
+                        type="email"
+                        placeholder="your@email.com"
+                        value={newsletterEmail}
+                        onChange={(e) => setNewsletterEmail(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      />
+                      <button
+                        type="submit"
+                        disabled={newsletterStatus === 'loading'}
+                        className="w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg font-semibold hover:from-cyan-600 hover:to-teal-600 transition-all disabled:opacity-50"
+                      >
+                        {newsletterStatus === 'loading' ? 'Subscribing...' : 'Subscribe'}
+                      </button>
+                      {newsletterStatus === 'success' && (
+                        <p className="text-green-400 text-sm">✓ Successfully subscribed!</p>
+                      )}
+                      {newsletterStatus === 'error' && (
+                        <p className="text-red-400 text-sm">✗ Failed to subscribe. Try again.</p>
+                      )}
+                    </form>
+                  </div>
+
                   {/* Search */}
                   <div>
                     <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
@@ -230,6 +313,23 @@ export default function Blog() {
                     </div>
                   )}
 
+                  {/* Popular Tags */}
+                  <div>
+                    <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                      Popular Tags
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {popularTags.map((tag, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-300 hover:bg-white/10 hover:border-cyan-500/50 transition-all cursor-pointer"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Featured Posts */}
                   {featuredPosts.length > 0 && (
                     <div>
@@ -239,12 +339,14 @@ export default function Blog() {
                       <div className="space-y-4">
                         {featuredPosts.map(post => (
                           <Link to={`/blog/${post.slug}`} key={post.id} className="block group">
-                            <p className="text-lg font-semibold text-gray-300 group-hover:text-cyan-400 transition-colors">
-                              {post.title}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {new Date(post.published_at).toLocaleDateString()}
-                            </p>
+                            <div className="bg-white/5 border border-white/10 rounded-lg p-4 hover:border-cyan-500/50 transition-all">
+                              <p className="text-lg font-semibold text-gray-300 group-hover:text-cyan-400 transition-colors mb-2">
+                                {post.title}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {new Date(post.published_at).toLocaleDateString()}
+                              </p>
+                            </div>
                           </Link>
                         ))}
                       </div>

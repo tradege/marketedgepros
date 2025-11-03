@@ -45,3 +45,4 @@ __all__ = [
 # Alias for backward compatibility
 Program = TradingProgram
 
+from src.models.token_blacklist import TokenBlacklist

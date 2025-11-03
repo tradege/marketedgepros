@@ -12,7 +12,7 @@ class TestChallengeRoutes:
     
     def test_get_challenges_requires_auth(self, client):
         """Test that getting challenges requires authentication"""
-        response = client.get('/api/v1/challenges/')
+        response = client.post('/api/v1/challenges/', json={'program_id': 1})
         assert response.status_code == 401
     
     def test_create_challenge_requires_auth(self, client):

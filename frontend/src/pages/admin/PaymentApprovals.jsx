@@ -28,7 +28,7 @@ const PaymentApprovals = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access_token');
       const headers = { Authorization: `Bearer ${token}` };
 
       const pendingRes = await axios.get(`${API_BASE_URL}/payment-approvals/pending`, { headers });
@@ -66,7 +66,7 @@ const PaymentApprovals = () => {
 
     try {
       setProcessing(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access_token');
       const headers = { Authorization: `Bearer ${token}` };
 
       await axios.post(
@@ -93,7 +93,7 @@ const PaymentApprovals = () => {
 
     try {
       setProcessing(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access_token');
       const headers = { Authorization: `Bearer ${token}` };
 
       await axios.post(

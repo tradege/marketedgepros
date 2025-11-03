@@ -309,31 +309,69 @@ class AuthService:
     
     @staticmethod
     def revoke_token(token):
-        """Revoke a token by adding it to blacklist (Redis)"""
-        redis_client = get_redis()
-        if not redis_client:
+        """Revoke a token by adding it to blacklist (Redis + Database)"""
+        from src.models.token_blacklist import TokenBlacklist
+        import jwt
+        
+        try:
+            # Decode token to get jti and user_id
+            payload = jwt.decode(
+                token,
+                current_app.config['JWT_SECRET_KEY'],
+                algorithms=["HS256"]
+            )
+            
+            jti = payload.get('jti')
+            user_id = payload.get('user_id')
+            token_type = payload.get('type', 'access')
+            exp = datetime.fromtimestamp(payload['exp'])
+            
+            if not jti or not user_id:
+                return False
+            
+            # Add to database blacklist (permanent record)
+            TokenBlacklist.revoke_token(jti, token_type, user_id, exp)
+            
+            # Also add to Redis for fast lookup (optional, for performance)
+            redis_client = get_redis()
+            if redis_client:
+                ttl = int((exp - datetime.utcnow()).total_seconds())
+                if ttl > 0:
+                    redis_client.setex(f'blacklist:{jti}', ttl, '1')
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error revoking token: {e}")
             return False
-        
-        payload = User.verify_token(token)
-        if not payload:
-            return False
-        
-        # Calculate TTL (time until expiration)
-        exp = datetime.fromtimestamp(payload['exp'])
-        ttl = int((exp - datetime.utcnow()).total_seconds())
-        
-        if ttl > 0:
-            # Add to blacklist with TTL
-            redis_client.setex(f'blacklist:{token}', ttl, '1')
-        
-        return True
     
     @staticmethod
     def is_token_blacklisted(token):
-        """Check if token is blacklisted"""
-        redis_client = get_redis()
-        if not redis_client:
-            return False
+        """Check if token is blacklisted (checks Redis first, then Database)"""
+        from src.models.token_blacklist import TokenBlacklist
+        import jwt
         
-        return redis_client.exists(f'blacklist:{token}')
+        try:
+            # Decode token to get jti
+            payload = jwt.decode(
+                token,
+                current_app.config['JWT_SECRET_KEY'],
+                algorithms=["HS256"],
+                options={"verify_exp": False}  # Don't fail on expired tokens
+            )
+            
+            jti = payload.get('jti')
+            if not jti:
+                return False
+            
+            # Check Redis first (faster)
+            redis_client = get_redis()
+            if redis_client and redis_client.exists(f'blacklist:{jti}'):
+                return True
+            
+            # Check database (fallback)
+            return TokenBlacklist.is_token_revoked(jti)
+            
+        except Exception:
+            return False
 

@@ -16,14 +16,17 @@ export default function DashboardTable({
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Ensure data is always an array
+  const safeData = Array.isArray(data) ? data : [];
+
   // Filter data based on search
   const filteredData = searchable && searchQuery
-    ? data.filter(row =>
+    ? safeData.filter(row =>
         Object.values(row).some(value =>
           String(value).toLowerCase().includes(searchQuery.toLowerCase())
         )
       )
-    : data;
+    : safeData;
 
   // Pagination
   const totalPages = Math.ceil(filteredData.length / pageSize);

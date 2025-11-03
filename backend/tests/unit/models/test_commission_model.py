@@ -11,12 +11,12 @@ from src.models import Commission, Agent, Referral
 class TestCommissionModel:
     """Test Commission model functionality"""
     
-    def test_create_commission(self, session, agent_user, referral, challenge):
+    def test_create_commission(self, session, agent_user, referral_user, challenge):
         """Test creating a commission"""
         from src.models import Agent, Referral
         
         agent = Agent.query.filter_by(user_id=agent_user.id).first()
-        # referral fixture is used instead
+        referral = Referral.query.filter_by(referred_user_id=referral_user.id).first()
         
         commission = Commission(
             agent_id=agent.id,
@@ -88,11 +88,12 @@ class TestCommissionModel:
         with pytest.raises(ValueError, match='Commission rate must be between 0 and 100'):
             Commission.calculate_commission(100, -5)
     
-    def test_validate_commission_correct(self, session, agent_user, referral, challenge):
+    def test_validate_commission_correct(self, session, agent_user, referral_user, challenge):
         """Test validating a correctly calculated commission"""
         from src.models import Agent, Referral
         
         agent = Agent.query.filter_by(user_id=agent_user.id).first()
+        referral = Referral.query.filter_by(referred_user_id=referral_user.id).first()
         
         commission = Commission(
             agent_id=agent.id,
@@ -105,11 +106,12 @@ class TestCommissionModel:
         
         assert commission.validate_commission() is True
     
-    def test_validate_commission_incorrect(self, session, agent_user, referral, challenge):
+    def test_validate_commission_incorrect(self, session, agent_user, referral_user, challenge):
         """Test validating an incorrectly calculated commission"""
         from src.models import Agent, Referral
         
         agent = Agent.query.filter_by(user_id=agent_user.id).first()
+        referral = Referral.query.filter_by(referred_user_id=referral_user.id).first()
         
         commission = Commission(
             agent_id=agent.id,
@@ -122,11 +124,12 @@ class TestCommissionModel:
         
         assert commission.validate_commission() is False
     
-    def test_commission_status_transitions(self, session, agent_user, referral_user, referral, challenge):
+    def test_commission_status_transitions(self, session, agent_user, referral_user, challenge):
         """Test commission status transitions"""
         from src.models import Agent, Referral
         
         agent = Agent.query.filter_by(user_id=agent_user.id).first()
+        referral = Referral.query.filter_by(referred_user_id=referral_user.id).first()
         
         commission = Commission(
             agent_id=agent.id,
@@ -159,11 +162,12 @@ class TestCommissionModel:
         assert commission.paid_at is not None
         assert commission.transaction_id == 'txn_abc123'
     
-    def test_commission_to_dict(self, session, agent_user, referral_user, referral, challenge):
+    def test_commission_to_dict(self, session, agent_user, referral_user, challenge):
         """Test commission serialization"""
         from src.models import Agent, Referral
         
         agent = Agent.query.filter_by(user_id=agent_user.id).first()
+        referral = Referral.query.filter_by(referred_user_id=referral_user.id).first()
         
         commission = Commission(
             agent_id=agent.id,
@@ -186,11 +190,12 @@ class TestCommissionModel:
         assert commission_dict['commission_amount'] == 18.00
         assert commission_dict['status'] == 'approved'
     
-    def test_commission_relationships(self, session, agent_user, referral_user, referral, challenge):
+    def test_commission_relationships(self, session, agent_user, referral_user, challenge):
         """Test commission relationships"""
         from src.models import Agent, Referral
         
         agent = Agent.query.filter_by(user_id=agent_user.id).first()
+        referral = Referral.query.filter_by(referred_user_id=referral_user.id).first()
         
         commission = Commission(
             agent_id=agent.id,
@@ -209,11 +214,12 @@ class TestCommissionModel:
         assert commission.challenge is not None
         assert commission.challenge.id == challenge.id
     
-    def test_commission_decimal_precision(self, session, agent_user, referral_user, referral, challenge):
+    def test_commission_decimal_precision(self, session, agent_user, referral_user, challenge):
         """Test commission decimal precision"""
         from src.models import Agent, Referral
         
         agent = Agent.query.filter_by(user_id=agent_user.id).first()
+        referral = Referral.query.filter_by(referred_user_id=referral_user.id).first()
         
         commission = Commission(
             agent_id=agent.id,

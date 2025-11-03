@@ -73,6 +73,7 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
     
     # Role and Permissions
     role = db.Column(db.String(20), default='guest', nullable=False)  # supermaster, master, agent, trader, guest
+    token_version = db.Column(db.Integer, default=0, nullable=False)  # For token revocation
     can_create_same_role = db.Column(db.Boolean, default=False, nullable=False)  # Only root supermaster can create another supermaster
     
     # Hierarchy (MLM Structure)
@@ -152,8 +153,43 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
         totp = pyotp.TOTP(self.two_factor_secret)
         return totp.verify(token, valid_window=1)
     
+    def generate_verification_token(self, expires_in_hours=24):
+        """Generate a new email verification token for the user."""
+        try:
+            # Create a new token instance
+            token_instance = EmailVerificationToken(user_id=self.id, expires_in_hours=expires_in_hours)
+            
+            # Add the token to the session and commit to save it
+            db.session.add(token_instance)
+            db.session.commit()
+            
+            # Return the token string
+            return token_instance.token
+        except Exception as e:
+            db.session.rollback()
+            # Log the exception if necessary
+            raise RuntimeError("Failed to generate verification token") from e
+    
+    def generate_password_reset_token(self, expires_in_minutes=15):
+        """Generate a new password reset token for the user."""
+        try:
+            # Create a new token instance
+            token_instance = PasswordResetToken(user_id=self.id, expires_in_minutes=expires_in_minutes)
+            
+            # Add the token to the session and commit to save it
+            db.session.add(token_instance)
+            db.session.commit()
+            
+            # Return the 6-digit code
+            return token_instance.code
+        except Exception as e:
+            db.session.rollback()
+            # Log the exception if necessary
+            raise RuntimeError("Failed to generate password reset token") from e
+    
     def generate_access_token(self):
-        """Generate JWT access token"""
+        """Generate JWT access token with jti and token_version"""
+        import uuid
         now = datetime.utcnow()
         expires_delta = current_app.config['JWT_ACCESS_TOKEN_EXPIRES']
         payload = {
@@ -163,7 +199,9 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
             'tenant_id': self.tenant_id,
             'exp': now + expires_delta,
             'iat': now,
-            'type': 'access'
+            'type': 'access',
+            'jti': str(uuid.uuid4()),  # Unique token ID for revocation
+            'token_version': self.token_version or 0  # For mass revocation
         }
         
         return jwt.encode(

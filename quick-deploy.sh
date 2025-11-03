@@ -1,10 +1,10 @@
 #!/bin/bash
-# Quick Deployment Script for PropTradePro
+# Quick Deployment Script for MarketEdgePros
 # Run this on your production server
 
 set -e  # Exit on error
 
-echo "🚀 PropTradePro Quick Deployment Script"
+echo "🚀 MarketEdgePros Quick Deployment Script"
 echo "========================================"
 echo ""
 
@@ -72,7 +72,7 @@ echo ""
 echo -e "${GREEN}Step 4: Restarting services...${NC}"
 
 # Restart backend
-systemctl restart proptradepro-backend
+systemctl restart marketedgepros-backend
 echo "Backend service restarted"
 
 # Reload Nginx
@@ -86,11 +86,11 @@ echo ""
 echo -e "${GREEN}Step 5: Verifying deployment...${NC}"
 
 # Check backend status
-if systemctl is-active --quiet proptradepro-backend; then
+if systemctl is-active --quiet marketedgepros-backend; then
     echo -e "${GREEN}✅ Backend is running${NC}"
 else
     echo -e "${RED}❌ Backend is NOT running${NC}"
-    systemctl status proptradepro-backend
+    systemctl status marketedgepros-backend
     exit 1
 fi
 
@@ -108,7 +108,7 @@ echo -e "${GREEN}🎉 Deployment completed successfully!${NC}"
 echo ""
 echo "Next steps:"
 echo "1. Test the website: https://marketedgepros.com"
-echo "2. Check logs: sudo journalctl -u proptradepro-backend -f"
+echo "2. Check logs: sudo journalctl -u marketedgepros-backend -f"
 echo "3. Monitor for errors"
 echo ""
 echo "Recent commits deployed:"

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-import { Lock, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import { Lock, AlertCircle, CheckCircle, Eye, EyeOff, Mail } from 'lucide-react';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://marketedgepros.com/api/v1';
@@ -85,17 +85,17 @@ export default function ResetPassword() {
   if (success) {
     return (
       <Layout>
-        <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
+        <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
           <div className="max-w-md w-full">
-            <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="bg-slate-800/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-full mb-4 border border-green-500/30">
+                <CheckCircle className="w-8 h-8 text-green-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Password Reset Successful!</h2>
-              <p className="text-gray-600 mb-6">
-                Your password has been successfully reset. Redirecting to login...
+              <h2 className="text-2xl font-bold text-white mb-2">Password Reset Successfully!</h2>
+              <p className="text-gray-400 mb-6">
+                Your password has been updated. Redirecting to login...
               </p>
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500 mx-auto"></div>
             </div>
           </div>
         </div>
@@ -105,46 +105,51 @@ export default function ResetPassword() {
 
   return (
     <Layout>
-      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
+      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         <div className="max-w-md w-full">
-          <div className="bg-white rounded-2xl shadow-xl p-8">
+          {/* Decorative Background Elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"></div>
+          </div>
+
+          <div className="relative bg-slate-800/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-8">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                <Lock className="w-8 h-8 text-blue-600" />
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-full mb-4 shadow-lg shadow-cyan-500/30">
+                <Lock className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900">Reset Password</h2>
-              <p className="text-gray-600 mt-2">
-                Enter the code from your email and choose a new password
-              </p>
+              <h2 className="text-3xl font-bold text-white">Reset Password</h2>
+              <p className="text-gray-400 mt-2">Enter the code from your email and create a new password</p>
             </div>
 
             {error && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-800">{error}</p>
+              <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-300">{error}</p>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {!emailFromState && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
-                  </label>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-white placeholder-gray-500"
                     required
                   />
                 </div>
-              )}
+              </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Reset Code
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  6-Digit Reset Code
                 </label>
                 <input
                   type="text"
@@ -152,17 +157,13 @@ export default function ResetPassword() {
                   onChange={handleCodeChange}
                   placeholder="000000"
                   maxLength="6"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-2xl tracking-widest font-mono"
+                  className="w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-center text-2xl tracking-widest text-white placeholder-gray-500"
                   required
-                  autoFocus={!!emailFromState}
                 />
-                <p className="text-xs text-gray-500 mt-2 text-center">
-                  Enter the 6-digit code from your email
-                </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   New Password
                 </label>
                 <div className="relative">
@@ -170,19 +171,15 @@ export default function ResetPassword() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={newPassword}
-                    onChange={(e) => {
-                      setNewPassword(e.target.value);
-                      setError('');
-                    }}
+                    onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-10 pr-12 py-3 bg-slate-900/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-white placeholder-gray-500"
                     required
-                    minLength="8"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -193,7 +190,7 @@ export default function ResetPassword() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Confirm New Password
                 </label>
                 <div className="relative">
@@ -201,18 +198,15 @@ export default function ResetPassword() {
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      setError('');
-                    }}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-10 pr-12 py-3 bg-slate-900/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-white placeholder-gray-500"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
                   >
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -222,21 +216,17 @@ export default function ResetPassword() {
               <button
                 type="submit"
                 disabled={isLoading || code.length !== 6}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-cyan-600 hover:to-teal-600 transition-all shadow-lg shadow-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Resetting Password...' : 'Reset Password'}
               </button>
             </form>
 
-            <div className="mt-6 text-center space-y-2">
-              <p className="text-sm text-gray-600">
-                <Link to="/forgot-password" className="text-blue-600 hover:text-blue-700 font-medium">
-                  Didn't receive a code?
-                </Link>
-              </p>
-              <p className="text-sm text-gray-600">
-                <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
-                  Back to Login
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-400">
+                Remember your password?{' '}
+                <Link to="/login" className="text-cyan-400 hover:text-cyan-300 font-medium">
+                  Sign in
                 </Link>
               </p>
             </div>
@@ -246,4 +236,3 @@ export default function ResetPassword() {
     </Layout>
   );
 }
-

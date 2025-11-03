@@ -111,7 +111,7 @@ def can_user_create_role(user_role, target_role, is_root_supermaster=False):
 
 # Hierarchy rules documentation
 HIERARCHY_RULES = """
-PropTradePro Hierarchy System Rules:
+MarketEdgePros Hierarchy System Rules:
 
 1. SuperMaster (Root):
    - Identified by: can_create_same_role = True

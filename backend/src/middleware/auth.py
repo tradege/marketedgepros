@@ -2,13 +2,13 @@
 from functools import wraps
 from flask import request, jsonify, g
 from src.models import User
+from src.models.token_blacklist import TokenBlacklist
 import jwt
 from flask import current_app
 from src.constants.roles import Roles
 
-
 def jwt_required(f):
-    """JWT authentication decorator"""
+    """JWT authentication decorator with token revocation check"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         token = None
@@ -32,10 +32,21 @@ def jwt_required(f):
                 algorithms=["HS256"]
             )
             
+            # Check if token is blacklisted (revoked)
+            jti = data.get('jti')
+            if jti and TokenBlacklist.is_token_revoked(jti):
+                return jsonify({'error': 'Token has been revoked'}), 401
+            
             # Get user
             current_user = User.query.get(data['user_id'])
             if not current_user or not current_user.is_active:
                 return jsonify({'error': 'Invalid or inactive user'}), 401
+            
+            # Check token version (for mass revocation)
+            token_version = data.get('token_version', 0)
+            user_token_version = getattr(current_user, 'token_version', 0) or 0
+            if token_version < user_token_version:
+                return jsonify({'error': 'Token has been revoked'}), 401
             
             # Store in g object
             g.current_user = current_user
@@ -56,11 +67,9 @@ def jwt_required(f):
     
     return decorated_function
 
-
 def get_current_user():
     """Get current authenticated user from g object"""
     return g.get('current_user', None)
-
 
 def admin_required(f):
     """Admin role required decorator"""
@@ -76,7 +85,6 @@ def admin_required(f):
     
     return decorated_function
 
-
 def agent_required(f):
     """Agent role required decorator"""
     @wraps(f)
@@ -90,4 +98,3 @@ def agent_required(f):
         return f(*args, **kwargs)
     
     return decorated_function
-

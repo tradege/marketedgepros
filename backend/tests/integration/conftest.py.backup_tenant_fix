@@ -1,0 +1,26 @@
+"""
+Fixtures for integration tests
+"""
+import pytest
+from src.app import create_app
+from src.database import db as _db
+
+@pytest.fixture(scope='function')
+def app():
+    """Create Flask app for testing"""
+    app = create_app()
+    app.config['TESTING'] = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://marketedge:marketedge123@localhost:5432/marketedge_test'
+    
+    with app.app_context():
+        yield app
+
+@pytest.fixture(scope='function')
+def client(app):
+    """Create Flask test client"""
+    return app.test_client()
+
+@pytest.fixture(scope='function')
+def runner(app):
+    """Create Flask CLI runner"""
+    return app.test_cli_runner()

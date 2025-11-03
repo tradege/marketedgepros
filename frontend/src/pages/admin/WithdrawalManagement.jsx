@@ -23,8 +23,23 @@ export default function WithdrawalManagement() {
       setIsLoading(true);
       const params = selectedStatus !== 'all' ? { status: selectedStatus } : {};
       const response = await api.get('/wallet/admin/withdrawals', { params });
-      setWithdrawals(response.data.withdrawals || []);
+      console.log('WithdrawalManagement API Response:', response);
+      console.log('Response data:', response.data);
+      console.log('Response data type:', typeof response.data);
+      console.log('Withdrawals:', response.data?.withdrawals);
+      
+      // Handle the response properly
+      if (response.data && response.data.withdrawals) {
+        setWithdrawals(response.data.withdrawals);
+      } else if (Array.isArray(response.data)) {
+        setWithdrawals(response.data);
+      } else {
+        setWithdrawals([]);
+      }
     } catch (error) {
+      console.error('WithdrawalManagement Error:', error);
+      console.error('Error response:', error.response);
+      setWithdrawals([]);
     } finally {
       setIsLoading(false);
     }
@@ -163,13 +178,13 @@ export default function WithdrawalManagement() {
   const stats = [
     {
       label: 'Total Pending',
-      value: withdrawals.filter((w) => w.status === 'pending').length,
+      value: (withdrawals || []).filter((w) => w.status === 'pending').length,
       icon: Clock,
       color: 'yellow',
     },
     {
       label: 'Total Amount Pending',
-      value: `$${withdrawals
+      value: `$${(withdrawals || [])
         .filter((w) => w.status === 'pending')
         .reduce((sum, w) => sum + parseFloat(w.amount), 0)
         .toFixed(2)}`,
@@ -178,7 +193,7 @@ export default function WithdrawalManagement() {
     },
     {
       label: 'Completed Today',
-      value: withdrawals.filter(
+      value: (withdrawals || []).filter(
         (w) =>
           w.status === 'completed' &&
           new Date(w.completed_at).toDateString() === new Date().toDateString()
@@ -188,7 +203,7 @@ export default function WithdrawalManagement() {
     },
     {
       label: 'Rejected',
-      value: withdrawals.filter((w) => w.status === 'rejected').length,
+      value: (withdrawals || []).filter((w) => w.status === 'rejected').length,
       icon: XCircle,
       color: 'red',
     },
@@ -254,7 +269,7 @@ export default function WithdrawalManagement() {
         <div className="bg-slate-800/50 rounded-lg shadow">
           <DataTable
             columns={columns}
-            rows={withdrawals}
+            rows={withdrawals || []}
           />
         </div>
 

@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, MessageCircle } from 'lucide-react';
 
 export default function LandingFooter() {
   const currentYear = new Date().getFullYear();
@@ -12,29 +11,29 @@ export default function LandingFooter() {
         { name: 'About Us', to: '/about' },
         { name: 'How It Works', to: '/how-it-works' },
         { name: 'Blog', to: '/blog' },
-        { name: 'Contact', to: '/contact' },
         { name: 'Careers', to: '/careers' },
-      ]
+        { name: 'Contact', to: '/contact' },
+      ],
     },
     {
       title: 'Programs',
       links: [
-        { name: 'All Programs', to: '/programs' },
-        { name: 'One Phase Challenge', to: '/programs?phase=one' },
-        { name: 'Two Phase Challenge', to: '/programs?phase=two' },
-        { name: 'Instant Funding', to: '/programs?phase=instant' },
-        { name: 'Free Course', to: '/free-course' },
-      ]
+        { name: 'One-Phase Challenge', to: '/programs?filter=one-phase' },
+        { name: 'Two-Phase Challenge', to: '/programs?filter=two-phase' },
+        { name: 'Three-Phase Challenge', to: '/programs?filter=three-phase' },
+        { name: 'Instant Funding', to: '/programs?filter=instant' },
+        { name: 'Compare Programs', to: '/programs' },
+      ],
     },
     {
-      title: 'Support',
+      title: 'Resources',
       links: [
-        { name: 'Help Center', to: '/support' },
+        { name: 'Support Hub', to: '/support' },
         { name: 'FAQ', to: '/faq' },
-        { name: 'Contact Support', to: '/contact' },
         { name: 'Trading Rules', to: '/trading-rules' },
         { name: 'Affiliate Program', to: '/affiliate' },
-      ]
+        { name: 'API Documentation', to: '/api-docs' },
+      ],
     },
     {
       title: 'Legal',
@@ -44,8 +43,8 @@ export default function LandingFooter() {
         { name: 'Risk Disclosure', to: '/risk-disclosure' },
         { name: 'Refund Policy', to: '/refund-policy' },
         { name: 'Cookie Policy', to: '/cookie-policy' },
-      ]
-    }
+      ],
+    },
   ];
 
   const socialLinks = [
@@ -54,6 +53,7 @@ export default function LandingFooter() {
     { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/marketedgepros' },
     { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/marketedgepros' },
     { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/@marketedgepros' },
+    { name: 'Discord', icon: MessageCircle, href: 'https://discord.gg/jKbmeSe7' },
   ];
 
   return (

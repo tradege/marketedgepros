@@ -10,12 +10,12 @@ class TestPaymentRoutes:
     
     def test_get_payments_requires_auth(self, client):
         """Test that getting payments requires authentication"""
-        response = client.get('/api/v1/payments/')
+        response = client.get('/api/v1/payments/status/test_id')
         assert response.status_code == 401
     
     def test_create_payment_requires_auth(self, client):
         """Test that creating payment requires authentication"""
-        response = client.post('/api/v1/payments/', json={'amount': 100})
+        response = client.post('/api/v1/payments/create-payment-intent', json={'amount': 100, 'program_id': 1})
         assert response.status_code == 401
     
     def test_create_payment_intent_requires_auth(self, client):
@@ -67,7 +67,7 @@ class TestPaymentRoutesWithAuth:
         
         # Get payments
         response = client.get(
-            '/api/v1/payments/',
+            '/api/v1/payments/create-payment-intent',
             headers={'Authorization': f'Bearer {token}'}
         )
         
@@ -123,7 +123,7 @@ class TestPaymentRoutesWithAuth:
         
         # Try to create payment without amount
         response = client.post(
-            '/api/v1/payments/',
+            '/api/v1/payments/create-payment-intent',
             headers={'Authorization': f'Bearer {token}'},
             json={}
         )
@@ -151,7 +151,7 @@ class TestPaymentRoutesWithAuth:
         
         # Create payment
         response = client.post(
-            '/api/v1/payments/',
+            '/api/v1/payments/create-payment-intent',
             headers={'Authorization': f'Bearer {token}'},
             json={'amount': 100.00}
         )

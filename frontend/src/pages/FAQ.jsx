@@ -25,7 +25,7 @@ export default function FAQ() {
         },
         {
           q: 'What platforms do you support?',
-          a: 'We provide MetaTrader 5 (MT5) accounts for all our traders. MT5 is a professional trading platform with advanced charting, indicators, and automated trading capabilities.'
+          a: 'We currently support MetaTrader 4 (MT4) and MetaTrader 5 (MT5), the industry-standard trading platforms. TradingView integration is coming soon! Both platforms offer advanced charting, indicators, and automated trading capabilities.'
         }
       ]
     },
@@ -76,6 +76,27 @@ export default function FAQ() {
       ]
     },
     {
+      name: 'Add-ons & Customization',
+      questions: [
+        {
+          q: 'What are Add-ons?',
+          a: 'Add-ons are optional upgrades you can purchase with your challenge to customize your trading experience. They include features like increased leverage, higher profit splits, bi-weekly payouts, and removal of minimum trading days.'
+        },
+        {
+          q: 'How do Add-ons work?',
+          a: 'When purchasing a challenge, you can select any Add-ons you want. The cost is added to your base challenge price, and the benefits apply immediately to your account. You can choose multiple Add-ons for maximum customization.'
+        },
+        {
+          q: 'What Add-ons are available?',
+          a: 'We offer: (1) Increased Leverage ($75) - Trade with 1:100 leverage instead of 1:30. (2) 90% Profit Split ($100) - Keep 90% of profits instead of 80%. (3) Bi-weekly Payouts ($50) - Get paid every 2 weeks instead of monthly. (4) No Minimum Trading Days ($30) - Remove the minimum trading days requirement.'
+        },
+        {
+          q: 'Can I add Add-ons after purchasing?',
+          a: 'Currently, Add-ons must be selected at the time of purchase. We recommend choosing all the Add-ons you want upfront to get the full benefits from day one.'
+        }
+      ]
+    },
+    {
       name: 'Payments & Withdrawals',
       questions: [
         {
@@ -88,7 +109,7 @@ export default function FAQ() {
         },
         {
           q: 'Is there a minimum withdrawal amount?',
-          a: 'No minimum! You can withdraw any amount from your profit share at any time.'
+          a: 'Yes, the minimum withdrawal amount is $50. This helps us process withdrawals efficiently while keeping costs low for everyone.'
         },
         {
           q: 'How often can I withdraw?',

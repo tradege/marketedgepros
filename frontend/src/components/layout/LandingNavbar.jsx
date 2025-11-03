@@ -19,6 +19,7 @@ export default function LandingNavbar() {
     { name: 'Features', href: '/#features' },
     { name: 'About', to: '/about' },
     { name: 'Blog', to: '/blog' },
+    { name: 'Support', to: '/support' },
   ];
 
   return (

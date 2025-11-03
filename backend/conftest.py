@@ -65,10 +65,10 @@ def app(request):
 
 
 @pytest.fixture(scope='session')
-def database(app):
+def database():
     """Create database tables"""
-    # Create all tables
-    _db.create_all()
+    # Note: _db is already initialized via init_db() in app creation
+    # We don't need app parameter here as _db is a global object
     
     yield _db
     
@@ -82,39 +82,43 @@ def database(app):
 # ============================================================================
 
 @pytest.fixture(scope='function')
-def session(database):
+def session(app, database):
     """
     Create a new database session for each test with proper isolation.
     Uses nested transactions to ensure complete rollback after each test.
+    
+    Fixed: Added app parameter and wrapped database operations in app context
+    to avoid "Working outside of application context" errors.
     """
-    # Start a connection
-    connection = database.engine.connect()
-    
-    # Begin a non-ORM transaction
-    transaction = connection.begin()
-    
-    # Create a session bound to the connection
-    # Use scoped_session so Flask-SQLAlchemy's teardown can call .remove()
-    session_factory = sessionmaker(bind=connection)
-    Session = scoped_session(session_factory)
-    
-    # Override Flask-SQLAlchemy's session
-    database.session = Session
-    
-    yield Session
-    
-    # Rollback everything - no data persists between tests
-    try:
-        Session.remove()
-        transaction.rollback()
-    except Exception:
-        pass
-    finally:
+    # Ensure we're within app context for all database operations
+    with app.app_context():
+        # Start a connection
+        connection = database.engine.connect()
+        
+        # Begin a non-ORM transaction
+        transaction = connection.begin()
+        
+        # Create a session bound to the connection
+        # Use scoped_session so Flask-SQLAlchemy's teardown can call .remove()
+        session_factory = sessionmaker(bind=connection)
+        Session = scoped_session(session_factory)
+        
+        # Override Flask-SQLAlchemy's session
+        database.session = Session
+        
+        yield Session
+        
+        # Rollback everything - no data persists between tests
         try:
-            #connection.close()  # Keep connection open to avoid "Connection is closed" errors
-            pass  # Connection kept open
+            Session.remove()
+            transaction.rollback()
         except Exception:
             pass
+        finally:
+            try:
+                connection.close()
+            except Exception:
+                pass
 
 
 @pytest.fixture(scope='function')
@@ -477,3 +481,105 @@ def trader_auth_headers(trader_user):
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'
     }
+
+
+
+# ============================================================================
+
+
+# ============================================================================
+# MOCK FIXTURES (For external services)
+# ============================================================================
+
+@pytest.fixture(autouse=True)
+def mock_email_service(monkeypatch):
+    """
+    Mock EmailService to avoid actual email sending in tests.
+    Applied automatically to all tests (autouse=True).
+    """
+    def mock_send(*args, **kwargs):
+        # Simulate successful email sending
+        return True
+    
+    # Mock the EmailService class methods
+    monkeypatch.setattr('src.services.email_service.EmailService._send_email', mock_send)
+    monkeypatch.setattr('src.services.email_service.EmailService.send_verification_email', mock_send)
+    monkeypatch.setattr('src.services.email_service.EmailService.send_password_reset_email', mock_send)
+    
+    return mock_send
+
+# HELPER FUNCTIONS (For common test patterns)
+# ============================================================================
+
+def register_user_helper(client, email='test@example.com', password='Test123!@#', 
+                        first_name='Test', last_name='User', **kwargs):
+    """
+    Helper function to register a user.
+    Returns the response object.
+    """
+    data = {
+        'email': email,
+        'password': password,
+        'first_name': first_name,
+        'last_name': last_name,
+        **kwargs
+    }
+    return client.post('/api/auth/register', json=data)
+
+
+def verify_user_helper(client, email, verification_code):
+    """
+    Helper function to verify a user's email.
+    Returns the response object.
+    """
+    return client.post('/api/auth/verify-email', json={
+        'email': email,
+        'code': verification_code
+    })
+
+
+def login_user_helper(client, email='test@example.com', password='Test123!@#'):
+    """
+    Helper function to login a user.
+    Returns the response object.
+    """
+    return client.post('/api/auth/login', json={
+        'email': email,
+        'password': password
+    })
+
+
+def register_and_login_user(client, email='test@example.com', password='Test123!@#',
+                            first_name='Test', last_name='User'):
+    """
+    Helper function to register, verify, and login a user in one go.
+    Returns the access token.
+    """
+    # Register
+    response = register_user_helper(client, email, password, first_name, last_name)
+    if response.status_code != 201:
+        raise Exception(f'Registration failed: {response.get_json()}')
+    
+    data = response.get_json()
+    
+    # If verification code is returned, verify the user
+    if 'verification_code' in data:
+        verification_code = data['verification_code']
+        verify_response = verify_user_helper(client, email, verification_code)
+        if verify_response.status_code not in [200, 201]:
+            raise Exception(f'Verification failed: {verify_response.get_json()}')
+    
+    # Login to get access token
+    login_response = login_user_helper(client, email, password)
+    if login_response.status_code != 200:
+        raise Exception(f'Login failed: {login_response.get_json()}')
+    
+    login_data = login_response.get_json()
+    return login_data.get('access_token')
+
+
+def get_auth_headers(token):
+    """
+    Helper function to create authorization headers.
+    """
+    return {'Authorization': f'Bearer {token}'}

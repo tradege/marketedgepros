@@ -1,4 +1,4 @@
-# PropTradePro - Deployment Guide to Production Server
+# MarketEdgePros - Deployment Guide to Production Server
 
 **Date:** October 28, 2025  
 **Version:** 1.0  
@@ -8,7 +8,7 @@
 
 ## OVERVIEW
 
-This guide will help you deploy the PropTradePro application to your production server with the latest fixes applied.
+This guide will help you deploy the MarketEdgePros application to your production server with the latest fixes applied.
 
 **Recent Changes:**
 - ✅ Fixed hierarchy system (Master → Affiliate only)
@@ -71,7 +71,7 @@ SECRET_KEY=<generate-random-64-char-string>
 JWT_SECRET_KEY=<generate-random-64-char-string>
 
 # Database
-DATABASE_URL=postgresql://proptrade_user:PASSWORD@localhost:5432/proptradepro_prod
+DATABASE_URL=postgresql://proptrade_user:PASSWORD@localhost:5432/marketedgepros_prod
 
 # Redis
 REDIS_URL=redis://localhost:6379/0
@@ -125,9 +125,9 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 sudo -u postgres psql
 
 # Create database and user
-CREATE DATABASE proptradepro_prod;
+CREATE DATABASE marketedgepros_prod;
 CREATE USER proptrade_user WITH PASSWORD 'YOUR_STRONG_PASSWORD';
-GRANT ALL PRIVILEGES ON DATABASE proptradepro_prod TO proptrade_user;
+GRANT ALL PRIVILEGES ON DATABASE marketedgepros_prod TO proptrade_user;
 \q
 ```
 
@@ -210,11 +210,11 @@ pip install gunicorn
 
 ### Create Systemd Service
 
-Create `/etc/systemd/system/proptradepro-backend.service`:
+Create `/etc/systemd/system/marketedgepros-backend.service`:
 
 ```ini
 [Unit]
-Description=PropTradePro Backend (Gunicorn)
+Description=MarketEdgePros Backend (Gunicorn)
 After=network.target postgresql.service redis.service
 
 [Service]
@@ -228,8 +228,8 @@ ExecStart=/var/www/MarketEdgePros/backend/venv/bin/gunicorn \
     --workers 4 \
     --bind 127.0.0.1:8000 \
     --timeout 120 \
-    --access-logfile /var/log/proptradepro/access.log \
-    --error-logfile /var/log/proptradepro/error.log \
+    --access-logfile /var/log/marketedgepros/access.log \
+    --error-logfile /var/log/marketedgepros/error.log \
     --log-level info \
     "src.app:create_app()"
 
@@ -243,8 +243,8 @@ WantedBy=multi-user.target
 ### Create Log Directory
 
 ```bash
-sudo mkdir -p /var/log/proptradepro
-sudo chown www-data:www-data /var/log/proptradepro
+sudo mkdir -p /var/log/marketedgepros
+sudo chown www-data:www-data /var/log/marketedgepros
 ```
 
 ### Start Backend Service
@@ -254,16 +254,16 @@ sudo chown www-data:www-data /var/log/proptradepro
 sudo systemctl daemon-reload
 
 # Enable service (start on boot)
-sudo systemctl enable proptradepro-backend
+sudo systemctl enable marketedgepros-backend
 
 # Start service
-sudo systemctl start proptradepro-backend
+sudo systemctl start marketedgepros-backend
 
 # Check status
-sudo systemctl status proptradepro-backend
+sudo systemctl status marketedgepros-backend
 
 # View logs
-sudo journalctl -u proptradepro-backend -f
+sudo journalctl -u marketedgepros-backend -f
 ```
 
 ---
@@ -449,7 +449,7 @@ redis-cli ping
 
 ```bash
 # Backend
-sudo systemctl status proptradepro-backend
+sudo systemctl status marketedgepros-backend
 
 # Nginx
 sudo systemctl status nginx
@@ -490,7 +490,7 @@ Open browser: https://marketedgepros.com
 
 ```bash
 # Backend logs
-sudo journalctl -u proptradepro-backend -f
+sudo journalctl -u marketedgepros-backend -f
 
 # Nginx access logs
 sudo tail -f /var/log/nginx/access.log
@@ -499,7 +499,7 @@ sudo tail -f /var/log/nginx/access.log
 sudo tail -f /var/log/nginx/error.log
 
 # Application logs
-sudo tail -f /var/log/proptradepro/error.log
+sudo tail -f /var/log/marketedgepros/error.log
 ```
 
 ### Create Backups
@@ -509,7 +509,7 @@ sudo tail -f /var/log/proptradepro/error.log
 cat > /root/backup-db.sh << 'EOF'
 #!/bin/bash
 DATE=$(date +%Y%m%d_%H%M%S)
-pg_dump -U proptrade_user proptradepro_prod | gzip > /backups/db_$DATE.sql.gz
+pg_dump -U proptrade_user marketedgepros_prod | gzip > /backups/db_$DATE.sql.gz
 # Keep only last 7 days
 find /backups -name "db_*.sql.gz" -mtime +7 -delete
 EOF
@@ -540,7 +540,7 @@ sudo apt install htop iotop nethogs
 
 ```bash
 # Check logs
-sudo journalctl -u proptradepro-backend -n 50
+sudo journalctl -u marketedgepros-backend -n 50
 
 # Common issues:
 # 1. Database connection - check DATABASE_URL
@@ -567,7 +567,7 @@ npm run build
 sudo systemctl status postgresql
 
 # Test connection
-psql -U proptrade_user -d proptradepro_prod -h localhost
+psql -U proptrade_user -d marketedgepros_prod -h localhost
 
 # Check .env file
 cat /var/www/MarketEdgePros/backend/.env | grep DATABASE_URL
@@ -589,10 +589,10 @@ git revert <commit-hash>
 cd frontend && npm run build
 
 # 3. Restart backend
-sudo systemctl restart proptradepro-backend
+sudo systemctl restart marketedgepros-backend
 
 # 4. Check status
-sudo systemctl status proptradepro-backend
+sudo systemctl status marketedgepros-backend
 ```
 
 ---

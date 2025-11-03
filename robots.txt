@@ -1,0 +1,15 @@
+# robots.txt for MarketEdgePros
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://marketedgepros.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+

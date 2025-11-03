@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import SchemaMarkup from "../components/seo/SchemaMarkup";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '../components/layout/Layout';
@@ -20,9 +21,9 @@ const NewHomePage = () => {
   // Preload images
   useEffect(() => {
     const images = [
-      '/images/abstract-trading-flow.png',
-      '/images/hero-trading-3d.png',
-      '/images/stats-globe-hologram.png'
+      '/images/abstract-trading-flow.webp',
+      '/images/hero-trading-3d.webp',
+      '/images/stats-globe-hologram.webp'
     ];
     
     let loadedCount = 0;
@@ -42,8 +43,8 @@ const NewHomePage = () => {
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/programs`);
-        const apiPrograms = Array.isArray(response.data) ? response.data : [];
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/programs/`);
+        const apiPrograms = response.data.programs || [];
         
         // If API returns empty, use static fallback
         if (apiPrograms.length === 0) {
@@ -155,23 +156,24 @@ const NewHomePage = () => {
   };
 
   const filteredPrograms = Array.isArray(programs) ? programs.filter(p => {
-    if (selectedPhase === 'one') return p.phases === 1;
-    if (selectedPhase === 'two') return p.phases === 2;
-    if (selectedPhase === 'three') return p.phases === 3;
-    if (selectedPhase === 'instant') return p.instant_funding;
+    if (selectedPhase === 'one') return p.type === 'one_phase' || p.phases === 1;
+    if (selectedPhase === 'two') return p.type === 'two_phase' || p.phases === 2;
+    if (selectedPhase === 'three') return p.type === 'three_phase' || p.phases === 3;
+    if (selectedPhase === 'instant') return p.type === 'instant_funding' || p.instant_funding;
     return false;
-  }) : [];
+  }).sort((a, b) => (a.account_size || 0) - (b.account_size || 0)) : [];
 
   return (
     <Layout>
       <div className="min-h-screen overflow-hidden scroll-smooth">
+      <SchemaMarkup />
         
         {/* Hero Section */}
         <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
           {/* Animated Background */}
           <div className="absolute inset-0 z-0">
             <img 
-              src="/images/abstract-trading-flow.png" 
+              src="/images/abstract-trading-flow.webp" 
               alt="" 
               loading="eager"
               className="w-full h-full object-cover opacity-30"
@@ -182,7 +184,7 @@ const NewHomePage = () => {
           {/* 3D Trading Screens - Floating */}
           <div className="absolute inset-0 z-10 pointer-events-none">
             <img 
-              src="/images/hero-trading-3d.png" 
+              src="/images/hero-trading-3d.webp" 
               alt="" 
               loading="eager"
               className="absolute top-1/4 left-1/4 w-96 h-auto opacity-60 animate-float"
@@ -246,7 +248,7 @@ const NewHomePage = () => {
           {/* Background */}
           <div className="absolute inset-0 z-0">
             <img 
-              src="/images/stats-globe-hologram.png" 
+              src="/images/stats-globe-hologram.webp" 
               alt="" 
               className="w-full h-full object-cover opacity-20"
             />
@@ -441,7 +443,7 @@ const NewHomePage = () => {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {/* Feature 1 */}
               <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
                 <div className="text-4xl mb-4">⚡</div>
@@ -495,6 +497,146 @@ const NewHomePage = () => {
                   Join traders from 200+ countries worldwide.
                 </p>
               </div>
+
+              {/* Feature 7 - MT4/MT5 */}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+                <div className="text-4xl mb-4">💻</div>
+                <h3 className="text-2xl font-bold mb-4">MT4 & MT5 Platforms</h3>
+                <p className="text-gray-400">
+                  Trade on industry-standard MetaTrader 4 & 5 platforms. TradingView coming soon.
+                </p>
+              </div>
+
+              {/* Feature 8 - Payout Policy */}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+                <div className="text-4xl mb-4">💵</div>
+                <h3 className="text-2xl font-bold mb-4">Low Minimum Withdrawal</h3>
+                <p className="text-gray-400">
+                  Withdraw your profits starting from just $50. Flexible payout frequency options.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="relative py-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">
+                What Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Traders Say</span>
+              </h2>
+              <p className="text-xl text-gray-300">Join thousands of successful funded traders</p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  name: "Alex Thompson",
+                  role: "Funded Trader",
+                  image: "AT",
+                  text: "MarketEdgePros changed my trading career. Fast payouts, fair rules, and excellent support. I scaled from $25K to $100K in 4 months!"
+                },
+                {
+                  name: "Maria Garcia",
+                  role: "Professional Trader",
+                  image: "MG",
+                  text: "Best prop firm I've worked with. No time pressure, realistic targets, and they actually care about trader success. Highly recommended!"
+                },
+                {
+                  name: "James Wilson",
+                  role: "Full-Time Trader",
+                  image: "JW",
+                  text: "The instant funding option was perfect for me. Started trading with real capital immediately and now making consistent profits with 90% split."
+                }
+              ].map((testimonial, index) => (
+                <div key={index} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-cyan-500/50 transition-all">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                      {testimonial.image}
+                    </div>
+                    <div>
+                      <h4 className="text-white font-bold text-lg">{testimonial.name}</h4>
+                      <p className="text-gray-400 text-sm">{testimonial.role}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="w-5 h-5 fill-cyan-400" viewBox="0 0 20 20">
+                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-gray-300 italic">"{testimonial.text}"</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Trust Badges Section */}
+        <section className="relative py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h3 className="text-2xl font-bold text-gray-400 mb-8">Trusted by traders worldwide</h3>
+              <div className="flex flex-wrap justify-center items-center gap-12">
+                {[
+                  { icon: "🏆", text: "Top Rated 2024" },
+                  { icon: "✓", text: "Verified Payouts" },
+                  { icon: "🔒", text: "Secure Platform" },
+                  { icon: "⚡", text: "Fast Support" },
+                  { icon: "🌍", text: "200+ Countries" }
+                ].map((badge, index) => (
+                  <div key={index} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-6 py-3">
+                    <span className="text-2xl">{badge.icon}</span>
+                    <span className="text-white font-semibold">{badge.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick FAQ Section */}
+        <section className="relative py-32">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl md:text-6xl font-bold mb-6">
+                Quick <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Answers</span>
+              </h2>
+              <p className="text-xl text-gray-300">Common questions from new traders</p>
+            </div>
+
+            <div className="space-y-6">
+              {[
+                {
+                  q: "How fast can I get funded?",
+                  a: "With instant funding, you can start trading immediately. For evaluation programs, most traders complete them in 2-4 weeks."
+                },
+                {
+                  q: "Are there any time limits?",
+                  a: "No! Unlike other firms, we don't impose time limits on evaluations. Trade at your own pace and comfort level."
+                },
+                {
+                  q: "How do payouts work?",
+                  a: "Request payouts anytime after your first profitable trade. We process all payout requests within 24 hours on business days."
+                },
+                {
+                  q: "Can I scale my account?",
+                  a: "Absolutely! Consistent traders can scale up to $400K and increase their profit split to 90% based on performance."
+                }
+              ].map((faq, index) => (
+                <div key={index} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-cyan-500/50 transition-all">
+                  <h4 className="text-xl font-bold text-white mb-3">{faq.q}</h4>
+                  <p className="text-gray-300">{faq.a}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center mt-12">
+              <Link to="/faq" className="text-cyan-400 hover:text-cyan-300 font-semibold text-lg">
+                View All FAQs →
+              </Link>
             </div>
           </div>
         </section>

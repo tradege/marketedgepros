@@ -1,0 +1,42 @@
+# Testing Dependencies for MarketEdgePros
+
+# Core testing framework
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-xdist==3.5.0  # Parallel test execution
+pytest-mock==3.12.0
+pytest-flask==1.3.0
+
+# Test data generation
+faker==20.1.0
+factory-boy==3.3.0
+
+# HTTP testing
+responses==0.24.1
+requests-mock==1.11.0
+
+# Code quality
+pytest-flake8==1.1.1
+pytest-pylint==0.21.0
+black==23.12.1
+isort==5.13.2
+
+# Coverage
+coverage[toml]==7.4.0
+
+# Mocking
+freezegun==1.4.0  # Time mocking
+pytest-freezegun==0.4.2
+
+# Database testing
+pytest-postgresql==5.0.0
+
+# API testing
+pytest-httpserver==1.0.8
+
+# Performance testing
+pytest-benchmark==4.0.0
+
+# Fixtures
+pytest-factoryboy==2.6.0
+

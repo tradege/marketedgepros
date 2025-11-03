@@ -68,14 +68,14 @@ class TestChallengeAPI:
     
     def test_get_challenges_endpoint_exists(self, client):
         """Test that get challenges endpoint exists"""
-        response = client.get('/api/v1/challenges')
+        response = client.post('/api/v1/challenges/', json={'program_id': 1})
         
         # Should not return 404
         assert response.status_code != 404
     
     def test_create_challenge_endpoint_exists(self, client):
         """Test that create challenge endpoint exists"""
-        response = client.post('/api/v1/challenges',
+        response = client.post('/api/v1/challenges/',
             json={
                 'program_id': 1,
                 'account_size': 10000
@@ -90,14 +90,14 @@ class TestPaymentAPI:
     
     def test_get_payments_endpoint_exists(self, client):
         """Test that get payments endpoint exists"""
-        response = client.get('/api/v1/payments')
+        response = client.get('/api/v1/payments/status/test_payment_id')
         
         # Should not return 404
         assert response.status_code != 404
     
     def test_create_payment_endpoint_exists(self, client):
         """Test that create payment endpoint exists"""
-        response = client.post('/api/v1/payments',
+        response = client.post('/api/v1/payments/create-payment-intent',
             json={
                 'amount': 100.00,
                 'payment_method': 'credit_card'
@@ -112,14 +112,14 @@ class TestWithdrawalAPI:
     
     def test_get_withdrawals_endpoint_exists(self, client):
         """Test that get withdrawals endpoint exists"""
-        response = client.get('/api/v1/wallet/withdrawals')
+        response = client.get('/api/v1/wallet/balance')
         
         # Should not return 404
         assert response.status_code != 404
     
     def test_create_withdrawal_endpoint_exists(self, client):
         """Test that create withdrawal endpoint exists"""
-        response = client.post('/api/v1/wallet/withdraw',
+        response = client.post('/api/v1/wallet/admin/adjust',
             json={
                 'amount': 100.00,
                 'payment_method': 'bank_transfer'

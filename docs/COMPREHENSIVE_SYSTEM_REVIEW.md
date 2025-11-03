@@ -406,7 +406,7 @@ Files Changed:
 - docs/MT45_INTEGRATION_PLAN.md (new)
 - docs/COMPREHENSIVE_SYSTEM_REVIEW.md (new)
 
-Repository: github.com/tradege/PropTradePro
+Repository: github.com/tradege/MarketEdgePros
 Branch: master
 Status: Pushed ✅
 ```
@@ -440,7 +440,7 @@ Status: Pushed ✅
 ## 📞 **צור קשר**
 
 אם יש שאלות או צריך הבהרות:
-- GitHub: github.com/tradege/PropTradePro
+- GitHub: github.com/tradege/MarketEdgePros
 - Documentation: `/docs` folder
 - Support: support@marketedgepros.com
 

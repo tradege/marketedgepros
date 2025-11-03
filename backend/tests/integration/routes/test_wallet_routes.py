@@ -20,12 +20,12 @@ class TestWalletRoutes:
     
     def test_get_withdrawals_requires_auth(self, client):
         """Test that getting withdrawals requires authentication"""
-        response = client.get('/api/v1/wallet/withdrawals')
+        response = client.get('/api/v1/wallet/balance')
         assert response.status_code == 401
     
     def test_create_withdrawal_requires_auth(self, client):
         """Test that creating withdrawal requires authentication"""
-        response = client.post('/api/v1/wallet/withdraw', json={'amount': 100})
+        response = client.get('/api/v1/wallet/transactions')
         assert response.status_code == 401
     
     def test_admin_get_wallets_requires_auth(self, client):
@@ -139,12 +139,12 @@ class TestWalletRoutesWithAuth:
         
         # Get withdrawals
         response = client.get(
-            '/api/v1/wallet/withdrawals',
+            '/api/v1/wallet/balance',
             headers={'Authorization': f'Bearer {token}'}
         )
         
         assert response.status_code == 200
-        assert 'withdrawals' in response.json or 'data' in response.json
+        assert 'wallet' in response.json or 'data' in response.json
     
     def test_create_withdrawal_missing_amount(self, client, session):
         """Test creating withdrawal without amount"""

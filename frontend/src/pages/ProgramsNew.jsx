@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, TrendingUp, Shield, Zap, ArrowRight, Target, Trophy, Gem } from 'lucide-react';
+import { Check, TrendingUp, Shield, Zap, ArrowRight, Target, Trophy, Gem, Star, Users, Clock, Award, CheckCircle, X } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import useAuthStore from '../store/authStore';
 import axios from 'axios';
@@ -14,6 +14,7 @@ export default function ProgramsNew() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('two_phase');
+  const [activeFaq, setActiveFaq] = useState(null);
 
   useEffect(() => {
     loadPrograms();
@@ -80,7 +81,7 @@ export default function ProgramsNew() {
 
   const handleGetStarted = (programId) => {
     if (!user) {
-      navigate('/login', { state: { from: `/programs/${programId}` } });
+      navigate('/login', { state: { from: `/programs/${programId}/checkout` } });
     } else {
       navigate(`/programs/${programId}/checkout`);
     }
@@ -93,6 +94,90 @@ export default function ProgramsNew() {
     { id: 'instant_funding', label: 'Instant Funding', icon: Zap, description: 'Fastest' },
     { id: 'one_phase', label: 'One Phase', icon: Target, description: 'Direct' },
     { id: 'three_phase', label: 'Three Phase', icon: Gem, description: 'Most Affordable' },
+  ];
+
+  const testimonials = [
+    {
+      name: "Michael Chen",
+      role: "Funded Trader",
+      image: "MC",
+      rating: 5,
+      text: "MarketEdgePros gave me the capital I needed to prove my strategy. Within 3 weeks, I passed the evaluation and now I'm trading with $100K. The support team is amazing!"
+    },
+    {
+      name: "Sarah Johnson",
+      role: "Professional Trader",
+      image: "SJ",
+      rating: 5,
+      text: "Best prop firm I've worked with. Fast payouts, fair rules, and excellent technology. I've scaled from $25K to $200K in just 6 months."
+    },
+    {
+      name: "David Martinez",
+      role: "Full-Time Trader",
+      image: "DM",
+      rating: 5,
+      text: "The two-phase challenge is perfectly designed. Realistic targets and no time pressure. I'm now making consistent profits with 90% split."
+    }
+  ];
+
+  const faqs = [
+    {
+      question: "What's the difference between the challenge types?",
+      answer: "Two-Phase has 2 evaluation stages, One-Phase has a single evaluation, Instant Funding gives you immediate access to capital, and Three-Phase offers the most affordable entry with 3 evaluation stages."
+    },
+    {
+      question: "How long does it take to get funded?",
+      answer: "Most traders complete the Two-Phase challenge in 2-4 weeks. One-Phase can be completed in 1-2 weeks, while Instant Funding gives you immediate access. There are no time limits on any challenge."
+    },
+    {
+      question: "What happens if I fail the challenge?",
+      answer: "You can retake the challenge at any time. We also offer a refund policy for first-time participants who don't violate any rules. Check our refund policy for details."
+    },
+    {
+      question: "Can I trade during news events?",
+      answer: "Yes! Unlike many prop firms, we allow trading during high-impact news events. We believe in giving traders full flexibility to implement their strategies."
+    },
+    {
+      question: "How fast are the payouts?",
+      answer: "We process payout requests within 24 hours on business days. You can request payouts as frequently as you like once you're funded."
+    },
+    {
+      question: "Can I scale my account?",
+      answer: "Absolutely! Funded traders can scale up to $2M based on consistent performance. We also increase your profit split to 90% as you grow."
+    }
+  ];
+
+  const whyChooseUs = [
+    {
+      icon: Shield,
+      title: "No Time Limits",
+      description: "Trade at your own pace. We don't pressure you with tight deadlines."
+    },
+    {
+      icon: Zap,
+      title: "Fast Payouts",
+      description: "Request withdrawals anytime. Receive your profits within 24 hours."
+    },
+    {
+      icon: Trophy,
+      title: "Up to 90% Profit Split",
+      description: "Keep the majority of what you earn. Scale up to 90% profit share."
+    },
+    {
+      icon: Users,
+      title: "24/7 Support",
+      description: "Our team is always available to help you succeed."
+    },
+    {
+      icon: Target,
+      title: "Realistic Targets",
+      description: "Achievable profit targets designed for sustainable trading."
+    },
+    {
+      icon: Award,
+      title: "Industry Leading",
+      description: "Trusted by thousands of traders worldwide since 2020."
+    }
   ];
 
   return (
@@ -141,7 +226,7 @@ export default function ProgramsNew() {
           </div>
 
           {/* Programs Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
             {isLoading ? (
               <div className="col-span-full text-center text-gray-400 py-20">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
@@ -243,8 +328,95 @@ export default function ProgramsNew() {
             )}
           </div>
 
+          {/* Why Choose Us Section */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-white mb-4">
+                Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">MarketEdgePros</span>
+              </h2>
+              <p className="text-gray-400 text-lg">Join thousands of successful traders who trust us with their trading career</p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {whyChooseUs.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105">
+                    <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg flex items-center justify-center mb-4">
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                    <p className="text-gray-400">{item.description}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Success Stories */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-white mb-4">
+                Success <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Stories</span>
+              </h2>
+              <p className="text-gray-400 text-lg">See what our funded traders have to say</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial, index) => (
+                <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
+                      {testimonial.image}
+                    </div>
+                    <div>
+                      <h4 className="text-white font-bold">{testimonial.name}</h4>
+                      <p className="text-gray-400 text-sm">{testimonial.role}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 fill-cyan-400 text-cyan-400" />
+                    ))}
+                  </div>
+                  <p className="text-gray-300 italic">"{testimonial.text}"</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-white mb-4">
+                Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Questions</span>
+              </h2>
+              <p className="text-gray-400 text-lg">Everything you need to know about our programs</p>
+            </div>
+            <div className="max-w-3xl mx-auto space-y-4">
+              {faqs.map((faq, index) => (
+                <div key={index} className="bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-cyan-500/50 transition-all duration-300">
+                  <button
+                    onClick={() => setActiveFaq(activeFaq === index ? null : index)}
+                    className="w-full px-6 py-4 flex items-center justify-between text-left"
+                  >
+                    <span className="text-white font-semibold pr-4">{faq.question}</span>
+                    <div className={`transform transition-transform ${activeFaq === index ? 'rotate-180' : ''}`}>
+                      <svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </button>
+                  {activeFaq === index && (
+                    <div className="px-6 pb-4 text-gray-400">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Features Section */}
-          <div className="mt-20 grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center p-6 bg-white/5 rounded-xl border border-white/10 hover:border-cyan-500/50 transition-all duration-300">
               <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full flex items-center justify-center">
                 <Zap className="w-8 h-8 text-white" />

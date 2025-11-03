@@ -72,8 +72,10 @@ def create_app(config_name=None):
         limiter.init_app(app)
         app.limiter = limiter
     
-    # Initialize Talisman for security headers
-    Talisman(app)
+    # Initialize Talisman for security headers (skip in testing)
+    import os
+    if not os.environ.get('FLASK_TESTING') == 'true':
+        Talisman(app)
 
     @app.after_request
     def add_security_headers(response):
@@ -120,6 +122,7 @@ def create_app(config_name=None):
     from src.routes.blog import blog_bp
     from src.routes.support import support_bp
     from src.routes.affiliate import affiliate_bp
+    from src.routes.nowpayments import nowpayments_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/v1/auth')
     app.register_blueprint(users_bp, url_prefix='/api/v1/users')
@@ -148,6 +151,7 @@ def create_app(config_name=None):
     app.register_blueprint(blog_bp, url_prefix='/api/v1/blog')
     app.register_blueprint(support_bp, url_prefix='/api/v1/support')
     app.register_blueprint(affiliate_bp, url_prefix='/api/v1/affiliate')
+    app.register_blueprint(nowpayments_bp)
     
     # Health check endpoint
     @app.route('/health', methods=['GET'])
