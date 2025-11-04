@@ -7,7 +7,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
-from src import limiter
+from src.extensions import limiter
 from src.config import get_config
 from src.database import db, init_db
 from src.middleware.tenant_middleware import init_tenant_middleware
@@ -48,7 +48,7 @@ def create_app(config_name=None):
     # Exempt API endpoints from CSRF protection (they use JWT authentication)
     # This is the standard approach for JWT-based APIs
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
-    cors_origins = app.config.get('CORS_ORIGINS', '*')
+    cors_origins = app.config.get('CORS_ORIGINS', ['http://localhost:3000'])
     if isinstance(cors_origins, str):
         cors_origins = cors_origins.split(',')
     elif not isinstance(cors_origins, list):
@@ -103,6 +103,7 @@ def create_app(config_name=None):
     from src.routes.uploads import uploads_bp
     from src.routes.agents import agents_bp
     from src.routes.admin import admin_bp
+    from src.routes.payouts import payouts_bp
     from src.routes.traders import traders_bp
     from src.routes.kyc import kyc_bp
     from src.routes.challenges import challenges_bp
@@ -129,6 +130,7 @@ def create_app(config_name=None):
     app.register_blueprint(profile_bp, url_prefix='/api/v1/profile')
     app.register_blueprint(programs_bp, url_prefix='/api/v1/programs')
     app.register_blueprint(payments_bp, url_prefix='/api/v1/payments')
+    app.register_blueprint(payouts_bp)
     app.register_blueprint(uploads_bp, url_prefix='/api/v1/uploads')
     app.register_blueprint(agents_bp, url_prefix='/api/v1/agents')
     app.register_blueprint(admin_bp, url_prefix='/api/v1/admin')

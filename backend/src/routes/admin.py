@@ -241,20 +241,25 @@ def create_user():
                 roles=', '.join(allowed_roles)
             )), 400
         
-        # Check if user can create same role
-        if data['role'] == g.current_user.role:
-            if not g.current_user.can_create_same_role:
-                role_names = {
-                    'supermaster': 'Supermaster',
-                    'super_admin': 'Super Admin',
-                    'master': 'Master',
-                    'admin': 'Admin',
-                    'agent': 'Agent'
-                }
-                return jsonify(format_error_response(
-                    'CANNOT_CREATE_SAME_ROLE',
-                    role=role_names.get(data['role'], data['role'])
-                )), 403
+        # FIXED: Check role creation permissions using ROLE_HIERARCHY
+        from src.constants.roles import can_user_create_role, Roles
+        
+        # Normalize roles (agent -> affiliate, etc.)
+        target_role = Roles.normalize_role(data['role'])
+        current_role = Roles.normalize_role(g.current_user.role)
+        
+        # Check if current user can create target role
+        if not can_user_create_role(current_role, target_role, g.current_user.can_create_same_role):
+            role_names = {
+                'supermaster': 'SuperMaster',
+                'master': 'Master',
+                'affiliate': 'Affiliate',
+                'trader': 'Trader'
+            }
+            return jsonify(format_error_response(
+                'CANNOT_CREATE_ROLE',
+                message=f"Your role ({role_names.get(current_role, current_role)}) cannot create {role_names.get(target_role, target_role)}"
+            )), 403
         
         # Phone number validation and verification logic
         is_verified = False

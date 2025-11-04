@@ -58,6 +58,11 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
     kyc_address_url = db.Column(db.String(500))
     kyc_address_uploaded_at = db.Column(db.DateTime)
     kyc_address_notes = db.Column(db.Text)
+
+    # Financial / Payout Fields
+    available_balance = db.Column(db.Numeric(12, 2), default=0.00)
+    total_withdrawn = db.Column(db.Numeric(12, 2), default=0.00)
+    payout_count = db.Column(db.Integer, default=0)
     
     # KYC Documents - Selfie
     kyc_selfie_status = db.Column(db.String(20), default='not_uploaded')
@@ -283,7 +288,14 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
     
     def can_create_user(self, target_role):
         """Check if this user can create a user with target_role"""
-        return target_role in ROLE_HIERARCHY.get(self.role, [])
+        from src.constants.roles import can_user_create_role, Roles
+        
+        # Normalize roles
+        current_role = Roles.normalize_role(self.role)
+        target = Roles.normalize_role(target_role)
+        
+        # Use the centralized role hierarchy check
+        return can_user_create_role(current_role, target, self.can_create_same_role)
     
     def get_downline_count(self):
         """Get total count of users in downline"""

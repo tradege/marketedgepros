@@ -2,6 +2,7 @@
 Authentication routes
 """
 from flask import Blueprint, request, jsonify, g
+from src.extensions import limiter
 from src import limiter
 from src.services.auth_service import AuthService
 from src.services.email_service import EmailService

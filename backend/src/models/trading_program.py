@@ -32,6 +32,9 @@ class TradingProgram(db.Model, TimestampMixin):
     
     # Profit Split
     profit_split = db.Column(db.Numeric(5, 2), default=80.00)  # Percentage to trader
+    profit_split_percentage = db.Column(db.Numeric(5, 2), default=80.00)  # Alias for compatibility
+    minimum_payout_amount = db.Column(db.Numeric(10, 2), default=50.00)  # Minimum payout
+    payout_mode = db.Column(db.String(50), default="on_demand")  # on_demand, on_demand_rules, scheduled
     
     # Trading Rules (stored as JSON)
     rules = db.Column(JSONB, default={})

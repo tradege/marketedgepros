@@ -46,3 +46,4 @@ __all__ = [
 Program = TradingProgram
 
 from src.models.token_blacklist import TokenBlacklist
+from src.models.payout_request import PayoutRequest

@@ -61,9 +61,12 @@ class HierarchyScopedMixin:
         fk_col = getattr(cls, cls.__hierarchy_user_fk__)
         
         # Filter: user_id IN (SELECT id FROM users WHERE tree_path LIKE 'current_user_path%')
+        # FIXED: Escape special characters to prevent SQL injection
+        from sqlalchemy import func
+        safe_tree_path = current_user.tree_path.replace("%", "\\%").replace("_", "\\_")
         return fk_col.in_(
             User.query.filter(
-                User.tree_path.like(f"{current_user.tree_path}%")
+                User.tree_path.like(f"{safe_tree_path}%", escape="\\")
             ).with_entities(User.id)
         )
 
