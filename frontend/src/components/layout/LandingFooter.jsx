@@ -134,7 +134,7 @@ export default function LandingFooter() {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
-            <p>© {currentYear} MarketEdgePros. All rights reserved.</p>
+            <p>© 2020 MarketEdgePros. All rights reserved.</p>
             <div className="flex items-center space-x-6">
               <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms</Link>
               <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy</Link>

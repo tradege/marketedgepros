@@ -12,11 +12,11 @@ export default function SupportHub() {
       title: 'Getting Started',
       icon: BookOpen,
       articles: [
-        { title: 'How to Create an Account', link: '/support/create-account' },
+        { title: 'How to Create an Account', link: '/support/article/create-account' },
         { title: 'Choosing the Right Challenge', link: '/support/choose-challenge' },
-        { title: 'Making Your First Payment', link: '/support/first-payment' },
+        { title: 'Making Your First Payment', link: '/support/article/first-payment' },
         { title: 'Setting Up MT5', link: '/support/setup-mt5' },
-        { title: 'Understanding Trading Rules', link: '/support/trading-rules' }
+        { title: 'Understanding Trading Rules', link: '/support/article/trading-rules' }
       ]
     },
     {
