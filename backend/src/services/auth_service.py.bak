@@ -32,12 +32,6 @@ class AuthService:
         user.set_password(password)
         
         db.session.add(user)
-        
-        # Assign to root user (for MLM hierarchy)
-        root_user = User.query.filter_by(parent_id=None).filter(User.role.in_(['supermaster', 'super_admin'])).first()
-        if root_user:
-            user.parent_id = root_user.id
-            user.update_tree_path()
         db.session.commit()
         
         # Handle referral code if provided
@@ -54,10 +48,6 @@ class AuthService:
                     status='pending'
                 )
                 db.session.add(referral)
-                
-                # Set parent relationship
-                user.parent_id = agent.user_id
-                user.update_tree_path()
                 
                 # Update agent stats
                 agent.referral_count += 1

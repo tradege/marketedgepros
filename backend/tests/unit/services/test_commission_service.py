@@ -15,7 +15,7 @@ def mock_tenant(session):
     """Create a mock tenant"""
     tenant = Tenant(
         name='Test Tenant',
-        subdomain='test'
+        subdomain=f'test_{__import__('uuid').uuid4().hex[:8]}'
     )
     session.add(tenant)
     session.flush()
@@ -354,7 +354,7 @@ class TestCommissionRetrieval:
         # Arrange - Create multiple commissions
         from src.models import TradingProgram, Tenant
         
-        tenant = Tenant(name='Test', subdomain='test')
+        tenant = Tenant(name='Test', subdomain=f'test_{__import__('uuid').uuid4().hex[:8]}')
         session.add(tenant)
         session.flush()
         
@@ -407,7 +407,7 @@ class TestCommissionRetrieval:
         # Arrange - Create commissions with different statuses
         from src.models import TradingProgram, Tenant
         
-        tenant = Tenant(name='Test', subdomain='test')
+        tenant = Tenant(name='Test', subdomain=f'test_{__import__('uuid').uuid4().hex[:8]}')
         session.add(tenant)
         session.flush()
         
@@ -465,7 +465,7 @@ class TestCommissionRetrieval:
         # Arrange - Create many commissions
         from src.models import TradingProgram, Tenant
         
-        tenant = Tenant(name='Test', subdomain='test')
+        tenant = Tenant(name='Test', subdomain=f'test_{__import__('uuid').uuid4().hex[:8]}')
         session.add(tenant)
         session.flush()
         
@@ -525,7 +525,7 @@ class TestCommissionStatistics:
         # Arrange - Create commissions with different statuses
         from src.models import TradingProgram, Tenant
         
-        tenant = Tenant(name='Test', subdomain='test')
+        tenant = Tenant(name='Test', subdomain=f'test_{__import__('uuid').uuid4().hex[:8]}')
         session.add(tenant)
         session.flush()
         

@@ -31,7 +31,6 @@ const CreateTicket = lazy(() => import('./pages/support/CreateTicket'));
 const MyTickets = lazy(() => import('./pages/support/MyTickets'));
 const TicketDetail = lazy(() => import('./pages/support/TicketDetail'));
 const Article = lazy(() => import("./pages/support/Article"));
-const NotFound = lazy(() => import("./pages/NotFound"));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const AffiliateLanding = lazy(() => import('./pages/affiliate/AffiliateLanding'));
@@ -191,7 +190,7 @@ function App() {
         <Route path="/support/create-ticket" element={<CreateTicket />} />
         <Route path="/support/my-tickets" element={<MyTickets />} />
         <Route path="/support/ticket/:ticketNumber" element={<TicketDetail />} />
-        <Route path="/support/article/:slug" element={<Article />} />
+        <Route path="/support/:slug" element={<Article />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/affiliate" element={<AffiliateLanding />} />
@@ -553,7 +552,19 @@ function App() {
           }
         />
 
-        <Route path="*" element={<NotFound />} />
+        {/* 404 */}
+        <Route
+          path="*"
+          element={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
+                <p className="text-xl text-gray-600 mb-8">Page not found</p>
+                <a href="/" className="btn btn-primary">
+                  Go to Home
+                </a>
+              </div>
+            </div>
           }
         />
         </Routes>

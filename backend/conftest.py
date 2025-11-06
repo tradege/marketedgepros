@@ -1,3 +1,4 @@
+import uuid
 """
 Professional pytest configuration with proper Flask-SQLAlchemy integration
 """
@@ -405,7 +406,7 @@ def tenant(session):
     
     tenant = Tenant(
         name='Test Tenant',
-        subdomain='test',
+        subdomain=f"test_{uuid.uuid4().hex[:8]}",
         status="active"
     )
     session.add(tenant)

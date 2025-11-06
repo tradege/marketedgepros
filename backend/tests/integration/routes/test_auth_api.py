@@ -147,6 +147,7 @@ class TestAuthAPI:
             content_type='application/json'
         )
         
+        print(f"Response: {response.status_code}, Data: {response.get_json()}")
         # Assert
         assert response.status_code == 200
     

@@ -55,7 +55,7 @@ def mock_program(session):
     from src.models.tenant import Tenant
     tenant = Tenant(
         name='Test Tenant',
-        subdomain='test',
+        subdomain=f'test_{__import__("uuid").uuid4().hex[:8]}',
         status='active'
     )
     session.add(tenant)

@@ -41,7 +41,7 @@ def mock_program(session):
     # Create tenant first
     tenant = Tenant(
         name='Test Tenant',
-        subdomain='test'
+        subdomain=f'test_{__import__('uuid').uuid4().hex[:8]}'
     )
     session.add(tenant)
     session.flush()

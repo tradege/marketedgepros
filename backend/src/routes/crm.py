@@ -296,11 +296,10 @@ def update_lead(lead_id):
 
 @crm_bp.route('/leads/<int:lead_id>/activities', methods=['POST'])
 @token_required
-def add_lead_activity():
+def add_lead_activity(lead_id):
     """Add activity to lead"""
     try:
         current_user = g.current_user
-        lead_id = int(request.view_args['lead_id'])
         
         if not PermissionManager.can_manage_leads(current_user):
             return jsonify({'error': 'Access denied'}), 403
@@ -342,11 +341,10 @@ def add_lead_activity():
 
 @crm_bp.route('/leads/<int:lead_id>/notes', methods=['POST'])
 @token_required
-def add_lead_note():
+def add_lead_note(lead_id):
     """Add note to lead"""
     try:
         current_user = g.current_user
-        lead_id = int(request.view_args['lead_id'])
         
         if not PermissionManager.can_manage_leads(current_user):
             return jsonify({'error': 'Access denied'}), 403
@@ -379,11 +377,10 @@ def add_lead_note():
 
 @crm_bp.route('/leads/<int:lead_id>/convert', methods=['POST'])
 @token_required
-def convert_lead():
+def convert_lead(lead_id):
     """Convert lead to user"""
     try:
         current_user = g.current_user
-        lead_id = int(request.view_args['lead_id'])
         
         if not PermissionManager.can_manage_leads(current_user):
             return jsonify({'error': 'Access denied'}), 403
@@ -446,11 +443,10 @@ def convert_lead():
 
 @crm_bp.route('/leads/<int:lead_id>/lost', methods=['POST'])
 @token_required
-def mark_lead_lost():
+def mark_lead_lost(lead_id):
     """Mark lead as lost"""
     try:
         current_user = g.current_user
-        lead_id = int(request.view_args['lead_id'])
         
         if not PermissionManager.can_manage_leads(current_user):
             return jsonify({'error': 'Access denied'}), 403

@@ -124,7 +124,7 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
         import string
         
         # Only agents and masters get referral codes
-        if not Roles.is_admin(self.role) and self.role != Roles.AGENT:
+        if not Roles.is_admin(self.role) and self.role != Roles.AFFILIATE:
             return None
         
         # Generate unique 8-character code
@@ -169,7 +169,7 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
             db.session.commit()
             
             # Return the token string
-            return token_instance.token
+            return token_instance.code
         except Exception as e:
             db.session.rollback()
             # Log the exception if necessary

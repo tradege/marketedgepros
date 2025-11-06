@@ -12,11 +12,11 @@ export default function SupportHub() {
       title: 'Getting Started',
       icon: BookOpen,
       articles: [
-        { title: 'How to Create an Account', link: '/support/article/create-account' },
+        { title: 'How to Create an Account', link: '/support/create-account' },
         { title: 'Choosing the Right Challenge', link: '/support/choose-challenge' },
-        { title: 'Making Your First Payment', link: '/support/article/first-payment' },
+        { title: 'Making Your First Payment', link: '/support/first-payment' },
         { title: 'Setting Up MT5', link: '/support/setup-mt5' },
-        { title: 'Understanding Trading Rules', link: '/support/article/trading-rules' }
+        { title: 'Understanding Trading Rules', link: '/support/trading-rules' }
       ]
     },
     {
@@ -56,11 +56,11 @@ export default function SupportHub() {
       title: 'Platform & Technical',
       icon: HelpCircle,
       articles: [
-        { title: 'MT5 Installation Guide', link: '/support/mt5-install' },
+        { title: 'MT5 Installation Guide', link: '/support/mt5-installation' },
         { title: 'Connecting to Trading Server', link: '/support/connect-server' },
         { title: 'Using Expert Advisors (EAs)', link: '/support/using-eas' },
-        { title: 'Troubleshooting Connection Issues', link: '/support/connection-issues' },
-        { title: 'Platform Requirements', link: '/support/requirements' }
+        { title: 'Troubleshooting Connection Issues', link: '/support/troubleshoot-connection' },
+        { title: 'Platform Requirements', link: '/support/platform-requirements' }
       ]
     },
     {
@@ -68,28 +68,42 @@ export default function SupportHub() {
       icon: FileText,
       articles: [
         { title: 'Updating Your Profile', link: '/support/update-profile' },
-        { title: 'KYC Verification Process', link: '/support/kyc-process' },
+        { title: 'KYC Verification Process', link: '/support/kyc-verification' },
         { title: 'Changing Your Password', link: '/support/change-password' },
         { title: 'Two-Factor Authentication', link: '/support/2fa' },
-        { title: 'Account Security Best Practices', link: '/support/security' }
+        { title: 'Account Security Best Practices', link: '/support/security-practices' }
       ]
     }
   ];
 
   const popularArticles = [
-    { title: 'How to Pass Your First Challenge', views: '12.5K', link: '/support/pass-challenge' },
-    { title: 'Understanding Daily Drawdown', views: '8.3K', link: '/support/daily-drawdown' },
-    { title: 'MT5 Setup Guide', views: '7.1K', link: '/support/mt5-install' },
-    { title: 'Withdrawal Process Explained', views: '6.8K', link: '/support/request-withdrawal' },
-    { title: 'Profit Split & Scaling', views: '5.9K', link: '/support/profit-split' }
+    { title: 'How to Pass Your First Challenge', link: '/support/pass-challenge', views: '12.5K' },
+    { title: 'Understanding Daily Drawdown', link: '/support/daily-drawdown', views: '8.3K' },
+    { title: 'MT5 Setup Guide', link: '/support/setup-mt5', views: '7.1K' },
+    { title: 'Withdrawal Process Explained', link: '/support/request-withdrawal', views: '6.8K' },
+    { title: 'Profit Split & Scaling', link: '/support/profit-split', views: '5.9K' }
   ];
 
   const quickLinks = [
     { title: 'Create Support Ticket', icon: MessageCircle, link: '/support/create-ticket' },
-    { title: 'Browse FAQ', icon: HelpCircle, link: '/support/faq' },
-    { title: 'My Tickets', icon: FileText, link: '/support/my-tickets' },
+    { title: 'Browse FAQ', icon: HelpCircle, link: '/faq' },
     { title: 'Join Discord Community', icon: ExternalLink, link: 'https://discord.gg/jKbmeSe7', external: true }
   ];
+
+  // Filter articles based on search term
+  const getFilteredArticles = () => {
+    if (!searchTerm.trim()) return categories;
+
+    const term = searchTerm.toLowerCase();
+    return categories.map(category => ({
+      ...category,
+      articles: category.articles.filter(article => 
+        article.title.toLowerCase().includes(term)
+      )
+    })).filter(category => category.articles.length > 0);
+  };
+
+  const filteredCategories = getFilteredArticles();
 
   return (
     <Layout>
@@ -124,7 +138,7 @@ export default function SupportHub() {
       {/* Quick Links */}
       <section className="py-12 bg-black border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {quickLinks.map((link, index) => {
               const Icon = link.icon;
               if (link.external) {
@@ -163,7 +177,7 @@ export default function SupportHub() {
             Browse by Category
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.map((category, index) => {
+            {filteredCategories.length > 0 ? filteredCategories.map((category, index) => {
               const Icon = category.icon;
               return (
                 <div
@@ -189,16 +203,14 @@ export default function SupportHub() {
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    to={`/support/category/${category.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="mt-4 inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 text-sm font-semibold"
-                  >
-                    View All Articles
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
                 </div>
               );
-            })}
+            }) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-400 text-lg">No articles found matching "{searchTerm}"</p>
+                <p className="text-gray-500 mt-2">Try different keywords or browse all categories</p>
+              </div>
+            )}
           </div>
         </div>
       </section>

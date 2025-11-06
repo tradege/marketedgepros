@@ -305,8 +305,8 @@ class TestCRMFiltersAndPagination:
         session.commit()
         
         # Create leads with different statuses
-        lead1 = Lead(email=f'lead1_{uuid.uuid4().hex[:8]}@test.com', first_name='John', last_name='Doe', status='new', created_by=user.id)
-        lead2 = Lead(email=f'lead2_{uuid.uuid4().hex[:8]}@test.com', first_name='Jane', last_name='Smith', status='contacted', created_by=user.id)
+        lead1 = Lead(email=f'lead1_{uuid.uuid4().hex[:8]}@test.com', first_name='John', last_name='Doe', status='new', assigned_to=user.id)
+        lead2 = Lead(email=f'lead2_{uuid.uuid4().hex[:8]}@test.com', first_name='Jane', last_name='Smith', status='contacted', assigned_to=user.id)
         session.add_all([lead1, lead2])
         session.commit()
         
@@ -328,7 +328,7 @@ class TestCRMFiltersAndPagination:
         session.commit()
         
         # Create lead
-        lead = Lead(email=f'john_{uuid.uuid4().hex[:8]}@test.com', first_name='John', last_name='Doe', created_by=user.id)
+        lead = Lead(email=f'john_{uuid.uuid4().hex[:8]}@test.com', first_name='John', last_name='Doe', assigned_to=user.id)
         session.add(lead)
         session.commit()
         
