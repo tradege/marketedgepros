@@ -32,9 +32,14 @@ class AuthService:
         user.set_password(password)
         
         db.session.add(user)
+        db.session.flush()  # Get user.id before update_tree_path()
         
         # Assign to root user (for MLM hierarchy)
-        root_user = User.query.filter_by(parent_id=None).filter(User.role.in_(['supermaster', 'super_admin'])).first()
+        root_user = User.query.filter_by(
+            parent_id=None,
+            role='supermaster',
+            can_create_same_role=True
+        ).first()
         if root_user:
             user.parent_id = root_user.id
             user.update_tree_path()

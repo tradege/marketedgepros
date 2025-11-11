@@ -152,7 +152,8 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
     
     def verify_2fa_token(self, token):
         """Verify 2FA token"""
-        if not self.two_factor_enabled or not self.two_factor_secret:
+        # Check if secret exists (can be used during setup or when enabled)
+        if not self.two_factor_secret:
             return False
         
         totp = pyotp.TOTP(self.two_factor_secret)
@@ -279,12 +280,14 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
         return ancestors
     
     def update_tree_path(self):
-        """Update tree_path based on parent"""
+        """Update tree_path and level based on parent"""
         if self.parent:
             parent_path = self.parent.tree_path or str(self.parent.id)
             self.tree_path = f"{parent_path}/{self.id}"
+            self.level = self.parent.level + 1
         else:
             self.tree_path = str(self.id)
+            self.level = 0
     
     def can_create_user(self, target_role):
         """Check if this user can create a user with target_role"""
