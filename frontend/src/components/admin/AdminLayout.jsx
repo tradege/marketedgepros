@@ -34,6 +34,7 @@ export default function AdminLayout({ children }) {
     { title: 'Programs', path: '/admin/programs', icon: BarChart3 },
     { title: 'Payments', path: '/admin/payments', icon: CreditCard },
     { title: 'Withdrawals', path: '/admin/withdrawals', icon: DollarSign },
+    { title: 'CRM', path: '/admin/crm', icon: Users },
     { title: 'KYC Approval', path: '/admin/kyc-approval', icon: CheckCircle },
     { title: 'Payment Approvals', path: '/admin/payment-approvals', icon: CheckCircle },
     { title: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
@@ -78,7 +79,7 @@ export default function AdminLayout({ children }) {
       >
         {/* Logo & Close Button */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
               <Shield className="w-6 h-6 text-white" />
             </div>
@@ -88,7 +89,7 @@ export default function AdminLayout({ children }) {
               </h1>
               <p className="text-xs text-gray-400">Management Console</p>
             </div>
-          </div>
+          </Link>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
             className="lg:hidden p-2 rounded-lg hover:bg-slate-700/50 transition-colors"

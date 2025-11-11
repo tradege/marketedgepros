@@ -26,6 +26,14 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardStats();
+    
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchDashboardStats();
+    }, 30000); // 30 seconds
+    
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
   }, []);
 
   const fetchDashboardStats = async () => {
@@ -111,6 +119,7 @@ export default function AdminDashboard() {
       color: 'blue',
       trend: 'up',
       trendValue: '+8.3%',
+      onClick: () => navigate('/admin/programs'),
     },
     {
       title: 'Pending KYC',
@@ -118,7 +127,7 @@ export default function AdminDashboard() {
       subtitle: 'Requires review',
       icon: FileText,
       color: 'amber',
-      onClick: () => navigate('/admin/kyc'),
+      onClick: () => navigate('/admin/kyc-approval'),
     },
   ];
 
