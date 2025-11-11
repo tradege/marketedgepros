@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../lib/api';
 import { 
   ArrowLeft, Mail, Phone, MapPin, Calendar, DollarSign, 
   User, Edit, Trash2, CheckCircle, XCircle, Clock,
@@ -23,10 +23,7 @@ const LeadDetails = () => {
 
   const fetchLeadDetails = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`/api/v1/crm/leads/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await api.get(`/crm/leads/${id}`);
       setLead(response.data);
       setLoading(false);
     } catch (error) {
@@ -37,10 +34,7 @@ const LeadDetails = () => {
 
   const fetchNotes = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`/api/v1/crm/leads/${id}/notes`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await api.get(`/crm/leads/${id}/notes`);
       setNotes(response.data.notes || []);
     } catch (error) {
       console.error('Error fetching notes:', error);
@@ -51,11 +45,7 @@ const LeadDetails = () => {
     if (!newNote.trim()) return;
     
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(`/api/v1/crm/leads/${id}/notes`, 
-        { content: newNote },
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
+      await api.post(`/crm/leads/${id}/notes`, { content: newNote });
       setNewNote('');
       fetchNotes();
     } catch (error) {
@@ -65,11 +55,7 @@ const LeadDetails = () => {
 
   const handleStatusChange = async (newStatus) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(`/api/v1/crm/leads/${id}`, 
-        { status: newStatus },
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
+      await api.patch(`/crm/leads/${id}`, { status: newStatus });
       fetchLeadDetails();
     } catch (error) {
       console.error('Error updating status:', error);
@@ -80,10 +66,7 @@ const LeadDetails = () => {
     if (!window.confirm('Are you sure you want to delete this lead?')) return;
     
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`/api/v1/crm/leads/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      await api.delete(`/crm/leads/${id}`);
       navigate('/admin/crm');
     } catch (error) {
       console.error('Error deleting lead:', error);
