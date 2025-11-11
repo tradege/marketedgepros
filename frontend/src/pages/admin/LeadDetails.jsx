@@ -24,7 +24,7 @@ const LeadDetails = () => {
   const fetchLeadDetails = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`/api/v1/admin/crm/leads/${id}`, {
+      const response = await axios.get(`/api/v1/crm/leads/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setLead(response.data);
@@ -38,7 +38,7 @@ const LeadDetails = () => {
   const fetchNotes = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`/api/v1/admin/crm/leads/${id}/notes`, {
+      const response = await axios.get(`/api/v1/crm/leads/${id}/notes`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setNotes(response.data.notes || []);
@@ -52,7 +52,7 @@ const LeadDetails = () => {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`/api/v1/admin/crm/leads/${id}/notes`, 
+      await axios.post(`/api/v1/crm/leads/${id}/notes`, 
         { content: newNote },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
@@ -66,7 +66,7 @@ const LeadDetails = () => {
   const handleStatusChange = async (newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`/api/v1/admin/crm/leads/${id}`, 
+      await axios.patch(`/api/v1/crm/leads/${id}`, 
         { status: newStatus },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
@@ -81,7 +81,7 @@ const LeadDetails = () => {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`/api/v1/admin/crm/leads/${id}`, {
+      await axios.delete(`/api/v1/crm/leads/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       navigate('/admin/crm');
