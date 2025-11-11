@@ -28,6 +28,13 @@ def upload_kyc_document():
     document_type = request.form.get('document_type', 'id')
     
     try:
+        # Validate file type
+        if not FileService.allowed_file(file.filename, 'documents'):
+            return jsonify({'error': 'Invalid file type. Only PDF, DOC, DOCX allowed'}), 400
+        
+        # Validate file size (10MB max for KYC documents)
+        FileService.validate_file_size(file, max_size_mb=10)
+        
         result = FileService.save_kyc_document(
             file,
             g.current_user.id,
@@ -66,6 +73,13 @@ def upload_profile_image():
         return jsonify({'error': 'No file selected'}), 400
     
     try:
+        # Validate file type
+        if not FileService.allowed_file(file.filename, 'images'):
+            return jsonify({'error': 'Invalid file type. Only images allowed'}), 400
+        
+        # Validate file size (5MB max for profile images)
+        FileService.validate_file_size(file, max_size_mb=5)
+        
         result = FileService.save_profile_image(file, g.current_user.id)
         
         return jsonify({
