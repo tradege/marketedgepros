@@ -7,6 +7,7 @@ from src.models.payout_request import PayoutRequest
 from src.models.user import User
 from src.models.trading_program import TradingProgram
 from src.extensions import db
+from src.services.scaling_service import ScalingService
 
 class PayoutService:
     """Service for managing payout requests and processing"""
@@ -116,6 +117,13 @@ class PayoutService:
         payout.notes = notes
         
         db.session.commit()
+        
+        # Update scaling progress
+        try:
+            ScalingService.update_profit(payout.user_id, payout.amount)
+        except Exception as e:
+            # Log error but don't fail the payout approval
+            print(f"Error updating scaling progress: {e}")
         
         # TODO: Send notification email
         # TODO: Trigger payment processing

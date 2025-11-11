@@ -5,9 +5,10 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import {
   Check, X, TrendingUp, Shield, Zap, DollarSign, 
-  ArrowLeft, CreditCard, Lock, AlertCircle
+  ArrowLeft, CreditCard, Lock, AlertCircle, Bitcoin
 } from 'lucide-react';
 import Layout from '../components/layout/Layout';
+import CryptoCheckout from '../components/CryptoCheckout';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -125,6 +126,7 @@ export default function ProgramDetails() {
   const [selectedAddons, setSelectedAddons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('crypto'); // 'stripe' or 'crypto'
 
   useEffect(() => {
     loadProgram();
@@ -136,6 +138,34 @@ export default function ProgramDetails() {
       setProgram(response.data);
     } catch (error) {
     } finally {
+      // Fallback to static programs if API fails
+      const staticPrograms = [
+        // One Phase
+        { id: 1, name: "$10K One Phase", type: "one_phase", account_size: 10000, profit_target: 8, max_daily_loss: 5, max_total_loss: 10, profit_split: 80, price: 99, addons: [], description: "Perfect for beginners. One evaluation phase with 8% profit target." },
+        { id: 2, name: "$25K One Phase", type: "one_phase", account_size: 25000, profit_target: 8, max_daily_loss: 5, max_total_loss: 10, profit_split: 80, price: 199, addons: [], description: "Intermediate traders. One evaluation phase with 8% profit target." },
+        { id: 3, name: "$50K One Phase", type: "one_phase", account_size: 50000, profit_target: 8, max_daily_loss: 5, max_total_loss: 10, profit_split: 85, price: 299, addons: [], description: "Advanced traders. One evaluation phase with 8% profit target and 85% profit split." },
+        { id: 4, name: "$100K One Phase", type: "one_phase", account_size: 100000, profit_target: 8, max_daily_loss: 5, max_total_loss: 10, profit_split: 90, price: 499, addons: [], description: "Professional traders. One evaluation phase with 8% profit target and 90% profit split." },
+        // Two Phase
+        { id: 5, name: "$10K Two Phase", type: "two_phase", account_size: 10000, profit_target: 10, max_daily_loss: 5, max_total_loss: 10, profit_split: 80, price: 79, addons: [], description: "Affordable entry. Two evaluation phases with 10% total profit target." },
+        { id: 6, name: "$25K Two Phase", type: "two_phase", account_size: 25000, profit_target: 10, max_daily_loss: 5, max_total_loss: 10, profit_split: 80, price: 149, addons: [], description: "Popular choice. Two evaluation phases with 10% total profit target." },
+        { id: 7, name: "$50K Two Phase", type: "two_phase", account_size: 50000, profit_target: 10, max_daily_loss: 5, max_total_loss: 10, profit_split: 85, price: 249, addons: [], description: "Serious traders. Two evaluation phases with 10% total profit target and 85% profit split." },
+        { id: 8, name: "$100K Two Phase", type: "two_phase", account_size: 100000, profit_target: 10, max_daily_loss: 5, max_total_loss: 10, profit_split: 90, price: 399, addons: [], description: "Elite traders. Two evaluation phases with 10% total profit target and 90% profit split." },
+        // Three Phase
+        { id: 9, name: "$10K Three Phase", type: "three_phase", account_size: 10000, profit_target: 12, max_daily_loss: 4, max_total_loss: 8, profit_split: 75, price: 59, addons: [], description: "Budget-friendly. Three evaluation phases with 12% total profit target." },
+        { id: 10, name: "$25K Three Phase", type: "three_phase", account_size: 25000, profit_target: 12, max_daily_loss: 4, max_total_loss: 8, profit_split: 75, price: 119, addons: [], description: "Extended evaluation. Three phases with 12% total profit target." },
+        { id: 11, name: "$50K Three Phase", type: "three_phase", account_size: 50000, profit_target: 12, max_daily_loss: 4, max_total_loss: 8, profit_split: 80, price: 199, addons: [], description: "Comprehensive evaluation. Three phases with 12% total profit target and 80% profit split." },
+        { id: 12, name: "$100K Three Phase", type: "three_phase", account_size: 100000, profit_target: 12, max_daily_loss: 4, max_total_loss: 8, profit_split: 85, price: 349, addons: [], description: "Premium evaluation. Three phases with 12% total profit target and 85% profit split." },
+        // Instant Funding
+        { id: 13, name: "$5K Instant Funding", type: "instant_funding", account_size: 5000, profit_target: 0, max_daily_loss: 3, max_total_loss: 6, profit_split: 50, price: 199, addons: [], description: "Start trading immediately with no evaluation required." },
+        { id: 14, name: "$10K Instant Funding", type: "instant_funding", account_size: 10000, profit_target: 0, max_daily_loss: 3, max_total_loss: 6, profit_split: 50, price: 299, addons: [], description: "Instant access to funded account. No evaluation needed." },
+        { id: 15, name: "$25K Instant Funding", type: "instant_funding", account_size: 25000, profit_target: 0, max_daily_loss: 3, max_total_loss: 6, profit_split: 60, price: 499, addons: [], description: "Immediate funding with 60% profit split. No evaluation required." },
+        { id: 16, name: "$50K Instant Funding", type: "instant_funding", account_size: 50000, profit_target: 0, max_daily_loss: 3, max_total_loss: 6, profit_split: 70, price: 799, addons: [], description: "Premium instant funding with 70% profit split. Trade immediately." },
+      ];
+      
+      const foundProgram = staticPrograms.find(p => p.id === parseInt(id));
+      if (foundProgram) {
+        setProgram(foundProgram);
+      }
       setIsLoading(false);
     }
   };
@@ -336,13 +366,57 @@ export default function ProgramDetails() {
                     </button>
                   </>
                 ) : (
-                  <Elements stripe={stripePromise}>
-                    <CheckoutForm
-                      program={program}
-                      selectedAddons={selectedAddons}
-                      onSuccess={handlePaymentSuccess}
-                    />
-                  </Elements>
+                  <div className="space-y-6">
+                    {/* Payment Method Selector */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-3">
+                        Select Payment Method
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          onClick={() => setPaymentMethod('crypto')}
+                          className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                            paymentMethod === 'crypto'
+                              ? 'border-cyan-500 bg-cyan-500/10'
+                              : 'border-white/10 bg-white/5 hover:border-white/30'
+                          }`}
+                        >
+                          <Bitcoin className="w-6 h-6 mx-auto mb-2 text-cyan-400" />
+                          <div className="text-sm font-medium text-white">USDT</div>
+                          <div className="text-xs text-gray-400 mt-1">Crypto</div>
+                        </button>
+                        <button
+                          onClick={() => setPaymentMethod('stripe')}
+                          className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                            paymentMethod === 'stripe'
+                              ? 'border-cyan-500 bg-cyan-500/10'
+                              : 'border-white/10 bg-white/5 hover:border-white/30'
+                          }`}
+                        >
+                          <CreditCard className="w-6 h-6 mx-auto mb-2 text-cyan-400" />
+                          <div className="text-sm font-medium text-white">Card</div>
+                          <div className="text-xs text-gray-400 mt-1">Stripe</div>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Payment Form */}
+                    {paymentMethod === 'crypto' ? (
+                      <CryptoCheckout
+                        program={program}
+                        selectedAddons={selectedAddons}
+                        onSuccess={handlePaymentSuccess}
+                      />
+                    ) : (
+                      <Elements stripe={stripePromise}>
+                        <CheckoutForm
+                          program={program}
+                          selectedAddons={selectedAddons}
+                          onSuccess={handlePaymentSuccess}
+                        />
+                      </Elements>
+                    )}
+                  </div>
                 )}
 
                 {showCheckout && (

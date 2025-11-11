@@ -87,12 +87,15 @@ class TestUserHierarchy:
         assert super_admin_user.can_create_user('trader') is True
     
     def test_admin_role_permissions(self, session, admin_user):
-        """Test admin role permissions"""
-        # Admin can create traders
+        """Test admin role permissions (master role)"""
+        # Master can create traders
         assert admin_user.can_create_user('trader') is True
         
-        # Admin cannot create super_admin
-        assert admin_user.can_create_user('super_admin') is False
+        # Master can create affiliates
+        assert admin_user.can_create_user('affiliate') is True
+        
+        # Master cannot create supermaster
+        assert admin_user.can_create_user('supermaster') is False
     
     def test_multiple_children(self, session, super_admin_user):
         """Test user with multiple children"""

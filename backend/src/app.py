@@ -75,7 +75,7 @@ def create_app(config_name=None):
     # Initialize Talisman for security headers (skip in testing)
     import os
     if not os.environ.get('FLASK_TESTING') == 'true':
-        Talisman(app)
+        Talisman(app, force_https=False)
 
     @app.after_request
     def add_security_headers(response):
@@ -104,6 +104,7 @@ def create_app(config_name=None):
     from src.routes.agents import agents_bp
     from src.routes.admin import admin_bp
     from src.routes.payouts import payouts_bp
+    from src.routes.scaling import scaling_bp
     from src.routes.traders import traders_bp
     from src.routes.kyc import kyc_bp
     from src.routes.challenges import challenges_bp
@@ -131,6 +132,7 @@ def create_app(config_name=None):
     app.register_blueprint(programs_bp, url_prefix='/api/v1/programs')
     app.register_blueprint(payments_bp, url_prefix='/api/v1/payments')
     app.register_blueprint(payouts_bp)
+    app.register_blueprint(scaling_bp)
     app.register_blueprint(uploads_bp, url_prefix='/api/v1/uploads')
     app.register_blueprint(agents_bp, url_prefix='/api/v1/agents')
     app.register_blueprint(admin_bp, url_prefix='/api/v1/admin')

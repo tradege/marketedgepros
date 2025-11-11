@@ -26,7 +26,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const FreeCourse = lazy(() => import('./pages/FreeCourse'));
 const LightningChallenge = lazy(() => import('./pages/LightningChallenge'));
 const SupportHub = lazy(() => import('./pages/support/SupportHub'));
-const SupportFAQ = lazy(() => import('./pages/support/FAQ'));
+
 const CreateTicket = lazy(() => import('./pages/support/CreateTicket'));
 const MyTickets = lazy(() => import('./pages/support/MyTickets'));
 const TicketDetail = lazy(() => import('./pages/support/TicketDetail'));
@@ -46,6 +46,7 @@ const Careers = lazy(() => import("./pages/Careers"));
 
 // Shared Pages (Lazy Loaded)
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ScalingProgress = lazy(() => import("./pages/ScalingProgress"));
 import RoleBasedDashboard from './components/RoleBasedDashboard';
 const KYC = lazy(() => import('./pages/KYC'));
 const Profile = lazy(() => import('./pages/user/Profile'));
@@ -63,6 +64,7 @@ const KYCApproval = lazy(() => import('./pages/admin/KYCApprovalConnected'));
 const PaymentApprovals = lazy(() => import('./pages/admin/PaymentApprovals'));
 const Settings = lazy(() => import('./pages/admin/Settings'));
 const WithdrawalManagement = lazy(() => import('./pages/admin/WithdrawalManagement'));
+const CRM = lazy(() => import('./pages/admin/CRM'));
 
 // Notification Pages (Lazy Loaded)
 const Notifications = lazy(() => import('./pages/Notifications'));
@@ -186,7 +188,7 @@ function App() {
         <Route path="/free-course" element={<FreeCourse />} />
         <Route path="/lightning-challenge" element={<LightningChallenge />} />
         <Route path="/support" element={<SupportHub />} />
-        <Route path="/support/faq" element={<SupportFAQ />} />
+
         <Route path="/support/create-ticket" element={<CreateTicket />} />
         <Route path="/support/my-tickets" element={<MyTickets />} />
         <Route path="/support/ticket/:ticketNumber" element={<TicketDetail />} />
@@ -235,6 +237,14 @@ function App() {
               <UserLayout>
                 <RoleBasedDashboard />
               </UserLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/scaling"
+          element={
+            <ProtectedRoute>
+              <ScalingProgress />
             </ProtectedRoute>
           }
         />
@@ -434,6 +444,17 @@ function App() {
                 <AdminLayout>
                   <WithdrawalManagement />
                 </AdminLayout>
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/crm"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
+                <CRM />
               </RoleGuard>
             </ProtectedRoute>
           }

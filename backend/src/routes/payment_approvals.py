@@ -2,7 +2,7 @@
 Payment Approval API Routes
 Endpoints for managing cash/free payment approvals
 """
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 from src.models import PaymentApprovalRequest, User, Challenge, Payment
 from src.services.payment_approval_service import PaymentApprovalService
 from src.utils.decorators import token_required, role_required
@@ -79,7 +79,7 @@ def get_my_requests():
     Get all approval requests created by current user (Master/Admin only)
     """
     try:
-        requests = PaymentApprovalService.get_requests_by_requester(current_user.id)
+        requests = PaymentApprovalService.get_requests_by_requester(g.current_user.id)
         
         # Enrich with details
         result = []
@@ -151,7 +151,7 @@ def create_approval_request():
         approval_request = PaymentApprovalService.create_approval_request(
             challenge_id=data.get('challenge_id'),
             payment_id=data.get('payment_id'),
-            requested_by_id=current_user.id,
+            requested_by_id=g.current_user.id,
             requested_for_id=data['requested_for'],
             amount=data['amount'],
             payment_type=data['payment_type']
@@ -193,7 +193,7 @@ def approve_request(request_id):
         
         approval_request = PaymentApprovalService.approve_request(
             approval_request_id=request_id,
-            admin_id=current_user.id,
+            admin_id=g.current_user.id,
             admin_notes=data.get('admin_notes')
         )
         
@@ -240,7 +240,7 @@ def reject_request(request_id):
         
         approval_request = PaymentApprovalService.reject_request(
             approval_request_id=request_id,
-            admin_id=current_user.id,
+            admin_id=g.current_user.id,
             rejection_reason=data['rejection_reason'],
             admin_notes=data.get('admin_notes')
         )
@@ -266,7 +266,7 @@ def reject_request(request_id):
 
 @bp.route('/<int:request_id>', methods=['GET'])
 @token_required
-def get_request_details(current_user, request_id):
+def get_request_details(request_id):
     """
     Get details of a specific approval request
     """
@@ -280,7 +280,7 @@ def get_request_details(current_user, request_id):
             }), 404
         
         # Check permissions - only Super Admin or the requester can view
-        if current_user.role != 'supermaster' and current_user.id != approval_request.requested_by:
+        if g.current_user.role != 'supermaster' and g.current_user.id != approval_request.requested_by:
             return jsonify({
                 'success': False,
                 'error': 'Unauthorized'

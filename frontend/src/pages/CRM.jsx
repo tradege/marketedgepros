@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, TrendingUp, UserPlus, Phone, Mail, Calendar, DollarSign, Filter, Search, X, Check, AlertCircle } from 'lucide-react';
 import Layout from '../components/layout/Layout';
+import { crmAPI } from '../services/api';
 
 export default function CRM() {
   const [view, setView] = useState('list'); // 'list' or 'pipeline'
@@ -33,98 +34,43 @@ export default function CRM() {
   }, [filters]);
 
   const fetchStats = async () => {
-    // Mock data
-    setStats({
-      total_leads: 156,
-      by_status: {
-        new: 23,
-        contacted: 45,
-        qualified: 32,
-        negotiating: 18,
-        converted: 28,
-        lost: 10
-      },
-      by_source: {
-        website: 67,
-        referral: 45,
-        agent: 23,
-        social_media: 21
-      },
-      this_month: 34,
-      converted_this_month: 12,
-      conversion_rate: 17.95
-    });
+    try {
+      const response = await crmAPI.getStats();
+      setStats(response.data);
+    } catch (error) {
+      console.error('Failed to fetch CRM stats:', error);
+      // Fallback to empty stats
+      setStats({
+        total_leads: 0,
+        by_status: {},
+        by_source: {},
+        this_month: 0,
+        converted_this_month: 0,
+        conversion_rate: 0
+      });
+    }
   };
 
   const fetchLeads = async () => {
-    // Mock data
-    setLeads([
-      {
-        id: 1,
-        first_name: 'John',
-        last_name: 'Doe',
-        email: 'john@example.com',
-        phone: '+1234567890',
-        status: 'qualified',
-        source: 'website',
-        score: 85,
-        budget: 10000,
-        company: 'Tech Corp',
-        assigned_user: { id: 1, name: 'Agent Smith' },
-        created_at: '2024-03-15T10:00:00',
-        last_contacted_at: '2024-03-18T14:30:00',
-        next_follow_up: '2024-03-20T10:00:00'
-      },
-      {
-        id: 2,
-        first_name: 'Jane',
-        last_name: 'Smith',
-        email: 'jane@example.com',
-        phone: '+1234567891',
-        status: 'contacted',
-        source: 'referral',
-        score: 72,
-        budget: 5000,
-        company: 'Business Inc',
-        assigned_user: { id: 2, name: 'Agent Johnson' },
-        created_at: '2024-03-16T11:00:00',
-        last_contacted_at: '2024-03-17T09:15:00',
-        next_follow_up: '2024-03-19T15:00:00'
-      },
-      {
-        id: 3,
-        first_name: 'Mike',
-        last_name: 'Johnson',
-        email: 'mike@example.com',
-        phone: '+1234567892',
-        status: 'new',
-        source: 'social_media',
-        score: 45,
-        budget: null,
-        company: null,
-        assigned_user: null,
-        created_at: '2024-03-18T16:00:00',
-        last_contacted_at: null,
-        next_follow_up: null
-      }
-    ]);
-    setLoading(false);
+    try {
+      const response = await crmAPI.getLeads(filters);
+      setLeads(response.data.leads || []);
+    } catch (error) {
+      console.error('Failed to fetch leads:', error);
+      setLeads([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchPipeline = async () => {
-    // Mock pipeline data
-    setPipeline({
-      new: [
-        { id: 3, first_name: 'Mike', last_name: 'Johnson', score: 45, budget: null }
-      ],
-      contacted: [
-        { id: 2, first_name: 'Jane', last_name: 'Smith', score: 72, budget: 5000 }
-      ],
-      qualified: [
-        { id: 1, first_name: 'John', last_name: 'Doe', score: 85, budget: 10000 }
-      ],
-      negotiating: []
-    });
+    try {
+      const response = await crmAPI.getPipeline();
+      setPipeline(response.data || {});
+    } catch (error) {
+      console.error('Failed to fetch pipeline:', error);
+      setPipeline({});
+    }
   };
 
   const getStatusColor = (status) => {

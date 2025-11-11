@@ -4,6 +4,7 @@ Supports multiple environments: development, staging, production
 """
 import os
 from datetime import timedelta
+from sqlalchemy.pool import NullPool
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -81,6 +82,10 @@ class TestingConfig(Config):
         'postgresql://postgres:postgres@localhost:5432/proptradepro_test'
     )
     RATELIMIT_ENABLED = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'poolclass': NullPool,
+        'pool_pre_ping': True
+    }
 
 
 class ProductionConfig(Config):

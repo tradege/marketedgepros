@@ -5,11 +5,10 @@
 
 export const ROLES = {
   SUPERMASTER: 'supermaster',
-  SUPER_ADMIN: 'super_admin',
   MASTER: 'master',
-  ADMIN: 'admin',
-  AGENT: 'agent',
-  TRADER: 'trader'
+  AFFILIATE: 'affiliate',
+  TRADER: 'trader',
+  GUEST: 'guest'
 };
 
 /**
@@ -18,24 +17,20 @@ export const ROLES = {
  */
 export const ADMIN_ROLES = [
   ROLES.SUPERMASTER,
-  ROLES.SUPER_ADMIN,
-  ROLES.MASTER,
-  ROLES.ADMIN
+  ROLES.MASTER
 ];
 
 export const MANAGEMENT_ROLES = [
   ROLES.SUPERMASTER,
-  ROLES.SUPER_ADMIN,
   ROLES.MASTER
 ];
 
 export const ALL_ROLES = [
   ROLES.SUPERMASTER,
-  ROLES.SUPER_ADMIN,
   ROLES.MASTER,
-  ROLES.ADMIN,
-  ROLES.AGENT,
-  ROLES.TRADER
+  ROLES.AFFILIATE,
+  ROLES.TRADER,
+  ROLES.GUEST
 ];
 
 export const ROLE_CONFIG = {
@@ -57,24 +52,7 @@ export const ROLE_CONFIG = {
       canManagePayments: true
     }
   },
-  [ROLES.SUPER_ADMIN]: {
-    value: 'super_admin',
-    label: 'Super Admin',
-    color: 'bg-purple-100 text-purple-800',
-    darkColor: 'dark:bg-purple-900 dark:text-purple-200',
-    hexColor: '#f093fb',
-    icon: '👑',
-    hierarchy: 1,
-    permissions: {
-      canCreateUsers: true,
-      canCreateWithoutVerification: true,
-      canManageCommissions: true,
-      canViewAllUsers: true,
-      canDeleteUsers: true,
-      canManagePrograms: true,
-      canManagePayments: true
-    }
-  },
+
   [ROLES.MASTER]: {
     value: 'master',
     label: 'Master',
@@ -93,27 +71,10 @@ export const ROLE_CONFIG = {
       canManagePayments: false
     }
   },
-  [ROLES.ADMIN]: {
-    value: 'admin',
-    label: 'Admin',
-    color: 'bg-blue-100 text-blue-800',
-    darkColor: 'dark:bg-blue-900 dark:text-blue-200',
-    hexColor: '#667eea',
-    icon: '⭐',
-    hierarchy: 2,
-    permissions: {
-      canCreateUsers: true,
-      canCreateWithoutVerification: false,
-      canManageCommissions: false,
-      canViewAllUsers: false,
-      canDeleteUsers: false,
-      canManagePrograms: false,
-      canManagePayments: false
-    }
-  },
-  [ROLES.AGENT]: {
-    value: 'agent',
-    label: 'Agent',
+
+  [ROLES.AFFILIATE]: {
+    value: 'affiliate',
+    label: 'Affiliate',
     color: 'bg-green-100 text-green-800',
     darkColor: 'dark:bg-green-900 dark:text-green-200',
     hexColor: '#43e97b',
@@ -137,6 +98,24 @@ export const ROLE_CONFIG = {
     hexColor: '#94a3b8',
     icon: '📊',
     hierarchy: 4,
+    permissions: {
+      canCreateUsers: false,
+      canCreateWithoutVerification: false,
+      canManageCommissions: false,
+      canViewAllUsers: false,
+      canDeleteUsers: false,
+      canManagePrograms: false,
+      canManagePayments: false
+    }
+  },
+  [ROLES.GUEST]: {
+    value: 'guest',
+    label: 'Guest',
+    color: 'bg-gray-100 text-gray-600',
+    darkColor: 'dark:bg-gray-800 dark:text-gray-400',
+    hexColor: '#9ca3af',
+    icon: '👤',
+    hierarchy: 5,
     permissions: {
       canCreateUsers: false,
       canCreateWithoutVerification: false,
@@ -204,19 +183,12 @@ export const getCreatableRoles = (currentRole) => {
     return Object.values(ROLE_CONFIG);
   }
   
-  // Super Admin can create Master, Admin, Agent, and Trader
-  if (currentRole === ROLES.SUPER_ADMIN) {
+  // Master can create Affiliate and Trader
+  if (currentRole === ROLES.MASTER) {
     return [
-      ROLE_CONFIG[ROLES.MASTER],
-      ROLE_CONFIG[ROLES.ADMIN],
-      ROLE_CONFIG[ROLES.AGENT],
+      ROLE_CONFIG[ROLES.AFFILIATE],
       ROLE_CONFIG[ROLES.TRADER]
     ];
-  }
-  
-  // Master/Admin can create Agent and Trader
-  if (currentRole === ROLES.MASTER || currentRole === ROLES.ADMIN) {
-    return [ROLE_CONFIG[ROLES.AGENT], ROLE_CONFIG[ROLES.TRADER]];
   }
   
   // Others cannot create users

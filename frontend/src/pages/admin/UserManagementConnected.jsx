@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Users, UserCheck, UserX, UserCog, X } from 'lucide-react';
+import { Users, UserCheck, UserX, UserCog, X, List, Network } from 'lucide-react';
 import axios from 'axios';
 import UserDetailsModal from '../../components/UserDetailsModal';
 import UserEditModal from '../../components/UserEditModal';
 import { getCreatableRoles, getRoleConfig } from '../../constants/roles';
 import ReferralCodeDisplay from '../../components/ReferralCodeDisplay';
+import UserTreeView from '../../components/UserTreeView';
 // AdminLayout removed - now wrapped in App.jsx
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
@@ -41,11 +42,17 @@ function UserManagement() {
     status: '',
     search: ''
   });
+  const [viewMode, setViewMode] = useState('table');
+  const [hierarchyUsers, setHierarchyUsers] = useState([]);
 
   useEffect(() => {
     fetchCurrentUser();
-    fetchUsers();
-  }, [pagination.page, filters]);
+    if (viewMode === 'tree') {
+      fetchHierarchy();
+    } else {
+      fetchUsers();
+    }
+  }, [pagination.page, filters, viewMode]);
 
   const fetchCurrentUser = async () => {
     try {
@@ -60,6 +67,27 @@ function UserManagement() {
       );
       setCurrentUser(response.data.user);
     } catch (err) {
+    }
+  };
+
+  const fetchHierarchy = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('access_token');
+      const response = await axios.get(
+        `${API_BASE_URL}/users/hierarchy`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      setHierarchyUsers(response.data.users);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load hierarchy');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -217,24 +245,51 @@ function UserManagement() {
             Manage user accounts and permissions
           </p>
         </div>
-        <button 
-          onClick={() => {
-            // Set default role to first creatable role
-            if (currentUser) {
-              const creatableRoles = getCreatableRoles(currentUser.role);
-              if (creatableRoles.length > 0) {
-                setFormData(prev => ({
-                  ...prev,
-                  role: creatableRoles[0].value
-                }));
+        <div className="flex gap-3">
+          {/* View Mode Toggle */}
+          <div className="flex gap-2 bg-slate-700 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('table')}
+              className={`px-3 py-2 rounded-md flex items-center gap-2 transition-colors ${
+                viewMode === 'table'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-300 hover:text-white'
+              }`}
+            >
+              <List className="w-4 h-4" />
+              Table
+            </button>
+            <button
+              onClick={() => setViewMode('tree')}
+              className={`px-3 py-2 rounded-md flex items-center gap-2 transition-colors ${
+                viewMode === 'tree'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-300 hover:text-white'
+              }`}
+            >
+              <Network className="w-4 h-4" />
+              Tree
+            </button>
+          </div>
+          <button 
+            onClick={() => {
+              // Set default role to first creatable role
+              if (currentUser) {
+                const creatableRoles = getCreatableRoles(currentUser.role);
+                if (creatableRoles.length > 0) {
+                  setFormData(prev => ({
+                    ...prev,
+                    role: creatableRoles[0].value
+                  }));
+                }
               }
-            }
-            setShowAddModal(true);
-          }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Add User
-        </button>
+              setShowAddModal(true);
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Add User
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -341,6 +396,15 @@ function UserManagement() {
       </div>
 
       {/* Users Table */}
+      {viewMode === 'tree' ? (
+        <UserTreeView 
+          users={hierarchyUsers}
+          onUserClick={(user) => {
+            setSelectedUserId(user.id);
+            setShowViewModal(true);
+          }}
+        />
+      ) : (
       <div className="bg-slate-800/50 dark:bg-gray-800 rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -471,6 +535,7 @@ function UserManagement() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Add User Modal */}
       {showAddModal && (

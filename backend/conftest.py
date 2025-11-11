@@ -88,10 +88,8 @@ def session(app, database):
     Create a new database session for each test with proper isolation.
     Uses nested transactions to ensure complete rollback after each test.
     
-    Fixed: Added app parameter and wrapped database operations in app context
-    to avoid "Working outside of application context" errors.
+    Fixed: Improved connection pooling and cleanup for flaky tests.
     """
-    # Ensure we're within app context for all database operations
     with app.app_context():
         # Start a connection
         connection = database.engine.connect()
@@ -100,7 +98,6 @@ def session(app, database):
         transaction = connection.begin()
         
         # Create a session bound to the connection
-        # Use scoped_session so Flask-SQLAlchemy's teardown can call .remove()
         session_factory = sessionmaker(bind=connection)
         Session = scoped_session(session_factory)
         
@@ -109,17 +106,33 @@ def session(app, database):
         
         yield Session
         
-        # Rollback everything - no data persists between tests
+        # Cleanup - ensure proper teardown
         try:
+            # Expire all objects to avoid stale data
+            Session.expire_all()
+            # Remove the session
             Session.remove()
+            # Rollback the transaction
             transaction.rollback()
-        except Exception:
-            pass
+            
+            # Clear Redis cache to prevent test contamination
+            try:
+                from src.extensions import redis_client
+                if redis_client:
+                    redis_client.flushdb()
+            except Exception:
+                pass  # Redis might not be available in all tests
+                
+        except Exception as e:
+            print(f"Session cleanup warning: {e}")
         finally:
             try:
+                # Close the connection
                 connection.close()
-            except Exception:
-                pass
+                # Dispose of the engine pool to prevent connection leaks
+                database.engine.dispose()
+            except Exception as e:
+                print(f"Connection cleanup warning: {e}")
 
 
 @pytest.fixture(scope='function')
@@ -152,15 +165,15 @@ def test_user(session):
 
 @pytest.fixture
 def admin_user(session):
-    """Create an admin user"""
+    """Create an admin user (master role)"""
     user = User(
         email='admin@example.com',
         first_name='Admin',
         last_name='User',
-        role='super_admin',
+        role='master',  # Master can create affiliates and traders
         is_active=True,
         is_verified=True,
-        can_create_same_role=True
+        can_create_same_role=False
     )
     user.set_password('AdminPassword123!')
     session.add(user)

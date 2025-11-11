@@ -211,21 +211,18 @@ class TestAuthAPI:
         """Test successful token refresh"""
         # Arrange
         refresh_token = trader_user.generate_refresh_token()
-        headers = {
-            'Authorization': f'Bearer {refresh_token}',
-            'Content-Type': 'application/json'
-        }
         
         # Act
         response = client.post(
             '/api/v1/auth/refresh',
-            headers=headers
+            json={'refresh_token': refresh_token},
+            headers={'Content-Type': 'application/json'}
         )
         
         # Assert
         assert response.status_code == 200
         data = json.loads(response.data)
-        assert 'verification_code' in data or 'access_token' in data
+        assert 'access_token' in data
     
     def test_protected_endpoint_without_token(self, client):
         """Test accessing protected endpoint without token"""

@@ -11,10 +11,10 @@ class PermissionManager:
     
     # Role hierarchy (lower number = higher privileges)
     ROLE_HIERARCHY = {
-        'admin': 0,           # Sees everything
+        'master': 0,           # Sees everything
         'supermaster': 1,     # Sees all downline
         'master': 2,          # Sees agents + traders below
-        'agent': 3,           # Sees traders below
+        'affiliate': 3,           # Sees traders below
         'trader': 4,          # Sees only self
         'guest': 5            # Sees only public data
     }
@@ -29,7 +29,7 @@ class PermissionManager:
         """Check if viewer can see target_user's data"""
         
         # Admin can see everything
-        if viewer.role == 'admin':
+        if viewer.role == 'master':
             return True
         
         # Can always see yourself
@@ -53,7 +53,7 @@ class PermissionManager:
         """Get list of user IDs that this user can view"""
         
         # Admin sees all
-        if user.role == 'admin':
+        if user.role == 'master':
             all_users = User.query.all()
             return [u.id for u in all_users]
         
@@ -75,7 +75,7 @@ class PermissionManager:
         """Get SQLAlchemy query for users this user can view"""
         
         # Admin sees all
-        if user.role == 'admin':
+        if user.role == 'master':
             return User.query
         
         # Guest sees none
@@ -102,7 +102,7 @@ class PermissionManager:
         """Check if creator can create a user with target_role"""
         
         # Admin can create anyone
-        if creator.role == 'admin':
+        if creator.role == 'master':
             return True
         
         # Guest and Trader cannot create users
@@ -111,9 +111,9 @@ class PermissionManager:
         
         # Check role hierarchy
         role_permissions = {
-            'supermaster': ['supermaster', 'master', 'agent', 'trader'],
-            'master': ['master', 'agent', 'trader'],
-            'agent': ['agent', 'trader']
+            'supermaster': ['supermaster', 'master', 'affiliate', 'trader'],
+            'master': ['master', 'affiliate', 'trader'],
+            'affiliate': ['affiliate', 'trader']
         }
         
         allowed_roles = role_permissions.get(creator.role, [])
@@ -124,7 +124,7 @@ class PermissionManager:
         """Check if editor can modify target_user"""
         
         # Admin can edit anyone
-        if editor.role == 'admin':
+        if editor.role == 'master':
             return True
         
         # Can edit yourself (limited fields)
@@ -144,7 +144,7 @@ class PermissionManager:
         """Check if deleter can delete target_user"""
         
         # Admin can delete anyone
-        if deleter.role == 'admin':
+        if deleter.role == 'master':
             return True
         
         # Cannot delete yourself
@@ -163,10 +163,10 @@ class PermissionManager:
     def get_data_scope(user):
         """Get data scope description for user"""
         scopes = {
-            'admin': 'all_system',
+            'master': 'all_system',
             'supermaster': 'all_downline',
             'master': 'downline_from_level',
-            'agent': 'direct_traders',
+            'affiliate': 'direct_traders',
             'trader': 'self_only',
             'guest': 'public_only'
         }
@@ -178,7 +178,7 @@ class PermissionManager:
         from src.models.trading_program import Challenge
         
         # Admin sees all
-        if user.role == 'admin':
+        if user.role == 'master':
             return query
         
         # Guest sees none
@@ -199,7 +199,7 @@ class PermissionManager:
         from src.models.payment import Payment
         
         # Admin sees all
-        if user.role == 'admin':
+        if user.role == 'master':
             return query
         
         # Guest sees none
@@ -220,7 +220,7 @@ class PermissionManager:
         from src.models.withdrawal import Withdrawal
         
         # Admin sees all
-        if user.role == 'admin':
+        if user.role == 'master':
             return query
         
         # Guest sees none
@@ -241,7 +241,7 @@ class PermissionManager:
         from src.models.lead import Lead
         
         # Admin sees all
-        if user.role == 'admin':
+        if user.role == 'master':
             return query
         
         # Guest sees none
@@ -265,7 +265,7 @@ class PermissionManager:
     def get_dashboard_stats_scope(user):
         """Get which stats user can see on dashboard"""
         
-        if user.role == 'admin':
+        if user.role == 'master':
             return {
                 'users': 'all',
                 'challenges': 'all',
@@ -309,12 +309,12 @@ class PermissionManager:
     def can_access_crm(user):
         """Check if user can access CRM features"""
         # Only agents and above can access CRM
-        return user.role in ['admin', 'supermaster', 'master', 'agent']
+        return user.role in ['master', 'supermaster', 'master', 'affiliate']
     
     @staticmethod
     def can_manage_leads(user):
         """Check if user can manage leads"""
-        return user.role in ['admin', 'supermaster', 'master', 'agent']
+        return user.role in ['master', 'supermaster', 'master', 'affiliate']
     
     @staticmethod
     def can_view_reports(user):
@@ -327,24 +327,24 @@ class PermissionManager:
     def can_approve_kyc(user):
         """Check if user can approve KYC"""
         # Only admin can approve KYC
-        return user.role == 'admin'
+        return user.role == 'master'
     
     @staticmethod
     def can_manage_programs(user):
         """Check if user can manage trading programs"""
         # Only admin can manage programs
-        return user.role == 'admin'
+        return user.role == 'master'
     
     @staticmethod
     def can_process_payments(user):
         """Check if user can process payments"""
         # Only admin can process payments
-        return user.role == 'admin'
+        return user.role == 'master'
     
     @staticmethod
     def can_view_system_settings(user):
         """Check if user can view system settings"""
-        return user.role == 'admin'
+        return user.role == 'master'
     
     @staticmethod
     def get_allowed_menu_items(user):
@@ -359,14 +359,14 @@ class PermissionManager:
                 'dashboard', 'trading_history', 'withdrawals', 'documents', 'profile'
             ]
         
-        if user.role in ['agent', 'master', 'supermaster']:
+        if user.role in ['affiliate', 'master', 'supermaster']:
             return [
                 'home', 'programs', 'about', 'faq', 'contact',
                 'dashboard', 'my_team', 'crm', 'leads', 'commissions', 
                 'reports', 'analytics', 'profile'
             ]
         
-        if user.role == 'admin':
+        if user.role == 'master':
             return [
                 'home', 'programs', 'about', 'faq', 'contact',
                 'admin_dashboard', 'users', 'programs_mgmt', 'kyc_approval',

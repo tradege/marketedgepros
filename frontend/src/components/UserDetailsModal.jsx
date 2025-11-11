@@ -88,7 +88,7 @@ function UserDetailsModal({ userId, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style={{zIndex: 1400}}>
-      <div className="bg-gray-800 rounded-lg w-full max-w-6xl m-4 max-h-[90vh] flex flex-col">
+      <div className="bg-gray-800 rounded-lg w-full max-w-4xl mx-auto my-8 max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-white">

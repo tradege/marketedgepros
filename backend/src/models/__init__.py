@@ -39,7 +39,9 @@ __all__ = [
     'Transaction',
     'Notification',
     'NotificationPreference',
-    'EmailQueue'
+    'EmailQueue',
+    'AccountScaling',
+    'ScalingTier',
 ]
 
 # Alias for backward compatibility
@@ -47,3 +49,4 @@ Program = TradingProgram
 
 from src.models.token_blacklist import TokenBlacklist
 from src.models.payout_request import PayoutRequest
+from src.models.account_scaling import AccountScaling, ScalingTier

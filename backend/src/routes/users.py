@@ -130,3 +130,64 @@ def update_profile():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+
+@users_bp.route('/hierarchy', methods=['GET'])
+@token_required
+def get_users_hierarchy():
+    """Get users in hierarchical tree structure based on parent_id"""
+    try:
+        # Get all users
+        users = User.query.all()
+        
+        # Build user dict for quick lookup
+        user_dict = {user.id: {
+            'id': user.id,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'role': user.role,
+            'parent_id': user.parent_id,
+            'is_verified': user.is_verified,
+            'kyc_status': user.kyc_status,
+            'created_at': user.created_at.isoformat() if user.created_at else None,
+            'children': []
+        } for user in users}
+        
+        # Build tree structure
+        root_users = []
+        for user_id, user_data in user_dict.items():
+            parent_id = user_data['parent_id']
+            if parent_id and parent_id in user_dict:
+                # Add to parent's children
+                user_dict[parent_id]['children'].append(user_data)
+            else:
+                # Root user (no parent)
+                root_users.append(user_data)
+        
+        # Sort by role hierarchy (supermaster > master > agent > trader)
+        role_order = {'supermaster': 0, 'master': 1, 'agent': 2, 'trader': 3}
+        
+        def sort_users(users_list):
+            return sorted(users_list, key=lambda u: (
+                role_order.get(u['role'], 999),
+                u['email']
+            ))
+        
+        # Recursively sort all levels
+        def sort_tree(node):
+            if node.get('children'):
+                node['children'] = sort_users(node['children'])
+                for child in node['children']:
+                    sort_tree(child)
+        
+        root_users = sort_users(root_users)
+        for user in root_users:
+            sort_tree(user)
+        
+        return jsonify({
+            'users': root_users,
+            'total_count': len(users)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

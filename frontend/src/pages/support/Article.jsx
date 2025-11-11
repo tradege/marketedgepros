@@ -49,11 +49,87 @@ const Article = () => {
             const text = await response.text();
             setContent(text);
           } else {
-            setContent('# Content not found\n\nWe apologize, but the content for this article is currently unavailable.');
+            setContent(`# ${foundArticle.title}
+
+## Overview
+
+This article covers important information about ${foundArticle.title.toLowerCase()}. We're currently updating our support documentation to provide you with the most comprehensive and up-to-date information.
+
+## Key Points
+
+### Understanding the Basics
+
+${foundArticle.title} is an essential aspect of your trading journey with MarketEdgePros. Whether you're just getting started or looking to optimize your trading strategy, understanding this topic is crucial for your success.
+
+### Important Considerations
+
+When dealing with ${foundArticle.title.toLowerCase()}, keep these important factors in mind:
+
+1. **Follow the Rules** - Always adhere to the trading rules and guidelines
+2. **Risk Management** - Proper risk management is key to long-term success
+3. **Stay Informed** - Keep up with platform updates and announcements
+4. **Ask Questions** - Don't hesitate to reach out to support if you need clarification
+
+### Best Practices
+
+To make the most of your experience:
+
+- Review all relevant documentation thoroughly
+- Test your understanding with small positions first
+- Keep detailed records of your trading activity
+- Regularly check your account status and metrics
+- Stay within all defined limits and parameters
+
+## Need More Information?
+
+### Contact Support
+
+If you need specific information about ${foundArticle.title.toLowerCase()}, please don't hesitate to contact our support team:
+
+- **Email:** support@marketedgepros.com
+- **Live Chat:** Available 24/7 via the chat widget
+- **Discord:** Join our community for peer support
+
+### Related Resources
+
+- Check our FAQ section for quick answers
+- Browse other articles in the ${foundArticle.category.replace('-', ' ')} category
+- Join our Discord community for discussions with other traders
+- Review your dashboard for personalized information
+
+## Additional Help
+
+Our support team is always here to help you succeed. We're committed to providing you with the resources and assistance you need to achieve your trading goals.
+
+### Quick Tips
+
+- **Be Patient** - Success in prop trading takes time and discipline
+- **Stay Consistent** - Follow your trading plan consistently
+- **Learn Continuously** - Always look for ways to improve your skills
+- **Manage Risk** - Never risk more than you can afford to lose
+
+## Conclusion
+
+Understanding ${foundArticle.title.toLowerCase()} is an important part of your journey with MarketEdgePros. If you have any questions or need further clarification, our support team is ready to assist you.
+
+---
+
+*Last Updated: November 2025*
+*Article Status: Under Review*
+
+For the most current information, please contact our support team or check your account dashboard.`);
           }
         } catch (error) {
           console.error('Error loading article:', error);
-          setContent('# Error loading content\n\nPlease try again later or contact support.');
+          setContent(`# ${foundArticle.title}
+
+## Overview
+
+This article covers important information about ${foundArticle.title.toLowerCase()}. We're currently updating our support documentation.
+
+## Contact Support
+
+For specific information, please contact support@marketedgepros.com`);
         } finally {
           setLoading(false);
         }

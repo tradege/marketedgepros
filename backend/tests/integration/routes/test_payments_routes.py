@@ -67,7 +67,7 @@ class TestPaymentRoutesWithAuth:
         
         # Get payments
         response = client.get(
-            '/api/v1/payments/create-payment-intent',
+            '/api/v1/payments/',
             headers={'Authorization': f'Bearer {token}'}
         )
         
@@ -151,7 +151,7 @@ class TestPaymentRoutesWithAuth:
         
         # Create payment
         response = client.post(
-            '/api/v1/payments/create-payment-intent',
+            '/api/v1/payments/',
             headers={'Authorization': f'Bearer {token}'},
             json={'amount': 100.00}
         )
