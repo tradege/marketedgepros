@@ -33,36 +33,9 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // React vendor chunk
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
-            return 'react-vendor';
-          }
-          
-          // Chart libraries (AnalyticsDashboard is 350KB!)
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/chart')) {
-            return 'charts';
-          }
-          
-          // Utilities
-          if (id.includes('node_modules/axios') || id.includes('node_modules/zustand')) {
-            return 'utils';
-          }
-          
-          // Icons
-          if (id.includes('node_modules/lucide-react')) {
-            return 'icons';
-          }
-          
-          // Admin pages (lazy load)
-          if (id.includes('/pages/admin/')) {
-            return 'admin';
-          }
-          
-          // Other node_modules
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'utils': ['axios', 'zustand'],
         },
         // Optimize chunk names
         chunkFileNames: 'assets/[name]-[hash].js',
