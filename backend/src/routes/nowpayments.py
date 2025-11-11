@@ -6,8 +6,14 @@ import logging
 nowpayments_bp = Blueprint('nowpayments', __name__)
 
 # NOWPayments API Configuration
-NOWPAYMENTS_API_KEY = 'HT7W41Z-8THMGF7-Q22Z1V6-AV4PZ0D'
-NOWPAYMENTS_API_URL = 'https://api.nowpayments.io/v1'
+# SECURITY: API key moved to environment variable
+NOWPAYMENTS_API_KEY = os.getenv('NOWPAYMENTS_API_KEY')
+NOWPAYMENTS_API_URL = os.getenv('NOWPAYMENTS_API_URL', 'https://api.nowpayments.io/v1')
+
+# Validate API key is set
+if not NOWPAYMENTS_API_KEY:
+    logger.error('NOWPAYMENTS_API_KEY environment variable is not set!')
+    raise ValueError('NOWPAYMENTS_API_KEY must be set in environment variables')
 
 logger = logging.getLogger(__name__)
 
