@@ -65,6 +65,7 @@ const PaymentApprovals = lazy(() => import('./pages/admin/PaymentApprovals'));
 const Settings = lazy(() => import('./pages/admin/Settings'));
 const WithdrawalManagement = lazy(() => import('./pages/admin/WithdrawalManagement'));
 const CRM = lazy(() => import('./pages/admin/CRM'));
+const LeadDetails = lazy(() => import('./pages/admin/LeadDetails'));
 
 // Notification Pages (Lazy Loaded)
 const Notifications = lazy(() => import('./pages/Notifications'));
@@ -455,6 +456,18 @@ function App() {
             <ProtectedRoute>
               <RoleGuard allowedRoles={ADMIN_ROLES}>
                 <CRM />
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/crm/:id"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={ADMIN_ROLES}>
+                <AdminLayout>
+                  <LeadDetails />
+                </AdminLayout>
               </RoleGuard>
             </ProtectedRoute>
           }
