@@ -171,6 +171,72 @@ def get_users():
         return jsonify({'error': str(e)}), 500
 
 
+@admin_bp.route('/users/hierarchy', methods=['GET'])
+@token_required
+@admin_required
+def get_users_tree():
+    """Get all users in hierarchical tree structure"""
+    try:
+        def build_user_tree(user):
+            """Recursively build user tree with children"""
+            user_data = {
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'role': user.role,
+                'is_active': user.is_active,
+                'is_verified': user.is_verified if hasattr(user, 'is_verified') else False,
+                'kyc_status': user.kyc_status,
+                'phone': user.phone,
+                'country_code': user.country_code,
+                'parent_id': user.parent_id,
+                'level': user.level if hasattr(user, 'level') else 0,
+                'tree_path': user.tree_path if hasattr(user, 'tree_path') else None,
+                'referral_code': user.referral_code if hasattr(user, 'referral_code') else None,
+                'created_at': user.created_at.isoformat() if user.created_at else None,
+                'last_login_at': user.last_login_at.isoformat() if user.last_login_at else None,
+                'children': []
+            }
+            
+            # Get direct children
+            children = User.query.filter_by(parent_id=user.id).order_by(User.created_at.asc()).all()
+            
+            # Recursively build children
+            for child in children:
+                user_data['children'].append(build_user_tree(child))
+            
+            return user_data
+        
+        # Get root users (users without parent or with parent_id=None)
+        # For supermaster, this will be the current user
+        # For others, it will be their top-level accessible users
+        root_users = User.query.filter(
+            or_(
+                User.parent_id == None,
+                User.parent_id == g.current_user.id
+            )
+        ).order_by(User.created_at.asc()).all()
+        
+        # If no root users found, use current user as root
+        if not root_users:
+            root_users = [g.current_user]
+        
+        # Build tree for each root user
+        tree = [build_user_tree(user) for user in root_users]
+        
+        return jsonify({
+            'users': tree,
+            'total_users': len(tree)
+        }), 200
+        
+    except Exception as e:
+        import traceback
+        print(f"Error in get_users_tree: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({'error': str(e)}), 500
+
+
 @admin_bp.route('/users/<int:user_id>', methods=['GET'])
 @token_required
 @admin_required
@@ -712,8 +778,14 @@ def reject_kyc(user_id):
 @admin_required
 def get_user_full_details(user_id):
     """Get complete user details including downline, challenges, commissions, and payments"""
+    import traceback
+    import logging
+    logger = logging.getLogger(__name__)
+    
     try:
+        logger.info(f'Fetching full details for user_id: {user_id}')
         user = User.query.get_or_404(user_id)
+        logger.info(f'User found: {user.email}')
         
         # Basic user info
         user_data = {
@@ -732,49 +804,67 @@ def get_user_full_details(user_id):
             'is_verified': user.is_verified,
             'two_factor_enabled': user.two_factor_enabled
         }
+        logger.info('User data collected')
         
         # Downline (for Master/Agent roles)
         downline_data = []
-        if user.role in ['supermaster', 'admin', 'agent']:
-            # Get direct referrals
-            children = user.children
-            for child in children:
-                downline_data.append({
-                    'id': child.id,
-                    'name': f"{child.first_name} {child.last_name}",
-                    'email': child.email,
-                    'role': child.role,
-                    'is_active': child.is_active,
-                    'created_at': child.created_at.isoformat() if child.created_at else None,
-                    'children_count': User.query.filter_by(parent_id=child.id).count()
-                })
+        try:
+            if user.role in ['supermaster', 'admin', 'agent']:
+                logger.info(f'Fetching downline for role: {user.role}')
+                children = user.children
+                for child in children:
+                    downline_data.append({
+                        'id': child.id,
+                        'name': f"{child.first_name} {child.last_name}",
+                        'email': child.email,
+                        'role': child.role,
+                        'is_active': child.is_active,
+                        'created_at': child.created_at.isoformat() if child.created_at else None,
+                        'children_count': User.query.filter_by(parent_id=child.id).count()
+                    })
+                logger.info(f'Downline collected: {len(downline_data)} children')
+        except Exception as e:
+            logger.error(f'Error fetching downline: {str(e)}')
+            logger.error(traceback.format_exc())
         
         # Trading challenges
         challenges_data = []
-        challenges = user.challenges
-        for challenge in challenges:
-            challenges_data.append({
-                'id': challenge.id,
-                'program_name': challenge.program.name if challenge.program else 'N/A',
-                'account_size': float(challenge.account_size) if challenge.account_size else 0,
-                'status': challenge.status,
-                'current_balance': float(challenge.current_balance) if challenge.current_balance else 0,
-                'profit_loss': float(challenge.profit_loss) if challenge.profit_loss else 0,
-                'created_at': challenge.created_at.isoformat() if challenge.created_at else None
-            })
+        try:
+            logger.info('Fetching challenges')
+            challenges = user.challenges
+            for challenge in challenges:
+                challenges_data.append({
+                    'id': challenge.id,
+                    'program_name': challenge.program.name if challenge.program else 'N/A',
+                    'account_size': float(challenge.account_size) if challenge.account_size else 0,
+                    'status': challenge.status,
+                    'current_balance': float(challenge.current_balance) if challenge.current_balance else 0,
+                    'profit_loss': float(challenge.profit_loss) if challenge.profit_loss else 0,
+                    'created_at': challenge.created_at.isoformat() if challenge.created_at else None
+                })
+            logger.info(f'Challenges collected: {len(challenges_data)}')
+        except Exception as e:
+            logger.error(f'Error fetching challenges: {str(e)}')
+            logger.error(traceback.format_exc())
         
         # Payments
         payments_data = []
-        payments = user.payments
-        for payment in payments:
-            payments_data.append({
-                'id': payment.id,
-                'amount': float(payment.amount),
-                'currency': payment.currency,
-                'status': payment.status,
-                'payment_type': payment.payment_type,
-                'created_at': payment.created_at.isoformat() if payment.created_at else None
-            })
+        try:
+            logger.info('Fetching payments')
+            payments = user.payments
+            for payment in payments:
+                payments_data.append({
+                    'id': payment.id,
+                    'amount': float(payment.amount),
+                    'currency': payment.currency,
+                    'status': payment.status,
+                    'payment_type': payment.payment_type,
+                    'created_at': payment.created_at.isoformat() if payment.created_at else None
+                })
+            logger.info(f'Payments collected: {len(payments_data)}')
+        except Exception as e:
+            logger.error(f'Error fetching payments: {str(e)}')
+            logger.error(traceback.format_exc())
         
         # Commissions (if applicable)
         commissions_data = {
@@ -783,6 +873,7 @@ def get_user_full_details(user_id):
             'commission_rate': float(user.commission_rate) if hasattr(user, 'commission_rate') and user.commission_rate else 0
         }
         
+        logger.info('Returning full details response')
         return jsonify({
             'user': user_data,
             'downline': {
@@ -803,12 +894,6 @@ def get_user_full_details(user_id):
         }), 200
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-
-
-# /users/hierarchy endpoint removed - no longer needed!
-# The regular /users endpoint now automatically filters by hierarchy
-# Thanks to the centralized hierarchy scoping system!
-
+        logger.error(f'CRITICAL ERROR in get_user_full_details: {str(e)}')
+        logger.error(traceback.format_exc())
+        return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
