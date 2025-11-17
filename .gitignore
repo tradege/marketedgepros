@@ -84,3 +84,14 @@ venv/
 # Celery
 celerybeat-schedule*
 coverage.xml
+.env.backup*
+*.env.backup*
+backend_backup*.tar.gz
+
+# Backup files
+*.backup
+*.backup_*
+*.bak
+*.old
+*_backup
+*_backup_*
