@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 import requests
 import os
 import logging
+from src.middleware.auth import jwt_required, get_current_user
 
 nowpayments_bp = Blueprint('nowpayments', __name__)
 
@@ -18,6 +19,7 @@ if not NOWPAYMENTS_API_KEY:
 logger = logging.getLogger(__name__)
 
 @nowpayments_bp.route('/api/crypto/create-payment', methods=['POST'])
+@jwt_required
 def create_crypto_payment():
     """Create a new crypto payment via NOWPayments"""
     try:
@@ -76,6 +78,7 @@ def create_crypto_payment():
 
 
 @nowpayments_bp.route('/api/crypto/payment-status/<payment_id>', methods=['GET'])
+@jwt_required
 def get_payment_status(payment_id):
     """Get payment status from NOWPayments"""
     try:
@@ -140,6 +143,7 @@ def payment_webhook():
 
 
 @nowpayments_bp.route('/api/crypto/currencies', methods=['GET'])
+@jwt_required
 def get_available_currencies():
     """Get list of available cryptocurrencies"""
     try:

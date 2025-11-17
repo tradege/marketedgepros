@@ -1,6 +1,15 @@
 """
 Main Flask application factory
 """
+# GPT-5 FIX #3: Make gevent cooperative for true async concurrency
+# MUST be at the very top before any other imports
+import gevent.monkey
+gevent.monkey.patch_all()
+
+# Patch psycopg2 to work with gevent
+from psycogreen.gevent import patch_psycopg
+patch_psycopg()
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
@@ -12,6 +21,7 @@ from src.config import get_config
 from src.database import db, init_db
 from src.middleware.tenant_middleware import init_tenant_middleware
 import logging
+from prometheus_flask_exporter import PrometheusMetrics
 
 
 def create_app(config_name=None):
@@ -27,6 +37,8 @@ def create_app(config_name=None):
         app.config.from_object(config_class)
     
     # Initialize extensions
+    # Initialize Prometheus metrics
+    metrics = PrometheusMetrics(app, group_by="endpoint")
     init_db(app)
     
     # Initialize hierarchy scoping system
@@ -37,7 +49,7 @@ def create_app(config_name=None):
     
     # Initialize caching
     from src import cache
-    cache.init_app(app, config={'CACHE_TYPE': 'simple'})
+    cache.init_app(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': 'redis://localhost:6379/0', 'CACHE_DEFAULT_TIMEOUT': 300})
     
     # Initialize tenant middleware
     init_tenant_middleware(app)
@@ -213,4 +225,3 @@ def create_app(config_name=None):
 if __name__ == '__main__':
     app = create_app()
     app.run(host='0.0.0.0', port=5000, debug=True)
-

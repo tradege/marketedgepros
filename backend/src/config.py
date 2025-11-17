@@ -29,6 +29,12 @@ class Config:
     # Redis
     REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
     
+    # Flask-Caching configuration
+    CACHE_TYPE = 'RedisCache'
+    CACHE_REDIS_URL = REDIS_URL
+    CACHE_DEFAULT_TIMEOUT = 600  # 10 minutes
+    CACHE_KEY_PREFIX = 'marketedgepros_'
+    
     # JWT
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', SECRET_KEY)
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
@@ -83,8 +89,16 @@ class TestingConfig(Config):
     )
     RATELIMIT_ENABLED = False
     SQLALCHEMY_ENGINE_OPTIONS = {
-        'poolclass': NullPool,
-        'pool_pre_ping': True
+        'pool_size': 100,  # Increased for 9 workers
+        'max_overflow': 200,  # 2x pool_size
+        'pool_timeout': 60,  # Increased timeout
+        'pool_recycle': 3600,  # 1 hour
+        'pool_pre_ping': True,  # Test connections
+        'connect_args': {
+            'connect_timeout': 10,
+            'application_name': 'MarketEdgePros',
+            'options': '-c statement_timeout=30000'  # 30s query timeout
+        }
     }
 
 
@@ -94,6 +108,22 @@ class ProductionConfig(Config):
     
     # Override to ensure SECRET_KEY is set
     SECRET_KEY = os.getenv('SECRET_KEY') or Config.SECRET_KEY
+    
+    # Database connection pooling - OPTIMIZED FOR PGBOUNCER
+    # PgBouncer handles the real DB connections (20 max)
+    # We can have many more app-level connections
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': 100,  # Large pool (PgBouncer will manage real DB connections)
+        'max_overflow': 200,  # Allow bursts (PgBouncer handles it)
+        'pool_timeout': 30,  # Shorter timeout (fail fast)
+        'pool_recycle': 1800,  # Recycle every 30 min
+        'pool_pre_ping': True,  # Test connections before use
+        'connect_args': {
+            'connect_timeout': 10,
+            'application_name': 'MarketEdgePros',
+            'options': '-c statement_timeout=30000'  # 30s query timeout
+        }
+    }
     
     # Ensure critical settings are set in production
     @classmethod

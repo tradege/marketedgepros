@@ -597,3 +597,68 @@ def get_auth_headers(token):
     Helper function to create authorization headers.
     """
     return {'Authorization': f'Bearer {token}'}
+
+# ============================================================================
+# COOKIE-BASED AUTH HELPERS (For httpOnly cookie migration)
+# ============================================================================
+
+def extract_token_from_cookies(response, token_name='access_token'):
+    """
+    Extract token from httpOnly cookies in response.
+    Returns the token value or None if not found.
+    """
+    cookies = response.headers.getlist('Set-Cookie')
+    for cookie in cookies:
+        if cookie.startswith(f'{token_name}='):
+            # Extract token value from cookie string
+            # Format: access_token=<value>; HttpOnly; Secure; SameSite=Lax; Max-Age=3600; Path=/
+            token_part = cookie.split(';')[0]
+            token_value = token_part.split('=', 1)[1]
+            return token_value
+    return None
+
+def login_user_helper_with_cookies(client, email='test@example.com', password='Test123!@#'):
+    """
+    Helper function to login a user with cookie support.
+    Returns a tuple: (access_token, refresh_token, response)
+    """
+    response = client.post('/api/auth/login', json={
+        'email': email,
+        'password': password
+    })
+    
+    if response.status_code != 200:
+        return None, None, response
+    
+    # Extract tokens from cookies
+    access_token = extract_token_from_cookies(response, 'access_token')
+    refresh_token = extract_token_from_cookies(response, 'refresh_token')
+    
+    return access_token, refresh_token, response
+
+def register_and_login_user_with_cookies(client, email='test@example.com', password='Test123!@#',
+                                         first_name='Test', last_name='User'):
+    """
+    Helper function to register, verify, and login a user with cookie support.
+    Returns a tuple: (access_token, refresh_token)
+    """
+    # Register
+    response = register_user_helper(client, email, password, first_name, last_name)
+    if response.status_code != 201:
+        raise Exception(f'Registration failed: {response.get_json()}')
+    
+    data = response.get_json()
+    
+    # If verification code is returned, verify the user
+    if 'verification_code' in data:
+        verification_code = data['verification_code']
+        verify_response = verify_user_helper(client, email, verification_code)
+        if verify_response.status_code not in [200, 201]:
+            raise Exception(f'Verification failed: {verify_response.get_json()}')
+    
+    # Login to get access token from cookies
+    access_token, refresh_token, login_response = login_user_helper_with_cookies(client, email, password)
+    if login_response.status_code != 200:
+        raise Exception(f'Login failed: {login_response.get_json()}')
+    
+    return access_token, refresh_token

@@ -32,69 +32,60 @@ const useAuthStore = create((set, get) => ({
     set({ inactivityTimer: timer });
   },
 
-  // Initialize auth state from localStorage
+  // Initialize auth state (tokens are in httpOnly cookies)
   init: async () => {
-    const token = localStorage.getItem('access_token');
     const storedUser = localStorage.getItem('user');
     
-    if (token) {
-      try {
-        // Try to get fresh user data from API
-        const response = await authAPI.getCurrentUser();
-        const user = response.data.user;
-        
-        // Update localStorage with fresh data
-        localStorage.setItem('user', JSON.stringify(user));
-        
-        set({
-          user: user,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-        
-        // Start inactivity tracking
-        get().updateActivity();
-        
-        // Track user activity
-        const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
-        events.forEach(event => {
-          document.addEventListener(event, get().updateActivity);
-        });
-      } catch (error) {
-        // If API fails but we have stored user, use it as fallback
-        if (storedUser) {
-          try {
-            const user = JSON.parse(storedUser);
-            set({
-              user: user,
-              isAuthenticated: true,
-              isLoading: false,
-            });
-            
-            // Start inactivity tracking
-            get().updateActivity();
-            
-            // Track user activity
-            const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
-            events.forEach(event => {
-              document.addEventListener(event, get().updateActivity);
-            });
-          } catch (parseError) {
-            // If parsing fails, clear everything
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('user');
-            set({ isLoading: false });
-          }
-        } else {
-          // No stored user, clear tokens
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
+    try {
+      // Try to get fresh user data from API (cookies sent automatically)
+      const response = await authAPI.getCurrentUser();
+      const user = response.data.user;
+      
+      // Update localStorage with fresh data
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      set({
+        user: user,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+      
+      // Start inactivity tracking
+      get().updateActivity();
+      
+      // Track user activity
+      const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+      events.forEach(event => {
+        document.addEventListener(event, get().updateActivity);
+      });
+    } catch (error) {
+      // If API fails but we have stored user, use it as fallback
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser);
+          set({
+            user: user,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+          
+          // Start inactivity tracking
+          get().updateActivity();
+          
+          // Track user activity
+          const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+          events.forEach(event => {
+            document.addEventListener(event, get().updateActivity);
+          });
+        } catch (parseError) {
+          // If parsing fails, clear user data
+          localStorage.removeItem('user');
           set({ isLoading: false });
         }
+      } else {
+        // No stored user and API failed
+        set({ isLoading: false });
       }
-    } else {
-      set({ isLoading: false });
     }
   },
 
@@ -109,10 +100,11 @@ const useAuthStore = create((set, get) => ({
         return { requires2FA: true, userId: response.data.user_id };
       }
 
-      // Save tokens and user
-      localStorage.setItem('access_token', response.data.access_token);
-      localStorage.setItem('refresh_token', response.data.refresh_token);
+      // Save user and CSRF token
       localStorage.setItem('user', JSON.stringify(response.data.user));
+      if (response.data.csrf_token) {
+        localStorage.setItem('csrf_token', response.data.csrf_token);
+      }
 
       set({
         user: response.data.user,
@@ -142,9 +134,11 @@ const useAuthStore = create((set, get) => ({
       set({ error: null });
       const response = await authAPI.login2FA({ user_id: userId, token });
 
-      localStorage.setItem('access_token', response.data.access_token);
-      localStorage.setItem('refresh_token', response.data.refresh_token);
+      // Save user and CSRF token
       localStorage.setItem('user', JSON.stringify(response.data.user));
+      if (response.data.csrf_token) {
+        localStorage.setItem('csrf_token', response.data.csrf_token);
+      }
 
       set({
         user: response.data.user,
@@ -199,9 +193,9 @@ const useAuthStore = create((set, get) => ({
         document.removeEventListener(event, get().updateActivity);
       });
       
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      // Clear user data and CSRF token
       localStorage.removeItem('user');
+      localStorage.removeItem('csrf_token');
       set({
         user: null,
         isAuthenticated: false,

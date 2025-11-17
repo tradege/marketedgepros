@@ -1,7 +1,11 @@
 """
 Authentication routes
 """
-from flask import Blueprint, request, jsonify, g
+from flask import Blueprint, request, jsonify, g, make_response
+from src.middleware.csrf_middleware import generate_csrf_token, set_csrf_cookie
+from src.middleware.login_monitor import (
+    check_rate_limit, record_failed_login, record_successful_login, get_client_ip
+)
 from src.extensions import limiter
 from src import limiter
 from src.services.auth_service import AuthService
@@ -104,12 +108,40 @@ def login():
         access_token = user.generate_access_token()
         refresh_token = user.generate_refresh_token()
         
-        return jsonify({
+        # Record successful login
+        ip_address = get_client_ip()
+        record_successful_login(ip_address)
+        
+        # Generate CSRF token
+        csrf_token = generate_csrf_token()
+        
+        # Create response with httpOnly cookies
+        response = make_response(jsonify({
             'message': 'Login successful',
             'user': user.to_dict(),
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }), 200
+            'csrf_token': csrf_token  # Send token in response for frontend
+        }), 200)
+        
+        # Set httpOnly cookies for tokens
+        response.set_cookie(
+            'access_token',
+            value=access_token,
+            httponly=True,
+            secure=True,  # HTTPS only
+            samesite='Lax',  # CSRF protection
+            max_age=3600  # 1 hour
+        )
+        
+        response.set_cookie(
+            'refresh_token',
+            value=refresh_token,
+            httponly=True,
+            secure=True,
+            samesite='Lax',
+            max_age=2592000  # 30 days
+        )
+        
+        return response
         
     except ValueError as e:
         return jsonify({'error': str(e)}), 401
@@ -147,12 +179,36 @@ def login_2fa():
         access_token = user.generate_access_token()
         refresh_token = user.generate_refresh_token()
         
-        return jsonify({
+        # Generate CSRF token
+        csrf_token = generate_csrf_token()
+        
+        # Create response with httpOnly cookies
+        response = make_response(jsonify({
             'message': 'Login successful',
             'user': user.to_dict(),
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }), 200
+            'csrf_token': csrf_token  # Send token in response for frontend
+        }), 200)
+        
+        # Set httpOnly cookies for tokens
+        response.set_cookie(
+            'access_token',
+            value=access_token,
+            httponly=True,
+            secure=True,  # HTTPS only
+            samesite='Lax',  # CSRF protection
+            max_age=3600  # 1 hour
+        )
+        
+        response.set_cookie(
+            'refresh_token',
+            value=refresh_token,
+            httponly=True,
+            secure=True,
+            samesite='Lax',
+            max_age=2592000  # 30 days
+        )
+        
+        return response
         
     except ValueError as e:
         return jsonify({'error': str(e)}), 401
@@ -168,7 +224,13 @@ def logout():
         # Revoke current token
         AuthService.revoke_token(g.token)
         
-        return jsonify({'message': 'Logout successful'}), 200
+        # Create response and clear cookies
+        response = make_response(jsonify({'message': 'Logout successful'}), 200)
+        response.set_cookie('access_token', '', max_age=0)
+        response.set_cookie('refresh_token', '', max_age=0)
+        response.set_cookie('csrf_token', '', max_age=0)  # Clear CSRF token
+        
+        return response
         
     except Exception as e:
         return jsonify({'error': 'Logout failed'}), 500
@@ -186,9 +248,18 @@ def refresh_token():
     try:
         access_token = AuthService.refresh_access_token(data['refresh_token'])
         
-        return jsonify({
-            'access_token': access_token
-        }), 200
+        # Create response with new access token cookie
+        response = make_response(jsonify({'message': 'Token refreshed successfully'}), 200)
+        response.set_cookie(
+            'access_token',
+            value=access_token,
+            httponly=True,
+            secure=True,
+            samesite='Lax',
+            max_age=3600
+        )
+        
+        return response
         
     except ValueError as e:
         return jsonify({'error': str(e)}), 401

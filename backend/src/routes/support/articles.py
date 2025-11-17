@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.database import db
 from src.models.support_article import SupportArticle
+from src import cache
 from src.models.user import User
 from src.constants.roles import Roles
 import logging
@@ -15,7 +16,9 @@ logger = logging.getLogger(__name__)
 articles_bp = Blueprint('support_articles', __name__)
 
 
-@articles_bp.route('/', methods=['GET'])
+@articles_bp.route('', methods=['GET'], strict_slashes=False)
+@articles_bp.route('/', methods=['GET'], strict_slashes=False)
+@cache.cached(timeout=600, query_string=True)  # Cache for 10 minutes, include query params
 def get_articles():
     """
     Get all published support articles
@@ -63,7 +66,8 @@ def get_articles():
         return jsonify({'error': 'Failed to fetch articles'}), 500
 
 
-@articles_bp.route('/<slug>', methods=['GET'])
+@articles_bp.route('/<slug>', methods=['GET'], strict_slashes=False)
+@cache.cached(timeout=600)  # Cache for 10 minutes (matches Nginx)
 def get_article(slug):
     """Get single article by slug"""
     try:

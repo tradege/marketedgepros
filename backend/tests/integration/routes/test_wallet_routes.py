@@ -5,6 +5,17 @@ import pytest
 import uuid
 
 
+
+def extract_cookie_value(response, cookie_name):
+    """Helper to extract cookie value from response"""
+    cookies = response.headers.getlist('Set-Cookie')
+    for cookie in cookies:
+        if cookie.startswith(f'{cookie_name}='):
+            token_part = cookie.split(';')[0]
+            return token_part.split('=', 1)[1]
+    return None
+
+
 class TestWalletRoutes:
     """Test wallet routes authentication"""
     
@@ -81,7 +92,7 @@ class TestWalletRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Get balance
         response = client.get(
@@ -108,7 +119,7 @@ class TestWalletRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Get transactions
         response = client.get(
@@ -135,7 +146,7 @@ class TestWalletRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Get withdrawals
         response = client.get(
@@ -162,7 +173,7 @@ class TestWalletRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Try to create withdrawal without amount
         response = client.post(

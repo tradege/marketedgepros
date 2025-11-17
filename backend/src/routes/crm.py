@@ -302,7 +302,7 @@ def add_lead_note(lead_id):
         note = LeadNote(
             lead_id=lead_id,
             content=content,
-            created_by=current_user.id,
+            user_id=current_user.id,
             created_at=datetime.utcnow()
         )
         
@@ -313,7 +313,7 @@ def add_lead_note(lead_id):
             lead_id=lead_id,
             activity_type='note_added',
             description=f'Note added: {content[:50]}...' if len(content) > 50 else f'Note added: {content}',
-            created_by=current_user.id,
+            user_id=current_user.id,
             created_at=datetime.utcnow()
         )
         
@@ -336,7 +336,7 @@ def add_lead_note(lead_id):
         return jsonify({'error': str(e)}), 500
 
 
-@crm_bp.route('/leads/<int:lead_id>', methods=['PATCH'])
+@crm_bp.route('/leads/<int:lead_id>', methods=['PATCH', 'PUT'])
 @token_required
 def update_lead(lead_id):
     """Update lead details"""
@@ -379,260 +379,7 @@ def update_lead(lead_id):
                 lead_id=lead_id,
                 activity_type='lead_updated',
                 description=f'Lead updated: {", ".join(changes)}',
-                created_by=current_user.id,
-                created_at=datetime.utcnow()
-            )
-            
-            db.session.add(activity)
-        
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Lead updated successfully',
-            'lead': lead.to_dict()
-        }), 200
-        
-    except Exception as e:
-        db.session.rollback()
-        logger.error(f'Error updating lead: {str(e)}')
-        return jsonify({'error': str(e)}), 500
-
-
-@crm_bp.route('/leads/<int:lead_id>', methods=['DELETE'])
-@token_required
-def delete_lead(lead_id):
-    """Delete a lead"""
-    try:
-        current_user = g.current_user
-        
-        # Check permission - only admins can delete
-        if current_user.role not in ['admin', 'supermaster']:
-            return jsonify({'error': 'Admin access required'}), 403
-        
-        lead = Lead.query.get(lead_id)
-        
-        if not lead:
-            return jsonify({'error': 'Lead not found'}), 404
-        
-        # Delete related records
-        LeadNote.query.filter_by(lead_id=lead_id).delete()
-        LeadActivity.query.filter_by(lead_id=lead_id).delete()
-        
-        # Delete lead
-        db.session.delete(lead)
-        db.session.commit()
-        
-        return jsonify({'message': 'Lead deleted successfully'}), 200
-        
-    except Exception as e:
-        db.session.rollback()
-        logger.error(f'Error deleting lead: {str(e)}')
-        return jsonify({'error': str(e)}), 500
-# Add these endpoints to crm.py
-
-@crm_bp.route('/leads/<int:lead_id>', methods=['GET'])
-@token_required
-def get_lead_details(lead_id):
-    """Get lead details by ID"""
-    try:
-        current_user = g.current_user
-        
-        # Check permission
-        if not PermissionManager.can_access_crm(current_user):
-            return jsonify({'error': 'Access denied'}), 403
-        
-        lead = Lead.query.get(lead_id)
-        
-        if not lead:
-            return jsonify({'error': 'Lead not found'}), 404
-        
-        # Check if user can access this lead
-        # Permission already checked via can_access_crm
-        if False:  # Disabled can_access_lead check
-            return jsonify({'error': 'Access denied'}), 403
-        
-        lead_data = lead.to_dict()
-        
-        # Add assigned user info
-        if lead.assigned_to:
-            assigned_user = User.query.get(lead.assigned_to)
-            if assigned_user:
-                lead_data['assigned_user'] = {
-                    'id': assigned_user.id,
-                    'name': f"{assigned_user.first_name} {assigned_user.last_name}",
-                    'email': assigned_user.email
-                }
-        
-        # Add activity count
-        lead_data['activity_count'] = LeadActivity.query.filter_by(lead_id=lead_id).count()
-        lead_data['notes_count'] = LeadNote.query.filter_by(lead_id=lead_id).count()
-        
-        return jsonify(lead_data), 200
-        
-    except Exception as e:
-        logger.error(f'Error getting lead details: {str(e)}')
-        return jsonify({'error': str(e)}), 500
-
-
-@crm_bp.route('/leads/<int:lead_id>/notes', methods=['GET'])
-@token_required
-def get_lead_notes(lead_id):
-    """Get all notes for a lead"""
-    try:
-        current_user = g.current_user
-        
-        # Check permission
-        if not PermissionManager.can_access_crm(current_user):
-            return jsonify({'error': 'Access denied'}), 403
-        
-        lead = Lead.query.get(lead_id)
-        
-        if not lead:
-            return jsonify({'error': 'Lead not found'}), 404
-        
-        # Check if user can access this lead
-        # Permission already checked via can_access_crm
-        if False:  # Disabled can_access_lead check
-            return jsonify({'error': 'Access denied'}), 403
-        
-        notes = LeadNote.query.filter_by(lead_id=lead_id).order_by(LeadNote.created_at.desc()).all()
-        
-        notes_data = []
-        for note in notes:
-            note_data = {
-                'id': note.id,
-                'content': note.content,
-                'created_at': note.created_at.isoformat() if note.created_at else None,
-                'created_by': None
-            }
-            
-            # Add creator info
-            if note.created_by:
-                creator = User.query.get(note.created_by)
-                if creator:
-                    note_data['created_by'] = f"{creator.first_name} {creator.last_name}"
-            
-            notes_data.append(note_data)
-        
-        return jsonify({'notes': notes_data}), 200
-        
-    except Exception as e:
-        logger.error(f'Error getting lead notes: {str(e)}')
-        return jsonify({'error': str(e)}), 500
-
-
-@crm_bp.route('/leads/<int:lead_id>/notes', methods=['POST'])
-@token_required
-def add_lead_note(lead_id):
-    """Add a note to a lead"""
-    try:
-        current_user = g.current_user
-        
-        # Check permission
-        if not PermissionManager.can_access_crm(current_user):
-            return jsonify({'error': 'Access denied'}), 403
-        
-        lead = Lead.query.get(lead_id)
-        
-        if not lead:
-            return jsonify({'error': 'Lead not found'}), 404
-        
-        # Check if user can access this lead
-        # Permission already checked via can_access_crm
-        if False:  # Disabled can_access_lead check
-            return jsonify({'error': 'Access denied'}), 403
-        
-        data = request.get_json()
-        content = data.get('content', '').strip()
-        
-        if not content:
-            return jsonify({'error': 'Note content is required'}), 400
-        
-        # Create note
-        note = LeadNote(
-            lead_id=lead_id,
-            content=content,
-            created_by=current_user.id,
-            created_at=datetime.utcnow()
-        )
-        
-        db.session.add(note)
-        
-        # Create activity
-        activity = LeadActivity(
-            lead_id=lead_id,
-            activity_type='note_added',
-            description=f'Note added: {content[:50]}...' if len(content) > 50 else f'Note added: {content}',
-            created_by=current_user.id,
-            created_at=datetime.utcnow()
-        )
-        
-        db.session.add(activity)
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Note added successfully',
-            'note': {
-                'id': note.id,
-                'content': note.content,
-                'created_at': note.created_at.isoformat(),
-                'created_by': f"{current_user.first_name} {current_user.last_name}"
-            }
-        }), 201
-        
-    except Exception as e:
-        db.session.rollback()
-        logger.error(f'Error adding lead note: {str(e)}')
-        return jsonify({'error': str(e)}), 500
-
-
-@crm_bp.route('/leads/<int:lead_id>', methods=['PATCH'])
-@token_required
-def update_lead(lead_id):
-    """Update lead details"""
-    try:
-        current_user = g.current_user
-        
-        # Check permission
-        if not PermissionManager.can_access_crm(current_user):
-            return jsonify({'error': 'Access denied'}), 403
-        
-        lead = Lead.query.get(lead_id)
-        
-        if not lead:
-            return jsonify({'error': 'Lead not found'}), 404
-        
-        # Check if user can access this lead
-        # Permission already checked via can_access_crm
-        if False:  # Disabled can_access_lead check
-            return jsonify({'error': 'Access denied'}), 403
-        
-        data = request.get_json()
-        
-        # Track changes for activity log
-        changes = []
-        
-        # Update allowed fields
-        allowed_fields = ['status', 'score', 'budget', 'assigned_to', 'next_followup', 'notes']
-        
-        for field in allowed_fields:
-            if field in data:
-                old_value = getattr(lead, field)
-                new_value = data[field]
-                
-                if old_value != new_value:
-                    setattr(lead, field, new_value)
-                    changes.append(f'{field}: {old_value} → {new_value}')
-        
-        if changes:
-            lead.updated_at = datetime.utcnow()
-            
-            # Create activity
-            activity = LeadActivity(
-                lead_id=lead_id,
-                activity_type='lead_updated',
-                description=f'Lead updated: {", ".join(changes)}',
-                created_by=current_user.id,
+                user_id=current_user.id,
                 created_at=datetime.utcnow()
             )
             

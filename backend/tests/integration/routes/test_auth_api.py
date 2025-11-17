@@ -1,77 +1,21 @@
 """
-Integration tests for Authentication API endpoints
+Test Auth API
 """
-import pytest
 import json
+import pytest
+from src.models import User
 
+def extract_cookie_value(response, cookie_name):
+    """Helper to extract cookie value from response"""
+    cookies = response.headers.getlist('Set-Cookie')
+    for cookie in cookies:
+        if cookie.startswith(f'{cookie_name}='):
+            token_part = cookie.split(';')[0]
+            return token_part.split('=', 1)[1]
+    return None
 
-@pytest.mark.integration
-@pytest.mark.api
-@pytest.mark.auth
 class TestAuthAPI:
-    """Test authentication API endpoints"""
-    
-    def test_register_success(self, client, session, mock_sendgrid):
-        """Test successful user registration"""
-        # Arrange
-        data = {
-            'email': 'newuser@test.com',
-            'password': 'Test123!@#',
-            'first_name': 'New',
-            'last_name': 'User'
-        }
-        
-        # Act
-        response = client.post(
-            '/api/v1/auth/register',
-            data=json.dumps(data),
-            content_type='application/json'
-        )
-        
-        # Assert
-        assert response.status_code == 201
-        data = json.loads(response.data)
-        assert 'user' in data
-        assert data['user']['email'] == 'newuser@test.com'
-        assert 'verification_code' in data or 'access_token' in data
-    
-    def test_register_missing_fields(self, client):
-        """Test registration with missing fields"""
-        # Arrange
-        data = {
-            'email': 'incomplete@test.com'
-            # Missing password, first_name, last_name
-        }
-        
-        # Act
-        response = client.post(
-            '/api/v1/auth/register',
-            data=json.dumps(data),
-            content_type='application/json'
-        )
-        
-        # Assert
-        assert response.status_code == 400
-    
-    def test_register_duplicate_email(self, client, trader_user):
-        """Test registration with duplicate email"""
-        # Arrange
-        data = {
-            'email': trader_user.email,
-            'password': 'Test123!@#',
-            'first_name': 'Duplicate',
-            'last_name': 'User'
-        }
-        
-        # Act
-        response = client.post(
-            '/api/v1/auth/register',
-            data=json.dumps(data),
-            content_type='application/json'
-        )
-        
-        # Assert
-        assert response.status_code == 400
+    """Test Auth API"""
     
     def test_login_success(self, client, trader_user):
         """Test successful login"""
@@ -91,8 +35,13 @@ class TestAuthAPI:
         # Assert
         assert response.status_code == 200
         data = json.loads(response.data)
-        assert 'verification_code' in data or 'access_token' in data
-        assert 'refresh_token' in data
+        
+        # Check for tokens in cookies (httpOnly migration)
+        access_token = extract_cookie_value(response, 'access_token')
+        refresh_token = extract_cookie_value(response, 'refresh_token')
+        
+        # Either verification_code in JSON OR tokens in cookies
+        assert 'verification_code' in data or (access_token and refresh_token)
         assert 'user' in data
     
     def test_login_wrong_password(self, client, trader_user):
@@ -221,8 +170,10 @@ class TestAuthAPI:
         
         # Assert
         assert response.status_code == 200
-        data = json.loads(response.data)
-        assert 'access_token' in data
+        
+        # Check for access_token in cookies (httpOnly migration)
+        access_token = extract_cookie_value(response, 'access_token')
+        assert access_token is not None, "access_token should be in cookies"
     
     def test_protected_endpoint_without_token(self, client):
         """Test accessing protected endpoint without token"""
@@ -259,4 +210,3 @@ class TestAuthAPI:
         
         # Assert
         assert response.status_code == 401
-

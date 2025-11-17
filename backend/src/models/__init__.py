@@ -15,6 +15,7 @@ from src.models.payment import Payment
 from src.models.payment_approval import PaymentApprovalRequest
 from src.models.wallet import Wallet, Transaction
 from src.models.notification import Notification, NotificationPreference, EmailQueue
+from src.models.support_article import SupportArticle
 
 __all__ = [
     'User',
@@ -40,6 +41,7 @@ __all__ = [
     'Notification',
     'NotificationPreference',
     'EmailQueue',
+    'SupportArticle',
     'AccountScaling',
     'ScalingTier',
 ]

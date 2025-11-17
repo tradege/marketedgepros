@@ -14,6 +14,17 @@ def cleanup_after_test(session):
     session.rollback()
 
 
+
+def extract_cookie_value(response, cookie_name):
+    """Helper to extract cookie value from response"""
+    cookies = response.headers.getlist('Set-Cookie')
+    for cookie in cookies:
+        if cookie.startswith(f'{cookie_name}='):
+            token_part = cookie.split(';')[0]
+            return token_part.split('=', 1)[1]
+    return None
+
+
 class TestCRMAuthentication:
     """Test CRM routes authentication requirements"""
     
@@ -71,7 +82,7 @@ class TestCRMWithUser:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         response = client.get('/api/v1/crm/leads', headers={'Authorization': f'Bearer {token}'})
         assert response.status_code == 200
@@ -86,7 +97,7 @@ class TestCRMWithUser:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         response = client.post(
             '/api/v1/crm/leads',
@@ -113,7 +124,7 @@ class TestCRMWithUser:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         response = client.get('/api/v1/crm/stats', headers={'Authorization': f'Bearer {token}'})
         assert response.status_code == 200
@@ -128,7 +139,7 @@ class TestCRMWithUser:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         response = client.get('/api/v1/crm/pipeline', headers={'Authorization': f'Bearer {token}'})
         assert response.status_code == 200
@@ -149,7 +160,7 @@ class TestCRMFullWorkflow:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         headers = {'Authorization': f'Bearer {token}'}
         
         # 1. Create lead
@@ -217,7 +228,7 @@ class TestCRMFullWorkflow:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         headers = {'Authorization': f'Bearer {token}'}
         
         # Create lead
@@ -260,7 +271,7 @@ class TestCRMFullWorkflow:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         headers = {'Authorization': f'Bearer {token}'}
         
         # Create lead
@@ -311,7 +322,7 @@ class TestCRMFiltersAndPagination:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Filter by status
         response = client.get('/api/v1/crm/leads?status=new', headers={'Authorization': f'Bearer {token}'})
@@ -333,7 +344,7 @@ class TestCRMFiltersAndPagination:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Search by name
         response = client.get('/api/v1/crm/leads?search=John', headers={'Authorization': f'Bearer {token}'})
@@ -349,7 +360,7 @@ class TestCRMFiltersAndPagination:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Get with pagination
         response = client.get('/api/v1/crm/leads?page=1&per_page=10', headers={'Authorization': f'Bearer {token}'})
@@ -371,7 +382,7 @@ class TestCRMErrorCases:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Missing email
         response = client.post(
@@ -391,7 +402,7 @@ class TestCRMErrorCases:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Non-existent lead
         response = client.get('/api/v1/crm/leads/999999', headers={'Authorization': f'Bearer {token}'})
@@ -407,7 +418,7 @@ class TestCRMErrorCases:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Update non-existent lead
         response = client.put(
@@ -427,7 +438,7 @@ class TestCRMErrorCases:
         session.commit()
         
         response = client.post('/api/v1/auth/login', json={'email': email, 'password': 'Test123!'})
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Add activity to non-existent lead
         response = client.post(

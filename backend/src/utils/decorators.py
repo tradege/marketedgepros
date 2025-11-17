@@ -7,15 +7,17 @@ from src.constants.roles import Roles
 from src.utils.hierarchy_scoping import set_request_hierarchy_scope
 from src.database import db
 
-
 def token_required(f):
-    """Decorator to require valid JWT token"""
+    """Decorator to require valid JWT token (supports both cookies and headers)"""
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
         
-        # Get token from header
-        if 'Authorization' in request.headers:
+        # Try to get token from cookies first (new method)
+        token = request.cookies.get('access_token')
+        
+        # Fallback to Authorization header (backward compatibility)
+        if not token and 'Authorization' in request.headers:
             auth_header = request.headers['Authorization']
             try:
                 token = auth_header.split(' ')[1]  # Bearer <token>
@@ -50,7 +52,6 @@ def token_required(f):
     
     return decorated
 
-
 def role_required(*roles):
     """Decorator to require specific role(s)"""
     def decorator(f):
@@ -67,7 +68,6 @@ def role_required(*roles):
         return decorated
     return decorator
 
-
 def tenant_required(f):
     """Decorator to ensure user belongs to a tenant"""
     @wraps(f)
@@ -81,7 +81,6 @@ def tenant_required(f):
         return f(*args, **kwargs)
     
     return decorated
-
 
 def verified_email_required(f):
     """Decorator to require verified email"""
@@ -97,8 +96,6 @@ def verified_email_required(f):
     
     return decorated
 
-
-
 def admin_required(f):
     """Decorator to require admin role"""
     @wraps(f)
@@ -112,4 +109,3 @@ def admin_required(f):
         return f(*args, **kwargs)
     
     return decorated
-

@@ -5,6 +5,17 @@ import pytest
 import uuid
 
 
+
+def extract_cookie_value(response, cookie_name):
+    """Helper to extract cookie value from response"""
+    cookies = response.headers.getlist('Set-Cookie')
+    for cookie in cookies:
+        if cookie.startswith(f'{cookie_name}='):
+            token_part = cookie.split(';')[0]
+            return token_part.split('=', 1)[1]
+    return None
+
+
 class TestProgramsRoutes:
     """Test programs routes authentication"""
     
@@ -77,7 +88,7 @@ class TestProgramsRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Get programs
         response = client.get(
@@ -104,7 +115,7 @@ class TestProgramsRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Try to get non-existent program
         response = client.get(
@@ -130,7 +141,7 @@ class TestProgramsRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Try to create program
         response = client.post(
@@ -160,7 +171,7 @@ class TestProgramsRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Try to purchase without required fields
         response = client.post(
@@ -187,7 +198,7 @@ class TestProgramsRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Get my challenges
         response = client.get(
@@ -214,7 +225,7 @@ class TestProgramsRoutesWithAuth:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Try to get non-existent challenge
         response = client.get(

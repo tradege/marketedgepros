@@ -84,7 +84,7 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
     # Hierarchy (MLM Structure)
     parent_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)  # Who created this user
     level = db.Column(db.Integer, default=0, nullable=False, index=True)  # Depth in hierarchy (0 = top)
-    tree_path = db.Column(db.String(500), index=True)  # Path in tree: "1/5/23/45" for fast queries
+    tree_path = db.Column(db.String(500), index=True)  # Path in tree: "1.5.23.45" for fast queries
     commission_rate = db.Column(db.Numeric(5, 2), default=0.00)  # Custom commission rate for this user
     referral_code = db.Column(db.String(20), unique=True, nullable=True, index=True)  # Unique referral code for agents/masters
     
@@ -264,7 +264,7 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
         """Get all users in the downline (recursive)"""
         if not self.tree_path:
             return []
-        return User.query.filter(User.tree_path.startswith(self.tree_path + '/')).all()
+        return User.query.filter(User.tree_path.startswith(self.tree_path + '.')).all()
     
     def get_direct_children(self):
         """Get only direct children (1 level down)"""
@@ -283,7 +283,7 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
         """Update tree_path and level based on parent"""
         if self.parent:
             parent_path = self.parent.tree_path or str(self.parent.id)
-            self.tree_path = f"{parent_path}/{self.id}"
+            self.tree_path = f"{parent_path}.{self.id}"
             self.level = self.parent.level + 1
         else:
             self.tree_path = str(self.id)
@@ -365,7 +365,7 @@ class User(db.Model, TimestampMixin, HierarchyScopedMixin):
         
         # Filter by tree_path - only users in this user's hierarchy
         # tree_path LIKE 'current_user_path%' means all descendants
-        return cls.tree_path.like(f"{current_user.tree_path}%")
+        return cls.tree_path.like(f"{current_user.tree_path}.%") | (cls.tree_path == current_user.tree_path)
 
 
 class EmailVerificationToken(db.Model, TimestampMixin):

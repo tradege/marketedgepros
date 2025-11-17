@@ -5,6 +5,16 @@ import pytest
 import uuid
 
 
+
+def extract_cookie_value(response, cookie_name):
+    """Helper to extract cookie value from response"""
+    cookies = response.headers.getlist('Set-Cookie')
+    for cookie in cookies:
+        if cookie.startswith(f'{cookie_name}='):
+            token_part = cookie.split(';')[0]
+            return token_part.split('=', 1)[1]
+    return None
+
 class TestAdminRoutes:
     """Test admin routes authentication and permissions"""
     
@@ -100,7 +110,7 @@ class TestAdminRoutesWithTrader:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Try to access admin endpoint
         response = client.get(
@@ -126,7 +136,7 @@ class TestAdminRoutesWithTrader:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Try to access admin endpoint
         response = client.get(
@@ -156,7 +166,7 @@ class TestAdminRoutesWithAdmin:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Get dashboard stats
         response = client.get(
@@ -183,7 +193,7 @@ class TestAdminRoutesWithAdmin:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Get users
         response = client.get(
@@ -210,7 +220,7 @@ class TestAdminRoutesWithAdmin:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Try to get non-existent user
         response = client.get(
@@ -236,7 +246,7 @@ class TestAdminRoutesWithAdmin:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Try to create user without required fields
         response = client.post(
@@ -263,7 +273,7 @@ class TestAdminRoutesWithAdmin:
             'email': email,
             'password': 'Test123!'
         })
-        token = response.json['access_token']
+        token = extract_cookie_value(response, 'access_token')
         
         # Get payments
         response = client.get(

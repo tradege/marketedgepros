@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, BookOpen, MessageCircle, FileText, Video, HelpCircle, ExternalLink, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
@@ -6,83 +6,67 @@ import SEO from '../../components/SEO';
 
 export default function SupportHub() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const categories = [
-    {
-      title: 'Getting Started',
-      icon: BookOpen,
-      articles: [
-        { title: 'How to Create an Account', link: '/support/create-account' },
-        { title: 'Choosing the Right Challenge', link: '/support/choose-challenge' },
-        { title: 'Making Your First Payment', link: '/support/first-payment' },
-        { title: 'Setting Up MT5', link: '/support/setup-mt5' },
-        { title: 'Understanding Trading Rules', link: '/support/trading-rules' }
-      ]
-    },
-    {
-      title: 'Challenges & Evaluation',
-      icon: FileText,
-      articles: [
-        { title: 'Challenge Rules Explained', link: '/support/challenge-rules' },
-        { title: 'How to Pass Your Challenge', link: '/support/pass-challenge' },
-        { title: 'Daily Drawdown Calculation', link: '/support/daily-drawdown' },
-        { title: 'Total Drawdown Limits', link: '/support/total-drawdown' },
-        { title: 'Minimum Trading Days', link: '/support/min-trading-days' }
-      ]
-    },
-    {
-      title: 'Funded Accounts',
-      icon: Video,
-      articles: [
-        { title: 'Getting Your Funded Account', link: '/support/get-funded' },
-        { title: 'Profit Split Explained', link: '/support/profit-split' },
-        { title: 'Scaling Your Account', link: '/support/scaling' },
-        { title: 'Trading on Funded Account', link: '/support/trading-funded' },
-        { title: 'Account Consistency Requirements', link: '/support/consistency' }
-      ]
-    },
-    {
-      title: 'Payments & Withdrawals',
-      icon: MessageCircle,
-      articles: [
-        { title: 'How to Request a Withdrawal', link: '/support/request-withdrawal' },
-        { title: 'Payment Methods Accepted', link: '/support/payment-methods' },
-        { title: 'Withdrawal Processing Times', link: '/support/withdrawal-times' },
-        { title: 'Minimum Withdrawal Amount', link: '/support/min-withdrawal' },
-        { title: 'Payout Schedule', link: '/support/payout-schedule' }
-      ]
-    },
-    {
-      title: 'Platform & Technical',
-      icon: HelpCircle,
-      articles: [
-        { title: 'MT5 Installation Guide', link: '/support/mt5-installation' },
-        { title: 'Connecting to Trading Server', link: '/support/connect-server' },
-        { title: 'Using Expert Advisors (EAs)', link: '/support/using-eas' },
-        { title: 'Troubleshooting Connection Issues', link: '/support/troubleshoot-connection' },
-        { title: 'Platform Requirements', link: '/support/platform-requirements' }
-      ]
-    },
-    {
-      title: 'Account Management',
-      icon: FileText,
-      articles: [
-        { title: 'Updating Your Profile', link: '/support/update-profile' },
-        { title: 'KYC Verification Process', link: '/support/kyc-verification' },
-        { title: 'Changing Your Password', link: '/support/change-password' },
-        { title: 'Two-Factor Authentication', link: '/support/2fa' },
-        { title: 'Account Security Best Practices', link: '/support/security-practices' }
-      ]
-    }
-  ];
+  // Fetch articles from API
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const response = await fetch('/api/v1/support/articles');
+        if (response.ok) {
+          const data = await response.json();
+          setArticles(data.articles || []);
+        }
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const popularArticles = [
-    { title: 'How to Pass Your First Challenge', link: '/support/pass-challenge', views: '12.5K' },
-    { title: 'Understanding Daily Drawdown', link: '/support/daily-drawdown', views: '8.3K' },
-    { title: 'MT5 Setup Guide', link: '/support/setup-mt5', views: '7.1K' },
-    { title: 'Withdrawal Process Explained', link: '/support/request-withdrawal', views: '6.8K' },
-    { title: 'Profit Split & Scaling', link: '/support/profit-split', views: '5.9K' }
-  ];
+    fetchArticles();
+  }, []);
+
+  // Group articles by category
+  const getCategorizedArticles = () => {
+    const categoryMap = {
+      'Getting Started': { title: 'Getting Started', icon: BookOpen, articles: [] },
+      'Challenges & Evaluation': { title: 'Challenges & Evaluation', icon: FileText, articles: [] },
+      'Funded Accounts': { title: 'Funded Accounts', icon: Video, articles: [] },
+      'Payments & Withdrawals': { title: 'Payments & Withdrawals', icon: MessageCircle, articles: [] },
+      'Platform & Technical': { title: 'Platform & Technical', icon: HelpCircle, articles: [] },
+      'Account Management': { title: 'Account Management', icon: FileText, articles: [] }
+    };
+
+    articles.forEach(article => {
+      if (article.status === 'published' && article.category) {
+        // Normalize category name
+        const category = article.category;
+        if (categoryMap[category]) {
+          categoryMap[category].articles.push({
+            title: article.title,
+            link: `/support/${article.slug}`,
+            views: article.views || 0
+          });
+        }
+      }
+    });
+
+    return Object.values(categoryMap).filter(cat => cat.articles.length > 0);
+  };
+
+  const categories = getCategorizedArticles();
+
+  const popularArticles = articles
+    .filter(a => a.status === 'published')
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 5)
+    .map(a => ({
+      title: a.title,
+      link: `/support/${a.slug}`,
+      views: a.views ? `${(a.views / 1000).toFixed(1)}K` : '0'
+    }));
 
   const quickLinks = [
     { title: 'Create Support Ticket', icon: MessageCircle, link: '/support/create-ticket' },
@@ -93,7 +77,7 @@ export default function SupportHub() {
   // Filter articles based on search term
   const getFilteredArticles = () => {
     if (!searchTerm.trim()) return categories;
-
+    
     const term = searchTerm.toLowerCase();
     return categories.map(category => ({
       ...category,
@@ -176,92 +160,103 @@ export default function SupportHub() {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-12 text-center">
             Browse by Category
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCategories.length > 0 ? filteredCategories.map((category, index) => {
-              const Icon = category.icon;
-              return (
-                <div
-                  key={index}
-                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:bg-white/10 hover:border-cyan-500/30 transition-all group"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-teal-500/20 border border-cyan-500/30 group-hover:from-cyan-500/30 group-hover:to-teal-500/30 transition-all">
-                      <Icon className="w-6 h-6 text-cyan-400" />
+          
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">Loading articles...</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredCategories.length > 0 ? filteredCategories.map((category, index) => {
+                const Icon = category.icon;
+                return (
+                  <div
+                    key={index}
+                    className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:bg-white/10 hover:border-cyan-500/30 transition-all group"
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-teal-500/20 border border-cyan-500/30 group-hover:from-cyan-500/30 group-hover:to-teal-500/30 transition-all">
+                        <Icon className="w-6 h-6 text-cyan-400" />
+                      </div>
+                      <h3 className="text-xl font-bold text-white">{category.title}</h3>
                     </div>
-                    <h3 className="text-xl font-bold text-white">{category.title}</h3>
+                    <ul className="space-y-2">
+                      {category.articles.map((article, articleIndex) => (
+                        <li key={articleIndex}>
+                          <Link
+                            to={article.link}
+                            className="flex items-center justify-between text-gray-400 hover:text-cyan-300 transition-colors group/item"
+                          >
+                            <span className="text-sm">{article.title}</span>
+                            <ChevronRight className="w-4 h-4 opacity-0 group-hover/item:opacity-100 transition-opacity text-cyan-400" />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className="space-y-2">
-                    {category.articles.map((article, articleIndex) => (
-                      <li key={articleIndex}>
-                        <Link
-                          to={article.link}
-                          className="flex items-center justify-between text-gray-400 hover:text-cyan-300 transition-colors group/item"
-                        >
-                          <span className="text-sm">{article.title}</span>
-                          <ChevronRight className="w-4 h-4 opacity-0 group-hover/item:opacity-100 transition-opacity text-cyan-400" />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                );
+              }) : (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-gray-400 text-lg">No articles found matching "{searchTerm}"</p>
                 </div>
-              );
-            }) : (
-              <div className="col-span-full text-center py-12">
-                <p className="text-gray-400 text-lg">No articles found matching "{searchTerm}"</p>
-                <p className="text-gray-500 mt-2">Try different keywords or browse all categories</p>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
       {/* Popular Articles */}
-      <section className="py-20 bg-gradient-to-br from-black via-cyan-950/20 to-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-12 text-center">
-            Most Popular Articles
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {popularArticles.map((article, index) => (
-              <Link
-                key={index}
-                to={article.link}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-teal-500/10 hover:border-cyan-500/50 transition-all hover:transform hover:scale-105"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-white">{article.title}</h3>
-                  <ChevronRight className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-                </div>
-                <p className="text-sm text-gray-400">{article.views} views</p>
-              </Link>
-            ))}
+      {popularArticles.length > 0 && (
+        <section className="py-20 bg-black border-t border-white/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12 text-center">
+              Popular Articles
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {popularArticles.map((article, index) => (
+                <Link
+                  key={index}
+                  to={article.link}
+                  className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:bg-white/10 hover:border-cyan-500/30 transition-all"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors">
+                      {article.title}
+                    </h3>
+                    <ChevronRight className="w-5 h-5 text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2" />
+                  </div>
+                  <p className="text-sm text-gray-400">{article.views} views</p>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Still Need Help */}
+      {/* Contact Support CTA */}
       <section className="py-20 bg-black border-t border-white/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <MessageCircle className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
             Still Need Help?
           </h2>
           <p className="text-xl text-gray-400 mb-8">
-            Can't find what you're looking for? Our support team is here to help 24/7.
+            Can't find what you're looking for? Our support team is here to assist you 24/7.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/contact"
-              className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg text-white font-bold hover:from-cyan-600 hover:to-teal-600 transition shadow-lg shadow-cyan-500/50"
+              to="/support/create-ticket"
+              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-semibold rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-all shadow-lg shadow-cyan-500/25"
             >
+              <MessageCircle className="w-5 h-5 mr-2" />
               Contact Support
             </Link>
             <a
               href="https://discord.gg/jKbmeSe7"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white font-bold hover:bg-white/20 hover:border-cyan-500/50 transition"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white/5 border border-white/10 text-white font-semibold rounded-lg hover:bg-white/10 hover:border-cyan-500/50 transition-all"
             >
+              <ExternalLink className="w-5 h-5 mr-2" />
               Join Discord Community
             </a>
           </div>
