@@ -23,17 +23,17 @@ jobs:
         password: ${{ secrets.DO_PASSWORD }}
         script: |
           echo "=== Starting deployment ==="
-          cd /home/ubuntu/MarketEdgePros
+          cd /home/ubuntu/PropTradePro
           
           echo "=== Pulling latest code ==="
           git pull origin master || git pull origin main
           
           echo "=== Installing backend dependencies ==="
-          cd /home/ubuntu/MarketEdgePros/backend
+          cd /home/ubuntu/PropTradePro/backend
           pip3 install -r requirements.txt --break-system-packages || echo "Backend install warning (continuing)"
           
           echo "=== Building frontend ==="
-          cd /home/ubuntu/MarketEdgePros/frontend
+          cd /home/ubuntu/PropTradePro/frontend
           
           # Check if pnpm is available, otherwise use npm
           if command -v pnpm &> /dev/null; then
