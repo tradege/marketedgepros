@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../../lib/api';
+import api from '../../services/api';
 import { 
   ArrowLeft, Mail, Phone, MapPin, Calendar, DollarSign, 
   User, Edit, Trash2, CheckCircle, XCircle, Clock,
