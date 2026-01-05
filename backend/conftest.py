@@ -53,7 +53,7 @@ def app(request):
     # Apply test configuration
     app.config.from_object(TestingConfig)
     app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://marketedge:marketedge123@localhost:5432/marketedge_test'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://testuser:testpass123@localhost:5432/marketedgepros_test'
     
     # Establish application context
     ctx = app.app_context()
@@ -400,7 +400,7 @@ def referral_user(session, agent_user, super_admin_user):
     session.commit()
     
     # Create referral record
-    agent = Agent.query.filter_by(user_id=agent_user.id).first()
+    agent = session.query(Agent).filter_by(user_id=agent_user.id).first()
     referral = Referral(
         agent_id=agent.id,
         referred_user_id=user.id,
@@ -474,7 +474,7 @@ def referral(session, agent_user, referral_user):
     from src.models.agent import Agent
     
     # Get the agent
-    agent = Agent.query.filter_by(user_id=agent_user.id).first()
+    agent = session.query(Agent).filter_by(user_id=agent_user.id).first()
     
     # Create referral
     referral = Referral(
@@ -680,4 +680,4 @@ def session(db_engine):
 @pytest.fixture(scope='session')
 def db_engine(app):
     """Yields a SQLAlchemy engine for the test database."""
-    return app.extensions['sqlalchemy'].db.engine
+    from src.extensions import db; return db.engine

@@ -1,60 +1,62 @@
 """
 Fixtures for integration tests
+Note: app and client fixtures are inherited from the main conftest.py
 """
 import pytest
-import os
-from src.app import create_app
-from src.database import db as _db
+import uuid
+from src.extensions import db
+from src.models.user import User, PasswordResetToken
+
 
 @pytest.fixture(scope='function')
-def app():
-    """Create Flask app for testing"""
-    # Set FLASK_TESTING env var BEFORE creating app to disable tenant middleware
-    os.environ['FLASK_TESTING'] = 'true'
-    
-    app = create_app()
-    app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://marketedge:marketedge123@localhost:5432/marketedge_test'
-    
-    with app.app_context():
-        yield app
-
-@pytest.fixture(scope='function')
-def client(app):
-    """Create Flask test client"""
-    return app.test_client()
-
-@pytest.fixture(scope='function')
-def runner(app):
-    """Create Flask CLI runner"""
-    return app.test_cli_runner()
-
-@pytest.fixture(scope='function')
-def trader_user(session):
+def trader_user(app):
     """Create a trader user for testing"""
-    from src.models.user import User
-    import uuid
-    
-    email = f'trader_{uuid.uuid4().hex[:8]}@test.com'
-    user = User(
-        email=email,
-        first_name='Test',
-        last_name='Trader',
-        role='trader'
-    )
-    user.set_password('Test123!@#')
-    user.is_verified = True
-    session.add(user)
-    session.commit()
-    session.refresh(user)
-    
-    yield user
-    
-    # Cleanup password reset tokens first
-    from src.models.user import PasswordResetToken
-    session.query(PasswordResetToken).filter_by(user_id=user.id).delete()
-    session.commit()
-    
-    # Then delete user
-    session.delete(user)
-    session.commit()
+    with app.app_context():
+        email = f'trader_{uuid.uuid4().hex[:8]}@test.com'
+        user = User(
+            email=email,
+            first_name='Test',
+            last_name='Trader',
+            role='trader'
+        )
+        user.set_password('Test123!@#')
+        user.is_verified = True
+        db.session.add(user)
+        db.session.commit()
+        db.session.refresh(user)
+        
+        yield user
+        
+        # Cleanup password reset tokens first
+        db.session.query(PasswordResetToken).filter_by(user_id=user.id).delete()
+        db.session.commit()
+        
+        # Then delete user
+        db.session.delete(user)
+        db.session.commit()
+
+
+@pytest.fixture(scope='function')
+def admin_user(app):
+    """Create an admin user for testing"""
+    with app.app_context():
+        email = f'admin_{uuid.uuid4().hex[:8]}@test.com'
+        user = User(
+            email=email,
+            first_name='Test',
+            last_name='Admin',
+            role='supermaster'
+        )
+        user.set_password('Test123!@#')
+        user.is_verified = True
+        db.session.add(user)
+        db.session.commit()
+        db.session.refresh(user)
+        
+        yield user
+        
+        # Cleanup
+        db.session.query(PasswordResetToken).filter_by(user_id=user.id).delete()
+        db.session.commit()
+        db.session.delete(user)
+        db.session.commit()
