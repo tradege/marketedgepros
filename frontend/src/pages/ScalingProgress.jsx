@@ -1,0 +1,380 @@
+import React, { useState, useEffect } from 'react';
+import { useToast } from '../contexts/ToastContext';
+import { TrendingUp, Target, Trophy, Lock, CheckCircle, ArrowUp } from 'lucide-react';
+import UserLayout from '../components/layout/UserLayout';
+import useAuthStore from '../store/authStore';
+import { ADMIN_ROLES, ROLES } from '../constants/roles';
+import api from "../services/api";
+
+const ScalingProgress = () => {
+  const { user } = useAuthStore();
+  const [loading, setLoading] = useState(true);
+  const [scalingData, setScalingData] = useState(null);
+  const [allUsersScaling, setAllUsersScaling] = useState([]);
+  const [error, setError] = useState(null);
+
+  const isAdmin = user && ADMIN_ROLES.includes(user.role);
+  const isAffiliate = user && user.role === ROLES.AFFILIATE;
+  const isTrader = user && user.role === ROLES.TRADER;
+
+  useEffect(() => {
+    fetchData();
+  }, [user]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      if (isTrader) {
+        // Trader: Get own progress
+        const response = await api.get('/scaling/my-progress');
+        setScalingData(response.data.data);
+      } else if (isAdmin || isAffiliate) {
+        // Admin/Affiliate: Get all users (filtered by backend)
+        const response = await api.get('/scaling/admin/all-users');
+        setAllUsersScaling(response.data.data || []);
+      }
+      
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching scaling data:', err);
+      setError(err.response?.data?.error || 'Failed to load scaling data');
+      setLoading(false);
+    }
+  };
+
+  const handleScaleUp = async () => {
+    try {
+      await api.post('/scaling/scale-up', {});
+      toast.success('Successfully scaled up to next tier!');
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to scale up');
+    }
+  };
+
+  if (loading) {
+    return (
+      <UserLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+            <p className="text-gray-400 mt-4">Loading scaling data...</p>
+          </div>
+        </div>
+      </UserLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <UserLayout>
+        <div className="p-6">
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-400">
+            {error}
+          </div>
+        </div>
+      </UserLayout>
+    );
+  }
+
+  // Trader View
+  if (isTrader) {
+    return <TraderView scalingData={scalingData} onScaleUp={handleScaleUp} />;
+  }
+
+  // Admin/Affiliate View
+  if (isAdmin || isAffiliate) {
+    return <AdminView users={allUsersScaling} isAffiliate={isAffiliate} />;
+  }
+
+  return (
+    <UserLayout>
+      <div className="p-6">
+        <p className="text-gray-400">No scaling data available for your role.</p>
+      </div>
+    </UserLayout>
+  );
+};
+
+// Trader View Component
+const TraderView = ({ scalingData, onScaleUp }) => {
+  if (!scalingData) {
+    return (
+      <UserLayout>
+        <div className="p-6">
+          <p className="text-gray-400">No scaling plan found. Contact support to initialize your scaling plan.</p>
+        </div>
+      </UserLayout>
+    );
+  }
+
+  const tiers = scalingData.tiers || [];
+  const currentTier = tiers.find(t => t.tier_number === scalingData.current_tier);
+  const nextTier = tiers.find(t => t.tier_number === scalingData.next_tier);
+
+  return (
+    <UserLayout>
+      <div className="p-6 space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Account Scaling Progress</h1>
+          <p className="text-gray-400">Track your progress and scale up to larger account sizes</p>
+        </div>
+
+        {/* Current Tier Card */}
+        <div className="bg-gradient-to-r from-cyan-500/10 to-teal-500/10 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm mb-1">Current Tier</p>
+              <h2 className="text-4xl font-bold text-white">Tier {scalingData.current_tier}</h2>
+              <p className="text-cyan-400 text-2xl font-semibold mt-2">
+                ${scalingData.current_account_size?.toLocaleString()}
+              </p>
+            </div>
+            <Trophy className="w-16 h-16 text-cyan-400" />
+          </div>
+        </div>
+
+        {/* Progress Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <TrendingUp className="w-5 h-5 text-green-400" />
+              <p className="text-gray-400 text-sm">Total Profit</p>
+            </div>
+            <p className="text-2xl font-bold text-white">${scalingData.total_profit?.toLocaleString() || '0'}</p>
+          </div>
+
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <Target className="w-5 h-5 text-cyan-400" />
+              <p className="text-gray-400 text-sm">Target Profit</p>
+            </div>
+            <p className="text-2xl font-bold text-white">${scalingData.target_profit?.toLocaleString() || '0'}</p>
+          </div>
+
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <Trophy className="w-5 h-5 text-yellow-400" />
+              <p className="text-gray-400 text-sm">Times Scaled</p>
+            </div>
+            <p className="text-2xl font-bold text-white">{scalingData.times_scaled || 0}</p>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-white font-semibold">Progress to Next Tier</p>
+            <p className="text-cyan-400 font-bold">{scalingData.progress_percentage?.toFixed(1) || '0'}%</p>
+          </div>
+          <div className="w-full bg-white/10 rounded-full h-4 overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-cyan-500 to-teal-500 transition-all duration-500 ease-out"
+              style={{ width: `${Math.min(scalingData.progress_percentage || 0, 100)}%` }}
+            />
+          </div>
+          {nextTier && (
+            <p className="text-gray-400 text-sm mt-2">
+              Next: Tier {nextTier.tier_number} - ${nextTier.account_size?.toLocaleString()}
+            </p>
+          )}
+        </div>
+
+        {/* Scale Up Button */}
+        {scalingData.is_eligible_for_scaling && (
+          <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-6 backdrop-blur-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-1">🎉 Congratulations!</h3>
+                <p className="text-gray-300">You're eligible to scale up to Tier {scalingData.next_tier}!</p>
+              </div>
+              <button
+                onClick={onScaleUp}
+                className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full font-semibold text-white hover:shadow-lg hover:shadow-green-500/50 transition-all duration-300 flex items-center gap-2"
+              >
+                <ArrowUp className="w-5 h-5" />
+                Scale Up Now
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* All Tiers */}
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
+          <h3 className="text-xl font-bold text-white mb-4">All Tiers</h3>
+          <div className="space-y-3">
+            {tiers.map((tier) => {
+              const isCurrent = tier.tier_number === scalingData.current_tier;
+              const isCompleted = tier.tier_number < scalingData.current_tier;
+              const isLocked = tier.tier_number > scalingData.current_tier;
+
+              return (
+                <div
+                  key={tier.tier_number}
+                  className={`flex items-center justify-between p-4 rounded-lg border ${
+                    isCurrent
+                      ? 'bg-cyan-500/10 border-cyan-500/30'
+                      : isCompleted
+                      ? 'bg-green-500/10 border-green-500/30'
+                      : 'bg-white/5 border-white/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {isCompleted && <CheckCircle className="w-5 h-5 text-green-400" />}
+                    {isCurrent && <Trophy className="w-5 h-5 text-cyan-400" />}
+                    {isLocked && <Lock className="w-5 h-5 text-gray-500" />}
+                    <div>
+                      <p className={`font-semibold ${isCurrent ? 'text-cyan-400' : 'text-white'}`}>
+                        Tier {tier.tier_number}
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        ${tier.account_size?.toLocaleString()} Account
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-white font-semibold">${tier.profit_target?.toLocaleString()}</p>
+                    <p className="text-gray-400 text-sm">{tier.profit_split}% Split</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </UserLayout>
+  );
+};
+
+// Admin/Affiliate View Component
+const AdminView = ({ users, isAffiliate }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredUsers = users.filter(u =>
+    u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    u.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const stats = {
+    totalUsers: users.length,
+    eligibleForScaling: users.filter(u => u.is_eligible_for_scaling).length,
+    averageProgress: users.length > 0
+      ? (users.reduce((sum, u) => sum + (u.progress_percentage || 0), 0) / users.length).toFixed(1)
+      : 0,
+    totalScaled: users.reduce((sum, u) => sum + (u.times_scaled || 0), 0)
+  };
+
+  return (
+    <UserLayout>
+      <div className="p-6 space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            {isAffiliate ? 'My Traders' : 'All Traders'} Scaling Progress
+          </h1>
+          <p className="text-gray-400">Monitor and manage trader scaling progress</p>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
+            <p className="text-gray-400 text-sm mb-1">Total Traders</p>
+            <p className="text-2xl font-bold text-white">{stats.totalUsers}</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
+            <p className="text-gray-400 text-sm mb-1">Eligible for Scaling</p>
+            <p className="text-2xl font-bold text-green-400">{stats.eligibleForScaling}</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
+            <p className="text-gray-400 text-sm mb-1">Avg Progress</p>
+            <p className="text-2xl font-bold text-cyan-400">{stats.averageProgress}%</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
+            <p className="text-gray-400 text-sm mb-1">Total Scaled</p>
+            <p className="text-2xl font-bold text-yellow-400">{stats.totalScaled}</p>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
+          <input
+            type="text"
+            placeholder="Search by email or name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none"
+          />
+        </div>
+
+        {/* Users Table */}
+        <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden backdrop-blur-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-white/5">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Trader</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Current Tier</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Account Size</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Progress</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Profit</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Times Scaled</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {filteredUsers.map((user, index) => (
+                  <tr key={index} className="hover:bg-white/5 transition-colors">
+                    <td className="px-4 py-3">
+                      <div>
+                        <p className="text-white font-medium">{user.name || 'N/A'}</p>
+                        <p className="text-gray-400 text-sm">{user.email}</p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-white">Tier {user.current_tier}</td>
+                    <td className="px-4 py-3 text-cyan-400 font-semibold">
+                      ${user.current_account_size?.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-white/10 rounded-full h-2">
+                          <div
+                            className="h-full bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full"
+                            style={{ width: `${Math.min(user.progress_percentage || 0, 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-gray-300 text-sm">{user.progress_percentage?.toFixed(0)}%</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-white">
+                      ${user.total_profit?.toLocaleString()} / ${user.target_profit?.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-yellow-400 font-semibold">{user.times_scaled || 0}</td>
+                    <td className="px-4 py-3">
+                      {user.is_eligible_for_scaling ? (
+                        <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-semibold">
+                          Eligible
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 bg-gray-500/20 text-gray-400 rounded-full text-xs">
+                          In Progress
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {filteredUsers.length === 0 && (
+            <div className="p-8 text-center text-gray-400">
+              No traders found
+            </div>
+          )}
+        </div>
+      </div>
+    </UserLayout>
+  );
+};
+
+export default ScalingProgress;

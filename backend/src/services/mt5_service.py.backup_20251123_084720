@@ -1,0 +1,285 @@
+"""
+MT5 API Service for MarketEdgePros
+Handles all MT5 API interactions
+"""
+import requests
+import logging
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
+
+class MT5Service:
+    """Service for interacting with MT5 API"""
+    
+    def __init__(self):
+        self.api_url = "http://57.129.52.174:6710"
+        self.username = "backofficeApi"
+        self.password = "Trade@2022"
+        self.token = None
+        self.token_expires_at = None
+    
+    async def authenticate(self) -> str:
+        """
+        Get JWT token from MT5 API
+        Token expires in 2 minutes, refresh 30 seconds before expiration
+        """
+        if self.token and self.token_expires_at and datetime.now() < self.token_expires_at:
+            return self.token
+        
+        try:
+            url = f"{self.api_url}/Home/token"
+            payload = {
+                "userName": self.username,
+                "password": self.password
+            }
+            
+            response = requests.post(url, json=payload, timeout=10)
+            response.raise_for_status()
+            
+            data = response.json()
+            self.token = data.get('token')
+            # Token expires in 2 minutes, refresh 30 seconds before
+            self.token_expires_at = datetime.now() + timedelta(seconds=90)
+            
+            logger.info("MT5 API authentication successful")
+            return self.token
+            
+        except Exception as e:
+            logger.error(f"MT5 authentication failed: {e}")
+            raise
+    
+    async def create_account(self, name: str, group: str = "demo\\demoforex", 
+                           leverage: int = 100, balance: float = 10000) -> Dict:
+        """
+        Create new MT5 trading account
+        
+        Args:
+            name: Account holder name
+            group: MT5 group (default: demo\\demoforex)
+            leverage: Account leverage (default: 100)
+            balance: Initial balance (default: 10000)
+            
+        Returns:
+            Dict with account details including login and password
+        """
+        try:
+            token = await self.authenticate()
+            headers = {"Authorization": f"Bearer {token}"}
+            
+            url = f"{self.api_url}/Home/createAccount"
+            payload = {
+                "name": name,
+                "group": group,
+                "leverage": leverage,
+                "balance": balance,
+                "enable": True,
+                "enableChangePassword": True,
+                "enableReadOnly": False
+            }
+            
+            response = requests.post(url, json=payload, headers=headers, timeout=15)
+            response.raise_for_status()
+            
+            account_data = response.json()
+            logger.info(f"MT5 account created: {account_data.get('login')}")
+            return account_data
+            
+        except Exception as e:
+            logger.error(f"Failed to create MT5 account: {e}")
+            raise
+    
+    async def get_account_info(self, mt5_login: str) -> Dict:
+        """
+        Get account information from MT5
+        
+        Args:
+            mt5_login: MT5 account login number
+            
+        Returns:
+            Dict with account information
+        """
+        try:
+            token = await self.authenticate()
+            headers = {"Authorization": f"Bearer {token}"}
+            
+            url = f"{self.api_url}/Home/getUserInfo/{mt5_login}"
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except Exception as e:
+            logger.error(f"Failed to get account info for {mt5_login}: {e}")
+            raise
+    
+    async def get_all_accounts(self) -> List[Dict]:
+        """
+        Get all MT5 accounts
+        
+        Returns:
+            List of account dictionaries
+        """
+        try:
+            token = await self.authenticate()
+            headers = {"Authorization": f"Bearer {token}"}
+            
+            url = f"{self.api_url}/Home/getAllAccountInfos"
+            response = requests.get(url, headers=headers, timeout=15)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except Exception as e:
+            logger.error(f"Failed to get all accounts: {e}")
+            raise
+    
+    async def get_positions(self, mt5_login: str) -> List[Dict]:
+        """
+        Get open positions for account
+        
+        Args:
+            mt5_login: MT5 account login number
+            
+        Returns:
+            List of position dictionaries
+        """
+        try:
+            token = await self.authenticate()
+            headers = {"Authorization": f"Bearer {token}"}
+            
+            url = f"{self.api_url}/Home/getPosition/{mt5_login}"
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except Exception as e:
+            logger.error(f"Failed to get positions for {mt5_login}: {e}")
+            raise
+    
+    async def get_trade_history(self, mt5_login: str, start_date: datetime, 
+                               end_date: datetime) -> List[Dict]:
+        """
+        Get trade history for account
+        
+        Args:
+            mt5_login: MT5 account login number
+            start_date: Start date for history
+            end_date: End date for history
+            
+        Returns:
+            List of trade dictionaries
+        """
+        try:
+            token = await self.authenticate()
+            headers = {"Authorization": f"Bearer {token}"}
+            
+            url = f"{self.api_url}/Home/tradehistoryByLoginTime"
+            payload = {
+                "login": mt5_login,
+                "startDate": start_date.isoformat(),
+                "endDate": end_date.isoformat()
+            }
+            
+            response = requests.post(url, json=payload, headers=headers, timeout=15)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except Exception as e:
+            logger.error(f"Failed to get trade history for {mt5_login}: {e}")
+            raise
+    
+    async def update_balance(self, mt5_login: str, amount: float, 
+                           operation: str = "deposit") -> Dict:
+        """
+        Update account balance
+        
+        Args:
+            mt5_login: MT5 account login number
+            amount: Amount to add/subtract
+            operation: 'deposit' or 'withdraw'
+            
+        Returns:
+            Dict with operation result
+        """
+        try:
+            token = await self.authenticate()
+            headers = {"Authorization": f"Bearer {token}"}
+            
+            url = f"{self.api_url}/Home/balanceOP"
+            payload = {
+                "login": mt5_login,
+                "amount": amount,
+                "type": operation,
+                "comment": f"Balance {operation} via MarketEdgePros"
+            }
+            
+            response = requests.post(url, json=payload, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            logger.info(f"Balance updated for {mt5_login}: {operation} {amount}")
+            return response.json()
+            
+        except Exception as e:
+            logger.error(f"Failed to update balance for {mt5_login}: {e}")
+            raise
+    
+    async def disable_account(self, mt5_login: str) -> Dict:
+        """
+        Disable MT5 account
+        
+        Args:
+            mt5_login: MT5 account login number
+            
+        Returns:
+            Dict with operation result
+        """
+        try:
+            token = await self.authenticate()
+            headers = {"Authorization": f"Bearer {token}"}
+            
+            url = f"{self.api_url}/Home/userDisable"
+            payload = {"login": mt5_login}
+            
+            response = requests.post(url, json=payload, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            logger.info(f"Account disabled: {mt5_login}")
+            return response.json()
+            
+        except Exception as e:
+            logger.error(f"Failed to disable account {mt5_login}: {e}")
+            raise
+    
+    async def disable_trading(self, mt5_login: str) -> Dict:
+        """
+        Disable trading for account
+        
+        Args:
+            mt5_login: MT5 account login number
+            
+        Returns:
+            Dict with operation result
+        """
+        try:
+            token = await self.authenticate()
+            headers = {"Authorization": f"Bearer {token}"}
+            
+            url = f"{self.api_url}/Home/tradeDisable"
+            payload = {"login": mt5_login}
+            
+            response = requests.post(url, json=payload, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            logger.info(f"Trading disabled for: {mt5_login}")
+            return response.json()
+            
+        except Exception as e:
+            logger.error(f"Failed to disable trading for {mt5_login}: {e}")
+            raise
+
+
+# Singleton instance
+mt5_service = MT5Service()

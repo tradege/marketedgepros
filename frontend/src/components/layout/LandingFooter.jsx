@@ -1,0 +1,158 @@
+import { Link } from 'react-router-dom';
+import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, MessageCircle } from 'lucide-react';
+
+export default function LandingFooter() {
+  const currentYear = 2020; // Fixed year as requested
+  
+  const footerSections = [
+    {
+      title: 'Company',
+      links: [
+        { name: 'About Us', to: '/about' },
+        { name: 'How It Works', to: '/how-it-works' },
+        { name: 'Blog', to: '/blog' },
+        { name: 'Careers', to: '/careers' },
+        { name: 'Contact', to: '/contact' },
+      ],
+    },
+    {
+      title: 'Programs',
+      links: [
+        { name: 'One-Phase Challenge', to: '/programs?filter=one-phase' },
+        { name: 'Two-Phase Challenge', to: '/programs?filter=two-phase' },
+        { name: 'Three-Phase Challenge', to: '/programs?filter=three-phase' },
+        // { name: 'Instant Funding', to: '/programs?filter=instant' }, // Removed - program doesn't exist
+        // { name: 'Compare Programs', to: '/programs' }, // Removed - page doesn't exist
+      ],
+    },
+    {
+      title: 'Resources',
+      links: [
+        { name: 'Support Hub', to: '/support' },
+        { name: 'FAQ', to: '/faq' },
+        { name: 'Trading Rules', to: '/trading-rules' },
+        { name: 'Affiliate Program', to: '/affiliate' },
+        // { name: 'API Documentation', to: '/api-docs' }, // Removed - page doesn't exist
+      ],
+    },
+    {
+      title: 'Legal',
+      links: [
+        { name: 'Terms of Service', to: '/terms-of-service' },
+        { name: 'Privacy Policy', to: '/privacy-policy' },
+        { name: 'Risk Disclosure', to: '/risk-disclosure' },
+        { name: 'Refund Policy', to: '/refund-policy' },
+        { name: 'Cookie Policy', to: '/cookie-policy' },
+      ],
+    },
+  ];
+
+  const socialLinks = [
+    { name: 'Facebook', icon: Facebook, href: 'https://facebook.com/marketedgepros' },
+    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/marketedgepros' },
+    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/marketedgepros' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/marketedgepros' },
+    { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/@marketedgepros' },
+    { name: 'Discord', icon: MessageCircle, href: 'https://discord.gg/jKbmeSe7' },
+  ];
+
+  return (
+    <footer className="bg-black border-t border-white/10">
+      {/* Main Footer */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          {/* Brand Column */}
+          <div className="lg:col-span-1">
+            <Link to="/" className="flex items-center space-x-2 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg"></div>
+              <span className="text-xl font-bold text-white">MarketEdgePros</span>
+            </Link>
+            <p className="text-gray-400 text-sm mb-6">
+              Empowering traders worldwide with professional funding and cutting-edge trading technology.
+            </p>
+            
+            {/* Social Links */}
+            <div className="flex space-x-4">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-cyan-500 transition-colors"
+                  aria-label={social.name}
+                >
+                  <social.icon size={20} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer Sections */}
+          {footerSections.map((section) => (
+            <div key={section.title}>
+              <h3 className="text-white font-semibold mb-4">{section.title}</h3>
+              <ul className="space-y-2">
+                {section.links.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      to={link.to}
+                      className="text-gray-400 hover:text-white transition-colors text-sm"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Newsletter Section */}
+        <div className="mt-12 pt-8 border-t border-white/10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-center md:text-left">
+              <h3 className="text-white font-semibold mb-2">Stay Updated</h3>
+              <p className="text-gray-400 text-sm">Get the latest news and updates delivered to your inbox.</p>
+            </div>
+            <div className="flex w-full md:w-auto">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 md:w-64 px-4 py-2 bg-white/5 border border-white/10 rounded-l-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
+              />
+              <button className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-r-lg text-white font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition-all flex items-center">
+                <Mail size={18} className="mr-2" />
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+            <p>© {currentYear} MarketEdgePros. All rights reserved.</p>
+            <div className="flex items-center space-x-6">
+              <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms</Link>
+              <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy</Link>
+              <Link to="/risk-disclosure" className="hover:text-white transition-colors">Risk Disclosure</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Risk Warning */}
+      <div className="bg-red-900/20 border-t border-red-500/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <p className="text-xs text-gray-400 text-center">
+            <strong className="text-red-400">Risk Warning:</strong> Trading forex and CFDs involves significant risk of loss and is not suitable for all investors. 
+            Past performance is not indicative of future results. Please ensure you fully understand the risks involved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}

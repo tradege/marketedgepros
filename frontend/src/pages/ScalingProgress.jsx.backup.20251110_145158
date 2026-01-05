@@ -1,0 +1,302 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  TrendingUp,
+  DollarSign,
+  Trophy,
+  CheckCircle,
+  Lock,
+  ArrowRight,
+  Target,
+  Zap,
+  Award,
+  RefreshCw,
+} from 'lucide-react';
+import UserLayout from '../components/layout/UserLayout';
+import useAuthStore from '../store/authStore';
+import axios from 'axios';
+
+export default function ScalingProgress() {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const [scaling, setScaling] = useState(null);
+  const [tiers, setTiers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isScaling, setIsScaling] = useState(false);
+
+  useEffect(() => {
+    loadScalingData();
+  }, []);
+
+  const loadScalingData = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Load user's scaling progress
+      const progressResponse = await axios.get('/api/v1/scaling/my-progress');
+      setScaling(progressResponse.data.data);
+      
+      // Load all tiers
+      const tiersResponse = await axios.get('/api/v1/scaling/tiers');
+      setTiers(tiersResponse.data.data.tiers);
+      
+    } catch (error) {
+      console.error('Error loading scaling data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleScaleUp = async () => {
+    try {
+      setIsScaling(true);
+      const response = await axios.post('/api/v1/scaling/scale-up');
+      
+      if (response.data.success) {
+        // Reload data
+        await loadScalingData();
+        
+        // Show success message (you can add a toast notification here)
+        alert(`Congratulations! You've scaled up to Tier ${response.data.new_tier}!`);
+      }
+    } catch (error) {
+      alert(error.response?.data?.error || 'Failed to scale up');
+    } finally {
+      setIsScaling(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <UserLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
+        </div>
+      </UserLayout>
+    );
+  }
+
+  if (!scaling || !scaling.has_scaling_plan) {
+    return (
+      <UserLayout>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+            <Trophy className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-2">No Scaling Plan Yet</h2>
+            <p className="text-gray-400 mb-6">
+              Complete a challenge to unlock your scaling journey!
+            </p>
+            <button
+              onClick={() => navigate('/programs')}
+              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-xl text-white font-bold hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300"
+            >
+              Browse Programs
+            </button>
+          </div>
+        </div>
+      </UserLayout>
+    );
+  }
+
+  const currentTier = tiers.find(t => t.tier_number === scaling.current_tier);
+  const nextTier = tiers.find(t => t.tier_number === scaling.next_tier);
+
+  return (
+    <UserLayout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 mb-2">
+            Scaling Progress
+          </h1>
+          <p className="text-gray-400">Track your journey to larger account sizes</p>
+        </div>
+
+        {/* Current Status */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Current Tier */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-xl flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Current Tier</p>
+                <p className="text-2xl font-bold text-white">Tier {scaling.current_tier}</p>
+              </div>
+            </div>
+            <p className="text-cyan-400 font-semibold text-lg">
+              ${scaling.current_account_size.toLocaleString()}
+            </p>
+          </div>
+
+          {/* Total Profit */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Total Profit</p>
+                <p className="text-2xl font-bold text-white">${scaling.total_profit.toLocaleString()}</p>
+              </div>
+            </div>
+            <p className="text-gray-400 text-sm">
+              Target: ${scaling.target_profit.toLocaleString()}
+            </p>
+          </div>
+
+          {/* Times Scaled */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                <Award className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Times Scaled</p>
+                <p className="text-2xl font-bold text-white">{scaling.times_scaled}</p>
+              </div>
+            </div>
+            <p className="text-gray-400 text-sm">
+              {scaling.last_scaled_at ? `Last: ${new Date(scaling.last_scaled_at).toLocaleDateString()}` : 'Never scaled'}
+            </p>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-white">Progress to Next Tier</h2>
+            <span className="text-2xl font-bold text-cyan-400">
+              {scaling.progress_percentage.toFixed(1)}%
+            </span>
+          </div>
+          
+          {/* Progress Bar */}
+          <div className="relative h-8 bg-white/10 rounded-full overflow-hidden mb-6">
+            <div
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500 to-teal-500 transition-all duration-500 rounded-full"
+              style={{ width: `${Math.min(scaling.progress_percentage, 100)}%` }}
+            >
+              <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+            </div>
+          </div>
+
+          {/* Remaining Profit */}
+          <div className="flex items-center justify-between text-gray-300">
+            <span>${scaling.total_profit.toLocaleString()} earned</span>
+            <span>${(scaling.target_profit - scaling.total_profit).toLocaleString()} to go</span>
+          </div>
+
+          {/* Scale Up Button */}
+          {scaling.is_eligible_for_scaling && nextTier && (
+            <div className="mt-6 p-6 bg-gradient-to-r from-cyan-500/10 to-teal-500/10 border border-cyan-500/30 rounded-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">🎉 Ready to Scale Up!</h3>
+                  <p className="text-gray-300">
+                    Upgrade to Tier {nextTier.tier_number} - ${nextTier.account_size.toLocaleString()} account
+                  </p>
+                </div>
+                <button
+                  onClick={handleScaleUp}
+                  disabled={isScaling}
+                  className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-xl text-white font-bold hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isScaling ? (
+                    <>
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                      Scaling...
+                    </>
+                  ) : (
+                    <>
+                      Scale Up
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* All Tiers */}
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Scaling Tiers</h2>
+          
+          <div className="space-y-4">
+            {tiers.map((tier) => {
+              const isCurrent = tier.tier_number === scaling.current_tier;
+              const isPassed = tier.tier_number < scaling.current_tier;
+              const isNext = tier.tier_number === scaling.next_tier;
+              const isLocked = tier.tier_number > scaling.current_tier && !isNext;
+
+              return (
+                <div
+                  key={tier.tier_number}
+                  className={`p-6 rounded-xl border-2 transition-all ${
+                    isCurrent
+                      ? 'border-cyan-500 bg-cyan-500/10'
+                      : isPassed
+                      ? 'border-green-500/30 bg-green-500/5'
+                      : isNext
+                      ? 'border-teal-500/30 bg-teal-500/5'
+                      : 'border-white/10 bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                        isCurrent
+                          ? 'bg-gradient-to-r from-cyan-500 to-teal-500'
+                          : isPassed
+                          ? 'bg-green-500'
+                          : isLocked
+                          ? 'bg-gray-600'
+                          : 'bg-teal-500'
+                      }`}>
+                        {isPassed ? (
+                          <CheckCircle className="w-6 h-6 text-white" />
+                        ) : isLocked ? (
+                          <Lock className="w-6 h-6 text-white" />
+                        ) : (
+                          <Trophy className="w-6 h-6 text-white" />
+                        )}
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-xl font-bold text-white">Tier {tier.tier_number}</h3>
+                          {isCurrent && (
+                            <span className="px-2 py-1 bg-cyan-500 text-white text-xs font-bold rounded">
+                              CURRENT
+                            </span>
+                          )}
+                          {isNext && (
+                            <span className="px-2 py-1 bg-teal-500 text-white text-xs font-bold rounded">
+                              NEXT
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-gray-400 text-sm mt-1">
+                          ${tier.account_size.toLocaleString()} account • {tier.profit_split}% profit split
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="text-sm text-gray-400">Profit Target</p>
+                      <p className="text-lg font-bold text-white">
+                        ${tier.profit_target.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </UserLayout>
+  );
+}

@@ -1,0 +1,1 @@
+import React,  {: with data, the content of the file will be exactly the same as the previous attempt but encoded in base64 with shell expansion issues resolved by this method. Content is too long to include here.

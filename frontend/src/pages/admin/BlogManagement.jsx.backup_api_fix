@@ -1,0 +1,346 @@
+import { useState, useEffect } from 'react';
+import { 
+  Plus, Edit2, Trash2, Eye, EyeOff, Calendar, Tag, 
+  Search, Filter, ChevronLeft, ChevronRight 
+} from 'lucide-react';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || '/api/v1';
+
+// Dummy blog posts data (will be replaced with API data when backend is fixed)
+const DUMMY_POSTS = [
+  {
+    id: 1,
+    title: "What is Prop Trading? A Complete Guide for Beginners",
+    slug: "what-is-prop-trading-complete-guide",
+    excerpt: "Discover everything you need to know about proprietary trading, how it works, and why it's becoming the preferred path for aspiring traders worldwide.",
+    category: "Education",
+    tags: ["Prop Trading", "Beginners Guide", "Trading Education", "Getting Started"],
+    status: "published",
+    featured: true,
+    views: 1250,
+    created_at: "2024-10-15T10:00:00Z",
+    published_at: "2024-10-15T10:00:00Z"
+  },
+  {
+    id: 2,
+    title: "5 Key Strategies for Prop Trading Success",
+    slug: "5-key-strategies-prop-trading-success",
+    excerpt: "Master these five essential strategies to maximize your success as a proprietary trader and consistently pass funding challenges.",
+    category: "Strategy",
+    tags: ["Trading Strategies", "Risk Management", "Trading Psychology", "Success Tips"],
+    status: "published",
+    featured: true,
+    views: 980,
+    created_at: "2024-10-18T10:00:00Z",
+    published_at: "2024-10-18T10:00:00Z"
+  },
+  {
+    id: 3,
+    title: "How to Choose the Right Prop Firm: A Comprehensive Guide",
+    slug: "how-to-choose-right-prop-firm",
+    excerpt: "Not all prop firms are created equal. Learn the key factors to consider when selecting a proprietary trading firm that aligns with your goals.",
+    category: "Education",
+    tags: ["Prop Firms", "Choosing a Firm", "Trading Education", "Due Diligence"],
+    status: "published",
+    featured: false,
+    views: 750,
+    created_at: "2024-10-20T10:00:00Z",
+    published_at: "2024-10-20T10:00:00Z"
+  },
+  {
+    id: 4,
+    title: "A Day in the Life of a Successful Prop Trader",
+    slug: "day-in-life-successful-prop-trader",
+    excerpt: "Ever wondered what a typical day looks like for a funded proprietary trader? Get an inside look at the daily routine, challenges, and rewards.",
+    category: "Lifestyle",
+    tags: ["Day Trading", "Trading Routine", "Prop Trader Life", "Trading Discipline"],
+    status: "published",
+    featured: false,
+    views: 620,
+    created_at: "2024-10-22T10:00:00Z",
+    published_at: "2024-10-22T10:00:00Z"
+  },
+  {
+    id: 5,
+    title: "Risk Management in Prop Trading: The Ultimate Guide",
+    slug: "risk-management-prop-trading-guide",
+    excerpt: "Risk management is the difference between long-term success and account blowouts. Master these essential risk management principles for prop trading.",
+    category: "Risk Management",
+    tags: ["Risk Management", "Position Sizing", "Trading Rules", "Capital Preservation"],
+    status: "published",
+    featured: false,
+    views: 890,
+    created_at: "2024-10-25T10:00:00Z",
+    published_at: "2024-10-25T10:00:00Z"
+  }
+];
+
+const BlogManagement = () => {
+  const [posts, setPosts] = useState(DUMMY_POSTS);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
+
+  // Get unique categories
+  const categories = [...new Set(posts.map(post => post.category))];
+
+  // Filter posts
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || post.status === filterStatus;
+    const matchesCategory = filterCategory === 'all' || post.category === filterCategory;
+    return matchesSearch && matchesStatus && matchesCategory;
+  });
+
+  // Stats
+  const stats = {
+    total: posts.length,
+    published: posts.filter(p => p.status === 'published').length,
+    draft: posts.filter(p => p.status === 'draft').length,
+    featured: posts.filter(p => p.featured).length
+  };
+
+  const handleDelete = (postId) => {
+    if (confirm('Are you sure you want to delete this post?')) {
+      setPosts(posts.filter(p => p.id !== postId));
+    }
+  };
+
+  const handleToggleStatus = (postId) => {
+    setPosts(posts.map(p => 
+      p.id === postId 
+        ? { ...p, status: p.status === 'published' ? 'draft' : 'published' }
+        : p
+    ));
+  };
+
+  const handleToggleFeatured = (postId) => {
+    setPosts(posts.map(p => 
+      p.id === postId 
+        ? { ...p, featured: !p.featured }
+        : p
+    ));
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Blog Management</h1>
+          <p className="text-slate-400">Create, edit, and manage your blog posts</p>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg p-4">
+            <div className="text-slate-400 text-sm mb-1">Total Posts</div>
+            <div className="text-2xl font-bold text-white">{stats.total}</div>
+          </div>
+          <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg p-4">
+            <div className="text-slate-400 text-sm mb-1">Published</div>
+            <div className="text-2xl font-bold text-green-400">{stats.published}</div>
+          </div>
+          <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg p-4">
+            <div className="text-slate-400 text-sm mb-1">Drafts</div>
+            <div className="text-2xl font-bold text-yellow-400">{stats.draft}</div>
+          </div>
+          <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg p-4">
+            <div className="text-slate-400 text-sm mb-1">Featured</div>
+            <div className="text-2xl font-bold text-cyan-400">{stats.featured}</div>
+          </div>
+        </div>
+
+        {/* Filters and Search */}
+        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg p-4 mb-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Search */}
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search posts..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+            </div>
+
+            {/* Status Filter */}
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="px-4 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+            >
+              <option value="all">All Status</option>
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+            </select>
+
+            {/* Category Filter */}
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="px-4 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+            >
+              <option value="all">All Categories</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+
+            {/* Create Button */}
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg font-semibold hover:from-cyan-600 hover:to-blue-600 transition-all flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              New Post
+            </button>
+          </div>
+        </div>
+
+        {/* Posts Table */}
+        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-slate-900/50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Post
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Views
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-700">
+                {filteredPosts.map((post) => (
+                  <tr key={post.id} className="hover:bg-slate-900/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-start gap-3">
+                        {post.featured && (
+                          <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded">
+                            Featured
+                          </span>
+                        )}
+                        <div>
+                          <div className="text-white font-medium">{post.title}</div>
+                          <div className="text-slate-400 text-sm mt-1 line-clamp-1">
+                            {post.excerpt}
+                          </div>
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {post.tags.slice(0, 3).map((tag, idx) => (
+                              <span key={idx} className="px-2 py-0.5 bg-slate-700 text-slate-300 text-xs rounded">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="px-2 py-1 bg-cyan-500/20 text-cyan-400 text-sm rounded">
+                        {post.category}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-sm rounded ${
+                        post.status === 'published' 
+                          ? 'bg-green-500/20 text-green-400'
+                          : 'bg-yellow-500/20 text-yellow-400'
+                      }`}>
+                        {post.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-slate-300">
+                      {post.views.toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 text-slate-300 text-sm">
+                      {formatDate(post.created_at)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => handleToggleStatus(post.id)}
+                          className="p-2 text-slate-400 hover:text-cyan-400 transition-colors"
+                          title={post.status === 'published' ? 'Unpublish' : 'Publish'}
+                        >
+                          {post.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                        <button
+                          onClick={() => setEditingPost(post)}
+                          className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
+                          title="Edit"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(post.id)}
+                          className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {filteredPosts.length === 0 && (
+            <div className="text-center py-12 text-slate-400">
+              No posts found
+            </div>
+          )}
+        </div>
+
+        {/* Note about dummy data */}
+        <div className="mt-6 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <div className="text-blue-400 mt-0.5">ℹ️</div>
+            <div>
+              <div className="text-blue-400 font-semibold mb-1">Using Dummy Data</div>
+              <div className="text-slate-300 text-sm">
+                Currently displaying sample blog posts. Connect to the backend API to manage real posts.
+                The blog posts are visible on the public blog page at <a href="/blog" className="text-cyan-400 hover:underline">/blog</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BlogManagement;
+

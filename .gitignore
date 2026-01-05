@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+venv/
+ENV/
+.env
+*.log
+*.pot
+*.pyc
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Coverage
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# Database
+*.db
+*.sqlite3
+celerybeat-schedule*
+
+# Secrets
+.env.production
+*.pem
+*.key
+
+# Logs
+logs/
+*.log
+
+# Cache
+.cache/
+.pytest_cache/
+
+# Backups (keep in repo for reference)
+# backend/backups/
+*.env*
+backend/.env*

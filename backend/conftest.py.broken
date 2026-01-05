@@ -1,0 +1,238 @@
+"""
+Professional conftest for MarketEdgePros testing
+Uses TRUNCATE for reliable test isolation
+"""
+import pytest
+from src.app import create_app
+from src.database import db as _db
+
+@pytest.fixture(scope='session')
+def app():
+    """Create and configure Flask app for testing"""
+    app = create_app()
+    app.config['TESTING'] = True
+    
+    # Drop and recreate all tables to ensure schema is up to date
+    with app.app_context():
+        # _db.drop_all()  # Skipped due to views dependency
+        _db.create_all()
+        
+        # Add missing columns (manual migration)
+        try:
+            _db.session.execute(_db.text("""
+                ALTER TABLE withdrawals 
+                ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id),
+                ADD COLUMN IF NOT EXISTS challenge_id INTEGER REFERENCES challenges(id),
+                ADD COLUMN IF NOT EXISTS withdrawal_method VARCHAR(50),
+                ADD COLUMN IF NOT EXISTS payment_details JSON,
+                ADD COLUMN IF NOT EXISTS account_details JSON;
+            """))
+            _db.session.commit()
+        except Exception as e:
+            _db.session.rollback()
+            # Columns might already exist, ignore
+            pass
+    
+    yield app
+
+@pytest.fixture(scope="function")
+def clean_db(app, request):
+    """Clean database before each test that uses session fixture"""
+    # Only run if test uses session fixture
+    if "session" not in request.fixturenames:
+        return
+    
+    original_clean_db(app)
+
+def original_clean_db(app):
+    """Clean database before each test"""
+    with app.app_context():
+        connection = _db.engine.connect()
+        trans = connection.begin()
+        
+        try:
+            # Truncate all tables with CASCADE
+            for table in reversed(_db.metadata.sorted_tables):
+                connection.execute(_db.text(f'TRUNCATE TABLE {table.name} RESTART IDENTITY CASCADE;'))
+            trans.commit()
+        except:
+            trans.rollback()
+            raise
+        finally:
+            connection.close()
+
+@pytest.fixture(scope='function')
+def session(app, clean_db):
+    """Provide database session for tests"""
+    with app.app_context():
+        yield _db.session
+        _db.session.remove()
+
+
+@pytest.fixture
+def mock_sendgrid(mocker):
+    mocker.patch('src.services.email_service.EmailService.send_verification_email')
+    mocker.patch('src.services.email_service.EmailService.send_password_reset_email')
+    mocker.patch('src.services.email_service.EmailService.send_welcome_email')
+    return mocker
+
+# User Fixtures
+@pytest.fixture
+def admin_user(session):
+    """Create an admin user"""
+    from src.models.user import User
+    user = User(
+        email='admin@test.com',
+        first_name='Admin',
+        last_name='User',
+        role='admin',
+        is_active=True
+    )
+    session.add(user)
+    session.commit()
+    user.update_tree_path()
+    session.commit()
+    return user
+
+@pytest.fixture
+def super_admin_user(session):
+    """Create a super admin user"""
+    from src.models.user import User
+    user = User(
+        email='superadmin@test.com',
+        first_name='Super',
+        last_name='Admin',
+        role='super_admin',
+        is_active=True
+    )
+    session.add(user)
+    session.commit()
+    user.update_tree_path()
+    session.commit()
+    return user
+
+@pytest.fixture
+def trader_user(session):
+    """Create a trader user"""
+    from src.models.user import User
+    user = User(
+        email='trader@test.com',
+        first_name='Trader',
+        last_name='User',
+        role='trader',
+        is_active=True
+    )
+    session.add(user)
+    session.commit()
+    user.update_tree_path()
+    session.commit()
+    return user
+
+@pytest.fixture
+def agent_user(session):
+    """Create an agent user with Agent record"""
+    from src.models.user import User
+    from src.models.agent import Agent
+    user = User(
+        email='agent@test.com',
+        first_name='Agent',
+        last_name='User',
+        role='agent',
+        is_active=True
+    )
+    session.add(user)
+    session.commit()
+    user.update_tree_path()
+    session.commit()
+    
+    # Create Agent record
+    agent = Agent(
+        user_id=user.id,
+        agent_code='AGENT123',
+        status='active'
+    )
+    session.add(agent)
+    session.commit()
+    return user
+
+@pytest.fixture
+def referral_user(session):
+    """Create a referral user"""
+    from src.models.user import User
+    user = User(
+        email='referral@test.com',
+        first_name='Referral',
+        last_name='User',
+        role='trader',
+        is_active=True
+    )
+    session.add(user)
+    session.commit()
+    user.update_tree_path()
+    session.commit()
+    return user
+
+@pytest.fixture
+def trading_program(session):
+    """Create a trading program"""
+    from src.models.trading_program import TradingProgram
+    from src.models.tenant import Tenant
+    from decimal import Decimal
+    
+    # Create tenant first
+    tenant = Tenant(
+        name='Test Tenant',
+        subdomain='test',
+        status='active'
+    )
+    session.add(tenant)
+    session.commit()
+    
+    program = TradingProgram(
+        name='Test Program',
+        account_size=Decimal('10000.00'),
+        profit_target=Decimal('1000.00'),
+        type='evaluation',
+        tenant_id=tenant.id,
+        status='active'
+    )
+    session.add(program)
+    session.commit()
+    return program
+
+@pytest.fixture
+def challenge(session, trader_user, trading_program):
+    """Create a challenge"""
+    from src.models.trading_program import Challenge
+    from decimal import Decimal
+    
+    challenge = Challenge(
+        user_id=trader_user.id,
+        program_id=trading_program.id,
+        status='active',
+        initial_balance=Decimal('10000.00'),
+        current_balance=Decimal('10000.00')
+    )
+    session.add(challenge)
+    session.commit()
+    return challenge
+
+@pytest.fixture
+def referral(session, agent_user, referral_user):
+    """Create a referral record"""
+    from src.models.referral import Referral
+    from src.models.agent import Agent
+    
+    # Get the agent
+    agent = Agent.query.filter_by(user_id=agent_user.id).first()
+    
+    # Create referral
+    referral = Referral(
+        agent_id=agent.id,
+        referred_user_id=referral_user.id,
+        referral_code="TEST123",
+        status='active'
+    )
+    session.add(referral)
+    session.commit()
+    return referral
